@@ -14,7 +14,7 @@ import {
 } from './background';
 import { PencilDigits } from './pencil';
 import { buildShareUrl, loadState, MAX_DURATION_MS, saveState, type Mode } from './state';
-import { FALLBACK_THEME, isThemeId, themes, type ThemeId } from './themes';
+import { FALLBACK_THEME, isThemeId, themeCategories, themes, usesPencil, type ThemeId } from './themes';
 import { formatShort, msFromHMS, nextNewYear, pad, splitMs, toLocalInputValue } from './timer';
 
 mountSiteChrome('countdown');
@@ -223,8 +223,8 @@ function renderDigits(ms: number): void {
   if (p.days > 0 || p.hours > 0) units.push([pad(p.hours), 'hod']);
   units.push([pad(p.minutes), 'min'], [pad(p.seconds), 'sek']);
 
-  // The paper theme draws digits with a pencil; every other theme uses plain text.
-  const pencilMode = els.stage.dataset.theme === 'paper';
+  // Pencil/chalk themes draw digits stroke by stroke; every other theme uses plain text.
+  const pencilMode = usesPencil(els.stage.dataset.theme);
   const key = `${pencilMode ? 'pencil' : 'text'}|${units.map((u) => u[0]).join(':')}`;
   if (key === lastDigitsKey) return;
   lastDigitsKey = key;
@@ -236,24 +236,68 @@ function renderDigits(ms: number): void {
     return;
   }
   pencil.reset();
+  // Each digit sits in its own fixed-width cell (see updateDigitWidth), so fonts whose
+  // digits differ in width ("1" narrower than "0") don't make the line shift every second.
+  const cells = (value: string) => [...value].map((ch) => `<span class="digit">${ch}</span>`).join('');
   els.digits.innerHTML = units
     .map(
       ([value, label], i) =>
         `${i ? '<span class="digits__sep" aria-hidden="true">:</span>' : ''}` +
-        `<span class="unit"><span class="unit__value">${value}</span><span class="unit__label">${label}</span></span>`,
+        `<span class="unit"><span class="unit__value">${cells(value)}</span><span class="unit__label">${label}</span></span>`,
     )
     .join('');
 }
 
+let measuredFont = '';
+let measureCtx: CanvasRenderingContext2D | null = null;
+
+/**
+ * Sets --digit-w to the widest digit of the current theme's font (in em), so every digit
+ * cell is as wide as the widest digit. Re-measures only when the font actually changes.
+ */
+function updateDigitWidth(): void {
+  const cs = getComputedStyle(els.digits);
+  const pencilMode = usesPencil(els.stage.dataset.theme);
+  const font = `${cs.fontStyle} ${cs.fontWeight} 100px ${cs.fontFamily}`;
+  if (`${pencilMode}|${font}` === measuredFont) return;
+  measureCtx ??= document.createElement('canvas').getContext('2d');
+  if (!measureCtx) return;
+  measuredFont = `${pencilMode}|${font}`;
+  measureCtx.font = font;
+  let widest = 0;
+  for (let d = 0; d <= 9; d++) widest = Math.max(widest, measureCtx.measureText(String(d)).width);
+  const em = widest / 100;
+  els.digits.style.setProperty('--digit-w', `${em.toFixed(3)}em`);
+  // Fonts with unusually wide digits shrink so the line still fits the stage. The sizes in
+  // countdown.css assume ~0.6em digits. Pencil themes draw their own fixed-size glyphs.
+  els.digits.style.setProperty('--fit', pencilMode ? '1' : Math.max(1, em / 0.6).toFixed(3));
+}
+
+// Web/system fonts may finish loading after the first measurement; measure again then.
+void document.fonts?.ready.then(() => {
+  measuredFont = '';
+  updateDigitWidth();
+});
+
 /** Builds the swatches once, then only updates their state (keeps keyboard focus in place). */
 function renderThemes(): void {
   if (!els.themeList.childElementCount) {
-    els.themeList.innerHTML = themes
-      .map(
-        (t) =>
-          `<button type="button" class="theme-swatch" data-theme-id="${t.id}">` +
-          `<span class="theme-swatch__preview" data-theme="${t.id}"></span><span>${t.name}</span></button>`,
-      )
+    els.themeList.innerHTML = themeCategories
+      .map((category) => {
+        const swatches = themes
+          .filter((t) => t.category === category.id)
+          .map(
+            (t) =>
+              `<button type="button" class="theme-swatch" data-theme-id="${t.id}">` +
+              `<span class="theme-swatch__preview" data-theme="${t.id}"></span><span>${t.name}</span></button>`,
+          )
+          .join('');
+        return (
+          `<section class="theme-group" aria-labelledby="theme-group-${category.id}">` +
+          `<h3 id="theme-group-${category.id}" class="theme-group__title">${category.name}</h3>` +
+          `<div class="themes">${swatches}</div></section>`
+        );
+      })
       .join('');
   }
   els.themeList.querySelectorAll<HTMLButtonElement>('[data-theme-id]').forEach((b) => {
@@ -279,6 +323,7 @@ function render(): void {
   const running = state.status === 'running';
 
   els.stage.dataset.theme = state.theme === 'custom' && !hasCustomBg ? FALLBACK_THEME : state.theme;
+  updateDigitWidth();
   els.stage.classList.toggle('is-finished', state.status === 'finished');
   els.stageTitle.textContent = state.title;
   els.done.hidden = state.status !== 'finished';

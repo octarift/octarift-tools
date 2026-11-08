@@ -88,18 +88,19 @@
   align-items: flex-start;
   gap: 0.12em;
   /* Sized so each layout fills roughly three quarters of the stage width, capped by height. */
-  font-size: min(25cqw, 42cqh);
+  /* --fit (from main.ts) shrinks fonts whose digits are wider than usual. */
+  font-size: calc(min(25cqw, 42cqh) / var(--fit, 1));
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
 .digits[data-units='3'] {
-  font-size: min(17.5cqw, 36cqh);
+  font-size: calc(min(17.5cqw, 36cqh) / var(--fit, 1));
 }
 
 .digits[data-units='4'] {
-  font-size: min(13cqw, 30cqh);
+  font-size: calc(min(13cqw, 30cqh) / var(--fit, 1));
 }
 
 .unit {
@@ -109,7 +110,14 @@
 }
 
 .unit__value {
-  letter-spacing: -0.02em;
+  display: flex;
+}
+
+/* Fixed-width digit cell; --digit-w is the widest digit of the current font (set in main.ts). */
+.digit {
+  display: inline-block;
+  width: var(--digit-w, 0.62em);
+  text-align: center;
 }
 
 .unit__label {
@@ -259,11 +267,11 @@ body.pseudo-fullscreen .stage {
   --graphite: #333238;
 }
 
-.stage[data-theme='paper'] .stage__content {
+.stage:is([data-theme='paper'], [data-theme='exam']) .stage__content {
   font-family: 'Segoe Print', 'Bradley Hand', 'Chalkboard SE', 'Comic Neue', cursive;
 }
 
-.stage[data-theme='paper'] .unit__label {
+.stage:is([data-theme='paper'], [data-theme='exam']) .unit__label {
   text-transform: none;
   letter-spacing: 0.04em;
 }
@@ -789,6 +797,732 @@ body.pseudo-fullscreen .stage {
   animation: wt-rise 14s linear infinite;
 }
 
+/* ----- Vánoce: winter night, falling snow, snowy hills and a string of glowing lights ----- */
+/* Layers (back to front): stars + sky, glow B (::before), far snow, hills, near snow, light string, glow A. */
+
+[data-theme='christmas'] {
+  background:
+    radial-gradient(1.5px 1.5px at 12% 34%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 27% 22%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 43% 41%, #dfe9ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 61% 28%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 78% 38%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 91% 25%, #dfe9ff 50%, transparent 51%),
+    radial-gradient(ellipse at 50% 120%, #2a5b8c 0%, transparent 60%),
+    linear-gradient(to bottom, #07112b 0%, #0e2350 45%, #1b3d6e 100%);
+}
+
+.stage[data-theme='christmas'] {
+  --stage-fg: #ffffff;
+  --stage-muted: rgb(255 214 120 / 0.92);
+}
+
+.stage[data-theme='christmas'] .stage__title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: #ffe2a0;
+  text-shadow: 0 0 0.5em rgb(255 190 90 / 0.45);
+}
+
+.stage[data-theme='christmas'] .digits {
+  text-shadow:
+    0 2px 0.1em rgb(0 10 40 / 0.5),
+    0 0 0.3em rgb(255 220 150 / 0.4);
+}
+
+.stage[data-theme='christmas'] .unit__label {
+  text-shadow: none;
+}
+
+/* Falling snow: each layer is a tile shifted down by exactly one tile height (seamless),
+   while a second animation sways it sideways. */
+.stage[data-theme='christmas'] .stage__fx i:nth-child(1),
+.stage[data-theme='christmas'] .stage__fx i:nth-child(3) {
+  left: -5%;
+  right: -5%;
+  top: calc(-1 * var(--fall));
+  height: calc(100% + var(--fall));
+  animation:
+    wt-snowfall var(--speed) linear infinite,
+    wt-sway 7s ease-in-out infinite;
+}
+
+.stage[data-theme='christmas'] .stage__fx i:nth-child(1) {
+  --fall: 200px;
+  --speed: 16s;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' fill='%23fff'%3E%3Ccircle cx='12' cy='18' r='1.3' opacity='.7'/%3E%3Ccircle cx='58' cy='74' r='1' opacity='.6'/%3E%3Ccircle cx='97' cy='12' r='1.5' opacity='.7'/%3E%3Ccircle cx='141' cy='58' r='1.1' opacity='.6'/%3E%3Ccircle cx='183' cy='104' r='1.4' opacity='.7'/%3E%3Ccircle cx='31' cy='131' r='1.2' opacity='.6'/%3E%3Ccircle cx='76' cy='170' r='1.5' opacity='.7'/%3E%3Ccircle cx='122' cy='142' r='1' opacity='.55'/%3E%3Ccircle cx='166' cy='186' r='1.3' opacity='.65'/%3E%3Ccircle cx='109' cy='96' r='1.2' opacity='.6'/%3E%3C/svg%3E")
+    0 0 / 200px 200px;
+}
+
+.stage[data-theme='christmas'] .stage__fx i:nth-child(3) {
+  --fall: 320px;
+  --speed: 9s;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320' fill='%23fff'%3E%3Ccircle cx='24' cy='40' r='3' opacity='.85'/%3E%3Ccircle cx='132' cy='96' r='2.4' opacity='.8'/%3E%3Ccircle cx='250' cy='28' r='3.4' opacity='.9'/%3E%3Ccircle cx='70' cy='210' r='2.6' opacity='.8'/%3E%3Ccircle cx='196' cy='176' r='3.2' opacity='.85'/%3E%3Ccircle cx='296' cy='252' r='2.5' opacity='.8'/%3E%3Ccircle cx='150' cy='292' r='3' opacity='.85'/%3E%3C/svg%3E")
+    0 0 / 320px 320px;
+  animation-delay: 0s, -3s;
+}
+
+/* Snowy hills. */
+.stage[data-theme='christmas'] .stage__fx i:nth-child(2) {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'%3E%3Cpath d='M0 90 C200 40 400 110 650 70 C850 40 1000 90 1200 60 V200 H0Z' fill='%23bcd2ec'/%3E%3Cpath d='M0 140 C250 100 450 160 700 125 C900 100 1050 145 1200 118 V200 H0Z' fill='%23f2f7ff'/%3E%3C/svg%3E")
+    0 0 / 100% 100% no-repeat;
+}
+
+/* The light string: a sagging wire with bulbs, repeated across the top. */
+.stage[data-theme='christmas'] .stage__fx i:nth-child(4),
+.stage[data-theme='christmas'] .stage__fx i:nth-child(5),
+.stage[data-theme='christmas']::before {
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 14cqh;
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+}
+
+.stage[data-theme='christmas'] .stage__fx i:nth-child(4) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' width='240' height='60'%3E%3Cpath d='M0 6 Q60 40 120 6 Q180 40 240 6' fill='none' stroke='%23142a1c' stroke-width='2'/%3E%3Cg stroke='%23142a1c' stroke-width='1'%3E%3Cellipse cx='30' cy='25' rx='3.6' ry='5.5' fill='%23ff4a4a'/%3E%3Cellipse cx='60' cy='29' rx='3.6' ry='5.5' fill='%23ffd34d'/%3E%3Cellipse cx='90' cy='25' rx='3.6' ry='5.5' fill='%2340dd88'/%3E%3Cellipse cx='150' cy='25' rx='3.6' ry='5.5' fill='%234fb3ff'/%3E%3Cellipse cx='180' cy='29' rx='3.6' ry='5.5' fill='%23ff8a3d'/%3E%3Cellipse cx='210' cy='25' rx='3.6' ry='5.5' fill='%23ff4a9a'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Glow halos, split into two sets that pulse out of step so the lights shimmer. */
+.stage[data-theme='christmas'] .stage__fx i:nth-child(5) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' width='240' height='60'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='.9'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='30' cy='26' r='13' fill='%23ff4a4a' opacity='.55'/%3E%3Ccircle cx='90' cy='26' r='13' fill='%2340dd88' opacity='.5'/%3E%3Ccircle cx='180' cy='30' r='13' fill='%23ff8a3d' opacity='.55'/%3E%3Ccircle cx='30' cy='26' r='5' fill='url(%23g)'/%3E%3Ccircle cx='90' cy='26' r='5' fill='url(%23g)'/%3E%3Ccircle cx='180' cy='30' r='5' fill='url(%23g)'/%3E%3C/svg%3E");
+  filter: blur(3px);
+  animation: wt-twinkle 2.4s ease-in-out infinite alternate;
+}
+
+.stage[data-theme='christmas']::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 60' width='240' height='60'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='.9'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='60' cy='30' r='13' fill='%23ffd34d' opacity='.55'/%3E%3Ccircle cx='150' cy='26' r='13' fill='%234fb3ff' opacity='.5'/%3E%3Ccircle cx='210' cy='26' r='13' fill='%23ff4a9a' opacity='.55'/%3E%3Ccircle cx='60' cy='30' r='5' fill='url(%23g)'/%3E%3Ccircle cx='150' cy='26' r='5' fill='url(%23g)'/%3E%3Ccircle cx='210' cy='26' r='5' fill='url(%23g)'/%3E%3C/svg%3E");
+  filter: blur(3px);
+  animation: wt-twinkle 2.4s ease-in-out -1.2s infinite alternate;
+}
+
+/* ----- Coffee break: warm café, a cup on a saucer and rising steam ----- */
+
+[data-theme='coffee'] {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgb(214 140 70 / 0.22), transparent 55%),
+    radial-gradient(ellipse at 50% 110%, #4a2c1a 0%, transparent 60%),
+    linear-gradient(160deg, #2e1b10 0%, #22140c 55%, #160c07 100%);
+}
+
+.stage[data-theme='coffee'] {
+  --stage-fg: #f6e7d4;
+  --stage-muted: rgb(222 168 112 / 0.95);
+  /* Cup size: fits the bottom corner in landscape and in portrait. */
+  --cup: min(24cqh, 30cqw);
+}
+
+.stage[data-theme='coffee'] .stage__title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: #e3ad74;
+}
+
+.stage[data-theme='coffee'] .digits {
+  font-weight: 600;
+  text-shadow: 0 0.04em 0.12em rgb(20 8 2 / 0.6);
+}
+
+.stage[data-theme='coffee'] .unit__label {
+  text-shadow: none;
+}
+
+/* Out-of-focus café lights drifting slowly. */
+.stage[data-theme='coffee']::before {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  z-index: 0;
+  background:
+    radial-gradient(6cqh 6cqh at 12% 22%, rgb(255 190 110 / 0.18), transparent 70%),
+    radial-gradient(9cqh 9cqh at 28% 70%, rgb(255 170 90 / 0.12), transparent 70%),
+    radial-gradient(5cqh 5cqh at 64% 18%, rgb(255 210 140 / 0.16), transparent 70%),
+    radial-gradient(11cqh 11cqh at 86% 34%, rgb(255 160 80 / 0.1), transparent 70%),
+    radial-gradient(7cqh 7cqh at 48% 88%, rgb(255 200 120 / 0.1), transparent 70%);
+  animation: wt-float 24s ease-in-out infinite alternate;
+}
+
+/* The cup on its saucer, bottom right. */
+.stage[data-theme='coffee'] .stage__fx i:nth-child(1) {
+  right: 6%;
+  bottom: 4%;
+  height: var(--cup);
+  aspect-ratio: 200 / 160;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 160'%3E%3Cdefs%3E%3ClinearGradient id='c' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23fffaf3'/%3E%3Cstop offset='.7' stop-color='%23efe2d2'/%3E%3Cstop offset='1' stop-color='%23cdb8a2'/%3E%3C/linearGradient%3E%3CradialGradient id='k' cx='.45' cy='.45'%3E%3Cstop offset='0' stop-color='%23c48a5c'/%3E%3Cstop offset='.55' stop-color='%23a0663e'/%3E%3Cstop offset='1' stop-color='%235a3420'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cellipse cx='100' cy='144' rx='92' ry='14' fill='%23000' opacity='.35'/%3E%3Cellipse cx='100' cy='138' rx='90' ry='15' fill='%23e6d6c4'/%3E%3Cellipse cx='100' cy='136' rx='62' ry='8' fill='%23d3c0aa'/%3E%3Cpath d='M146 74 C178 70 180 112 138 114' fill='none' stroke='%23e9dccb' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M38 58 H152 C152 108 132 134 95 134 C58 134 38 108 38 58Z' fill='url(%23c)'/%3E%3Cellipse cx='95' cy='58' rx='57' ry='11' fill='%23f3e8da'/%3E%3Cellipse cx='95' cy='59' rx='51' ry='8.5' fill='url(%23k)'/%3E%3Cpath d='M80 58 C88 54 102 54 110 59' fill='none' stroke='%23f0d2b0' stroke-opacity='.7' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  filter: drop-shadow(0 0.6cqh 1.2cqh rgb(0 0 0 / 0.35));
+}
+
+/* Steam: three wisps rising from the cup, fading out at different times. */
+.stage[data-theme='coffee'] .stage__fx i:nth-child(n + 2):nth-child(-n + 4) {
+  /* Centred on the coffee surface (x ≈ 95/200, top ≈ 58/160 of the cup). */
+  right: calc(6% + var(--cup) * 1.25 * 0.525 - var(--cup) * 0.13);
+  bottom: calc(4% + var(--cup) * 0.6);
+  width: calc(var(--cup) * 0.26);
+  height: calc(var(--cup) * 1.05);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 160'%3E%3Cpath d='M20 155 C8 135 32 118 20 98 C8 78 32 62 20 42 C12 28 26 16 20 4' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  filter: blur(3px);
+  opacity: 0;
+  transform-origin: 50% 100%;
+  animation: wt-steam 4.5s ease-out infinite;
+}
+
+.stage[data-theme='coffee'] .stage__fx i:nth-child(3) {
+  translate: -45% 0;
+  animation-delay: -1.5s;
+}
+
+.stage[data-theme='coffee'] .stage__fx i:nth-child(4) {
+  translate: 45% 0;
+  animation-delay: -3s;
+}
+
+/* ----- Psaní testu: school chalkboard; digits are drawn in chalk by pencil.ts ----- */
+
+[data-theme='exam'] {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
+      0 0 / 220px 220px,
+    radial-gradient(ellipse 45% 30% at 30% 28%, rgb(255 255 255 / 0.06), transparent 70%),
+    radial-gradient(ellipse 40% 25% at 72% 68%, rgb(255 255 255 / 0.05), transparent 70%),
+    linear-gradient(160deg, #2f4b3b 0%, #243b2e 60%, #1b2e23 100%);
+}
+
+.stage[data-theme='exam'] {
+  --stage-fg: #f3f0e6;
+  --stage-muted: rgb(243 240 230 / 0.72);
+  --graphite: #f3f0e6;
+}
+
+/* Chalk is wider and softer than a pencil. */
+.stage[data-theme='exam'] .pencil-stroke {
+  stroke-width: calc(var(--w, 4.4) * 1.45);
+}
+
+/* Wooden frame around the board. */
+.stage[data-theme='exam'] .stage__fx i:nth-child(1) {
+  inset: 0;
+  box-shadow:
+    inset 0 0 0 1.4cqh #8a5a32,
+    inset 0 0 0 1.9cqh #5e3b1c,
+    inset 0 0 4cqh 2.4cqh rgb(0 0 0 / 0.35);
+}
+
+/* Chalk tray with two pieces of chalk. */
+.stage[data-theme='exam'] .stage__fx i:nth-child(2) {
+  left: 8%;
+  right: 8%;
+  bottom: 1.9cqh;
+  height: 2.2cqh;
+  border-radius: 0.4cqh 0.4cqh 0 0;
+  background: linear-gradient(#94653b, #5e3b1c);
+  box-shadow: 0 0.4cqh 0.8cqh rgb(0 0 0 / 0.4);
+}
+
+.stage[data-theme='exam'] .stage__fx i:nth-child(3) {
+  left: 18%;
+  bottom: 4.1cqh;
+  width: 7cqh;
+  height: 1.3cqh;
+  border-radius: 0.6cqh;
+  background: #f4f1ea;
+  box-shadow: 16cqw 0 0 #f7cfd6;
+}
+
+/* An old sponge smudge, as on every real board. */
+.stage[data-theme='exam'] .stage__fx i:nth-child(4) {
+  left: 58%;
+  top: 10%;
+  width: 34%;
+  height: 22%;
+  rotate: -8deg;
+  background: radial-gradient(ellipse at center, rgb(255 255 255 / 0.07), transparent 70%);
+}
+
+/* ----- Vánoční stromeček: decorated tree with glowing baubles and a star ----- */
+
+[data-theme='tree'] {
+  background: radial-gradient(ellipse at 50% 40%, #4a1418 0%, #26090d 60%, #12040a 100%);
+}
+
+.stage[data-theme='tree'] {
+  --stage-fg: #ffffff;
+  --stage-muted: rgb(255 214 120 / 0.95);
+}
+
+.stage[data-theme='tree'] .stage__title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: #ffe2a0;
+}
+
+/* The tree sits behind the digits, so give them a strong shadow to stay readable. */
+.stage[data-theme='tree'] .digits {
+  text-shadow:
+    0 0.04em 0.15em rgb(0 0 0 / 0.75),
+    0 0 0.35em rgb(255 200 100 / 0.35);
+}
+
+.stage[data-theme='tree'] .unit__label,
+.stage[data-theme='tree'] .stage__title {
+  text-shadow: 0 0.1em 0.4em rgb(0 0 0 / 0.8);
+}
+
+/* Warm out-of-focus lights in the room. */
+.stage[data-theme='tree']::before {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  z-index: 0;
+  background:
+    radial-gradient(7cqh 7cqh at 10% 25%, rgb(255 200 110 / 0.2), transparent 70%),
+    radial-gradient(10cqh 10cqh at 88% 30%, rgb(255 120 90 / 0.14), transparent 70%),
+    radial-gradient(6cqh 6cqh at 18% 78%, rgb(255 220 140 / 0.16), transparent 70%),
+    radial-gradient(9cqh 9cqh at 84% 80%, rgb(255 190 100 / 0.14), transparent 70%);
+  animation: wt-float 30s ease-in-out infinite alternate;
+}
+
+/* Tree, two glow sets and the star glow share one box so they line up exactly. */
+.stage[data-theme='tree'] .stage__fx i:nth-child(-n + 4) {
+  left: 50%;
+  bottom: 1%;
+  height: min(94%, 120cqw);
+  aspect-ratio: 200 / 260;
+  translate: -50% 0;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.stage[data-theme='tree'] .stage__fx i:nth-child(1) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 260'%3E%3Crect x='90' y='228' width='20' height='28' rx='3' fill='%235a3518'/%3E%3Cpath d='M100 120 L16 236 Q100 252 184 236Z' fill='%23144f2b'/%3E%3Cpath d='M100 82 L34 182 Q100 196 166 182Z' fill='%23175e33'/%3E%3Cpath d='M100 48 L50 128 Q100 140 150 128Z' fill='%231b6b3b'/%3E%3Cpath d='M100 22 L64 80 Q100 90 136 80Z' fill='%23217843'/%3E%3Cg fill='none' stroke='%23e8c25a' stroke-width='2' opacity='.9'%3E%3Cpath d='M70 72 Q100 84 128 66'/%3E%3Cpath d='M56 120 Q100 136 146 112'/%3E%3Cpath d='M42 172 Q100 192 158 166'/%3E%3Cpath d='M26 226 Q100 248 176 222'/%3E%3C/g%3E%3Cg%3E%3Ccircle cx='84' cy='66' r='5.5' fill='%23e53935'/%3E%3Ccircle cx='116' cy='60' r='5.5' fill='%2342a5f5'/%3E%3Ccircle cx='70' cy='112' r='5.5' fill='%23ffd54a'/%3E%3Ccircle cx='102' cy='124' r='5.5' fill='%23e53935'/%3E%3Ccircle cx='132' cy='108' r='5.5' fill='%2342a5f5'/%3E%3Ccircle cx='58' cy='164' r='5.5' fill='%23e53935'/%3E%3Ccircle cx='96' cy='176' r='5.5' fill='%23e0e6ea'/%3E%3Ccircle cx='124' cy='178' r='5.5' fill='%23ffd54a'/%3E%3Ccircle cx='140' cy='160' r='5.5' fill='%23ffd54a'/%3E%3Ccircle cx='44' cy='214' r='5.5' fill='%2342a5f5'/%3E%3Ccircle cx='76' cy='226' r='5.5' fill='%23ffd54a'/%3E%3Ccircle cx='110' cy='222' r='5.5' fill='%23e53935'/%3E%3Ccircle cx='150' cy='210' r='5.5' fill='%23e53935'/%3E%3C/g%3E%3Cg fill='%23fff' opacity='.55'%3E%3Ccircle cx='82.5' cy='64' r='1.6'/%3E%3Ccircle cx='114.5' cy='58' r='1.6'/%3E%3Ccircle cx='68.5' cy='110' r='1.6'/%3E%3Ccircle cx='100.5' cy='122' r='1.6'/%3E%3Ccircle cx='130.5' cy='106' r='1.6'/%3E%3Ccircle cx='56.5' cy='162' r='1.6'/%3E%3Ccircle cx='94.5' cy='174' r='1.6'/%3E%3Ccircle cx='122.5' cy='176' r='1.6'/%3E%3Ccircle cx='138.5' cy='158' r='1.6'/%3E%3Ccircle cx='42.5' cy='212' r='1.6'/%3E%3Ccircle cx='74.5' cy='224' r='1.6'/%3E%3Ccircle cx='108.5' cy='220' r='1.6'/%3E%3Ccircle cx='148.5' cy='208' r='1.6'/%3E%3C/g%3E%3Cpolygon points='100,4 102.9,12 111.4,12.3 104.8,17.6 107,25.7 100,21 93,25.7 95.2,17.6 88.6,12.3 97.1,12' fill='%23ffd54a'/%3E%3C/svg%3E");
+}
+
+.stage[data-theme='tree'] .stage__fx i:nth-child(2) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 260'%3E%3Cg opacity='.6'%3E%3Ccircle cx='84' cy='66' r='12' fill='%23ff5a50'/%3E%3Ccircle cx='70' cy='112' r='12' fill='%23ffd54a'/%3E%3Ccircle cx='132' cy='108' r='12' fill='%2364b5ff'/%3E%3Ccircle cx='58' cy='164' r='12' fill='%23ff5a50'/%3E%3Ccircle cx='140' cy='160' r='12' fill='%23ffd54a'/%3E%3Ccircle cx='44' cy='214' r='12' fill='%2364b5ff'/%3E%3Ccircle cx='110' cy='222' r='12' fill='%23ff5a50'/%3E%3C/g%3E%3C/svg%3E");
+  filter: blur(4px);
+  animation: wt-twinkle 2.6s ease-in-out infinite alternate;
+}
+
+.stage[data-theme='tree'] .stage__fx i:nth-child(3) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 260'%3E%3Cg opacity='.6'%3E%3Ccircle cx='116' cy='60' r='12' fill='%2364b5ff'/%3E%3Ccircle cx='102' cy='124' r='12' fill='%23ff5a50'/%3E%3Ccircle cx='96' cy='176' r='12' fill='%23ffffff'/%3E%3Ccircle cx='124' cy='178' r='12' fill='%23ffd54a'/%3E%3Ccircle cx='76' cy='226' r='12' fill='%23ffd54a'/%3E%3Ccircle cx='150' cy='210' r='12' fill='%23ff5a50'/%3E%3C/g%3E%3C/svg%3E");
+  filter: blur(4px);
+  animation: wt-twinkle 2.6s ease-in-out -1.3s infinite alternate;
+}
+
+.stage[data-theme='tree'] .stage__fx i:nth-child(4) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 260'%3E%3Ccircle cx='100' cy='15' r='24' fill='%23ffd54a' opacity='.5'/%3E%3C/svg%3E");
+  filter: blur(6px);
+  animation: wt-pulse 3s ease-in-out infinite alternate;
+}
+
+/* ----- Silvestr: city skyline at night with fireworks ----- */
+
+[data-theme='newyear'] {
+  background:
+    radial-gradient(1.5px 1.5px at 14% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 9%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 52% 22%, #e8e2ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 71% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 92% 30%, #fff 50%, transparent 51%),
+    linear-gradient(to bottom, #050816 0%, #12103a 55%, #2a1b4f 100%);
+}
+
+.stage[data-theme='newyear'] {
+  --stage-fg: #fff6dc;
+  --stage-muted: rgb(255 214 120 / 0.95);
+}
+
+.stage[data-theme='newyear'] .stage__title {
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ffd978;
+}
+
+.stage[data-theme='newyear'] .digits {
+  text-shadow:
+    0 0.03em 0.1em rgb(0 0 0 / 0.5),
+    0 0 0.3em rgb(255 200 90 / 0.5);
+}
+
+.stage[data-theme='newyear'] .unit__label {
+  text-shadow: none;
+}
+
+/* Firework bursts: a ring of rays that expands, droops and fades, each on its own schedule. */
+.stage[data-theme='newyear'] .stage__fx i:nth-child(-n + 4) {
+  width: var(--size, 32cqh);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgb(255 255 255 / 0.5) 0 3%, transparent 6%),
+    repeating-conic-gradient(var(--c) 0 3deg, transparent 3deg 15deg);
+  mask-image: radial-gradient(circle, #000 4%, transparent 8%, transparent 20%, #000 32%, #000 46%, transparent 50%);
+  opacity: 0;
+  animation: wt-burst 3.4s ease-out infinite;
+}
+
+.stage[data-theme='newyear'] .stage__fx i:nth-child(1) {
+  --c: #ffd54a;
+  left: 18%;
+  top: 26%;
+}
+
+.stage[data-theme='newyear'] .stage__fx i:nth-child(2) {
+  --c: #ff4fa3;
+  --size: 28cqh;
+  left: 80%;
+  top: 20%;
+  animation-delay: -0.85s;
+}
+
+.stage[data-theme='newyear'] .stage__fx i:nth-child(3) {
+  --c: #4fe3ff;
+  --size: 24cqh;
+  left: 44%;
+  top: 14%;
+  animation-delay: -1.7s;
+}
+
+.stage[data-theme='newyear'] .stage__fx i:nth-child(4) {
+  --c: #7dff6a;
+  --size: 26cqh;
+  left: 90%;
+  top: 52%;
+  animation-delay: -2.55s;
+}
+
+/* City skyline with lit windows, repeated along the bottom. */
+.stage[data-theme='newyear'] .stage__fx i:nth-child(5) {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 20%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80' viewBox='0 0 320 80'%3E%3Cg fill='%230a0b1c'%3E%3Crect x='0' y='34' width='40' height='46'/%3E%3Crect x='42' y='14' width='30' height='66'/%3E%3Crect x='74' y='42' width='36' height='38'/%3E%3Crect x='112' y='22' width='26' height='58'/%3E%3Crect x='140' y='48' width='50' height='32'/%3E%3Crect x='192' y='6' width='22' height='74'/%3E%3Crect x='202' y='0' width='2' height='8'/%3E%3Crect x='216' y='36' width='44' height='44'/%3E%3Crect x='262' y='26' width='36' height='54'/%3E%3Crect x='300' y='44' width='20' height='36'/%3E%3C/g%3E%3Cg fill='%23ffd76a' opacity='.75'%3E%3Crect x='8' y='42' width='4' height='5'/%3E%3Crect x='24' y='54' width='4' height='5'/%3E%3Crect x='50' y='22' width='4' height='5'/%3E%3Crect x='60' y='40' width='4' height='5'/%3E%3Crect x='50' y='58' width='4' height='5'/%3E%3Crect x='86' y='52' width='4' height='5'/%3E%3Crect x='120' y='30' width='4' height='5'/%3E%3Crect x='128' y='50' width='4' height='5'/%3E%3Crect x='156' y='58' width='4' height='5'/%3E%3Crect x='198' y='18' width='4' height='5'/%3E%3Crect x='198' y='40' width='4' height='5'/%3E%3Crect x='228' y='46' width='4' height='5'/%3E%3Crect x='244' y='60' width='4' height='5'/%3E%3Crect x='272' y='34' width='4' height='5'/%3E%3Crect x='284' y='52' width='4' height='5'/%3E%3Crect x='306' y='54' width='4' height='5'/%3E%3C/g%3E%3C/svg%3E")
+    0 100% / auto 100% repeat-x;
+}
+
+/* ----- Velikonoce: pastel spring sky, sun rays, meadow and painted eggs ----- */
+
+[data-theme='easter'] {
+  background: linear-gradient(to bottom, #cfe9ff 0%, #efe6ff 55%, #fff4dc 100%);
+}
+
+.stage[data-theme='easter'] {
+  --stage-fg: #4a3b6b;
+  --stage-muted: rgb(120 96 160 / 0.9);
+}
+
+.stage[data-theme='easter'] .stage__content {
+  font-family: 'Segoe Print', 'Bradley Hand', 'Chalkboard SE', 'Comic Neue', cursive;
+}
+
+.stage[data-theme='easter'] .digits {
+  font-weight: 700;
+  text-shadow: 0 0.04em 0 rgb(255 255 255 / 0.7);
+}
+
+.stage[data-theme='easter'] .unit__label {
+  text-shadow: none;
+}
+
+/* Slowly turning sun rays with the sun disc in the middle. */
+.stage[data-theme='easter'] .stage__fx i:nth-child(1) {
+  left: 10%;
+  top: 12%;
+  width: 46cqh;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #fff6c8 0 15%, #ffe27a 16% 18%, transparent 19%),
+    repeating-conic-gradient(rgb(255 220 120 / 0.4) 0 8deg, transparent 8deg 20deg);
+  mask-image: radial-gradient(circle, #000 20%, transparent 70%);
+  animation: wt-rotate 60s linear infinite;
+}
+
+.stage[data-theme='easter'] .stage__fx i:nth-child(2) {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 26%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'%3E%3Cpath d='M0 80 C250 30 500 100 750 60 C950 30 1100 70 1200 50 V200 H0Z' fill='%23bfe6a8'/%3E%3Cpath d='M0 130 C300 90 600 150 900 110 C1050 95 1150 120 1200 112 V200 H0Z' fill='%2393d27c'/%3E%3C/svg%3E")
+    0 0 / 100% 100% no-repeat;
+}
+
+/* Grass and flowers swaying in the breeze. */
+.stage[data-theme='easter'] .stage__fx i:nth-child(3) {
+  left: -5%;
+  right: -5%;
+  bottom: 0;
+  height: 12cqh;
+  transform-origin: 50% 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='60' viewBox='0 0 200 60'%3E%3Cg fill='none' stroke='%235cb85c' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 60 Q8 42 3 28'/%3E%3Cpath d='M20 60 Q22 40 28 24'/%3E%3Cpath d='M34 60 Q31 46 36 34'/%3E%3Cpath d='M52 60 Q56 38 49 20'/%3E%3Cpath d='M66 60 Q64 46 70 32'/%3E%3Cpath d='M82 60 Q86 44 80 26'/%3E%3Cpath d='M98 60 Q96 42 103 30'/%3E%3Cpath d='M116 60 Q120 40 113 22'/%3E%3Cpath d='M132 60 Q129 48 135 36'/%3E%3Cpath d='M148 60 Q152 38 146 24'/%3E%3Cpath d='M164 60 Q162 44 169 30'/%3E%3Cpath d='M182 60 Q186 42 179 26'/%3E%3Cpath d='M196 60 Q194 46 199 36'/%3E%3C/g%3E%3Cg stroke='%2348a048' stroke-width='2'%3E%3Cpath d='M40 60 V36'/%3E%3Cpath d='M108 60 V30'/%3E%3Cpath d='M172 60 V38'/%3E%3C/g%3E%3Ccircle cx='40' cy='32' r='5' fill='%23fff'/%3E%3Ccircle cx='40' cy='32' r='2' fill='%23ffd54a'/%3E%3Ccircle cx='108' cy='26' r='5' fill='%23ff9ec4'/%3E%3Ccircle cx='108' cy='26' r='2' fill='%23fff3a0'/%3E%3Ccircle cx='172' cy='34' r='5' fill='%23c7a6ff'/%3E%3Ccircle cx='172' cy='34' r='2' fill='%23fff3a0'/%3E%3C/svg%3E")
+    0 100% / auto 100% repeat-x;
+  animation: wt-grass 4.5s ease-in-out infinite alternate;
+}
+
+/* Painted eggs in the grass, bottom left and (recoloured, mirrored) bottom right. */
+.stage[data-theme='easter'] .stage__fx i:nth-child(4),
+.stage[data-theme='easter'] .stage__fx i:nth-child(5) {
+  bottom: 1%;
+  height: min(28cqh, 32cqw);
+  aspect-ratio: 160 / 100;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 100'%3E%3Cellipse cx='82' cy='90' rx='70' ry='6' fill='%23000' opacity='.12'/%3E%3Cpath d='M40 38 C60 38 62 70 58 78 C52 88 28 88 22 78 C18 70 20 38 40 38Z' fill='%23ffb3c7'/%3E%3Cpath d='M22 62 L28 56 L34 62 L40 56 L46 62 L52 56 L58 62' fill='none' stroke='%23fff' stroke-width='3' stroke-linejoin='round'/%3E%3Cpath d='M21 71 H59' stroke='%23ff7fa3' stroke-width='3'/%3E%3Cpath d='M82 28 C104 28 106 64 102 72 C96 84 68 84 62 72 C58 64 60 28 82 28Z' fill='%23a8d8ff'/%3E%3Cpath d='M61 56 H103' stroke='%236fb4f0' stroke-width='3'/%3E%3Cg fill='%23fff'%3E%3Ccircle cx='74' cy='44' r='3'/%3E%3Ccircle cx='90' cy='46' r='3'/%3E%3Ccircle cx='80' cy='66' r='3'/%3E%3Ccircle cx='94' cy='68' r='3'/%3E%3Ccircle cx='70' cy='66' r='2.5'/%3E%3C/g%3E%3Cpath d='M124 42 C142 42 144 70 141 78 C136 88 112 88 107 78 C104 70 106 42 124 42Z' fill='%23ffe08a'/%3E%3Cpath d='M108 52 H140' stroke='%238fd17a' stroke-width='2.5'/%3E%3Cpath d='M107 61 H141' stroke='%23ff9f5a' stroke-width='3'/%3E%3Cpath d='M106 70 H142' stroke='%23fff' stroke-width='2.5'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.stage[data-theme='easter'] .stage__fx i:nth-child(4) {
+  left: 3%;
+}
+
+.stage[data-theme='easter'] .stage__fx i:nth-child(5) {
+  right: 3%;
+  scale: -1 1;
+  filter: hue-rotate(150deg);
+}
+
+/* ----- Prázdniny: beach with sun, sea, surf, a swaying palm and gulls ----- */
+
+[data-theme='holidays'] {
+  background: linear-gradient(
+    to bottom,
+    #2e9be8 0%,
+    #7cc9fb 40%,
+    #cdeeff 59.8%,
+    #0d83c9 60%,
+    #0a6fae 75%,
+    #ecd29c 75%,
+    #f3dfb3 100%
+  );
+}
+
+.stage[data-theme='holidays'] {
+  --stage-fg: #ffffff;
+  --stage-muted: rgb(255 255 255 / 0.92);
+}
+
+.stage[data-theme='holidays'] .digits,
+.stage[data-theme='holidays'] .stage__title {
+  text-shadow: 0 0.05em 0.15em rgb(0 60 110 / 0.45);
+}
+
+.stage[data-theme='holidays'] .unit__label {
+  font-weight: 700;
+  text-shadow:
+    0 1px 2px rgb(0 50 90 / 0.8),
+    0 0 8px rgb(0 50 90 / 0.5);
+}
+
+/* Sun. */
+.stage[data-theme='holidays'] .stage__fx i:nth-child(1) {
+  right: 13%;
+  top: 12%;
+  width: 15cqh;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbe0 0 45%, #ffe066 62%, rgb(255 224 102 / 0) 72%);
+  box-shadow: 0 0 6cqh 2cqh rgb(255 230 120 / 0.45);
+  animation: wt-pulse 5s ease-in-out infinite alternate;
+}
+
+/* Glittering wave lines on the sea, sliding sideways. */
+.stage[data-theme='holidays'] .stage__fx i:nth-child(2) {
+  left: 0;
+  top: 60%;
+  width: 200%;
+  height: 15%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23fff' stroke-width='2' vector-effect='non-scaling-stroke'%3E%3Cpath d='M0 14 Q100 0 200 14 T400 14 T600 14 T800 14 T1000 14 T1200 14' stroke-opacity='.55'/%3E%3Cpath d='M0 80 Q75 66 150 80 T300 80 T450 80 T600 80 T750 80 T900 80 T1050 80 T1200 80' stroke-opacity='.35'/%3E%3Cpath d='M0 150 Q150 136 300 150 T600 150 T900 150 T1200 150' stroke-opacity='.25'/%3E%3C/g%3E%3C/svg%3E")
+    0 0 / 50% 100% repeat-x;
+  animation: wt-wave 30s linear infinite;
+}
+
+/* Shoreline with white surf, drifting the other way. */
+.stage[data-theme='holidays'] .stage__fx i:nth-child(3) {
+  left: 0;
+  top: 72%;
+  bottom: 0;
+  width: 200%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200' preserveAspectRatio='none'%3E%3Cpath d='M0 24 Q150 0 300 24 T600 24 T900 24 T1200 24 V200 H0Z' fill='%23ecd29c'/%3E%3Cpath d='M0 24 Q150 0 300 24 T600 24 T900 24 T1200 24' fill='none' stroke='%23fff' stroke-opacity='.9' stroke-width='4' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")
+    0 0 / 50% 100% repeat-x;
+  animation: wt-wave 22s linear infinite reverse;
+}
+
+/* Palm tree, leaning in from the left and swaying gently. */
+.stage[data-theme='holidays'] .stage__fx i:nth-child(4) {
+  left: -3%;
+  bottom: 3%;
+  height: min(62cqh, 50cqw);
+  aspect-ratio: 120 / 200;
+  transform-origin: 50% 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 200'%3E%3Cpath d='M60 198 C62 160 56 110 68 56' fill='none' stroke='%238a5a32' stroke-width='9' stroke-linecap='round'/%3E%3Cpath d='M56 180 h9 M57 160 h9 M57 140 h9 M59 120 h9 M61 100 h9 M64 80 h8' stroke='%236b4426' stroke-width='2'/%3E%3Cpath d='M68 54 C46 40 18 44 2 70 C22 56 44 54 68 58Z' fill='%231e8f4e'/%3E%3Cpath d='M68 54 C52 30 30 18 8 22 C30 28 50 40 66 58Z' fill='%2327a85b'/%3E%3Cpath d='M68 54 C72 30 88 12 110 8 C94 20 80 36 70 58Z' fill='%231e8f4e'/%3E%3Cpath d='M68 54 C90 42 112 48 120 66 C104 56 88 56 70 58Z' fill='%2327a85b'/%3E%3Cpath d='M68 54 C84 62 98 80 100 100 C90 82 80 70 66 60Z' fill='%23197a42'/%3E%3Ccircle cx='64' cy='61' r='4' fill='%236b4426'/%3E%3Ccircle cx='71' cy='63' r='4' fill='%235a381e'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  animation: wt-palm 6s ease-in-out infinite alternate;
+}
+
+/* A pair of gulls crossing the sky. */
+.stage[data-theme='holidays'] .stage__fx i:nth-child(5) {
+  left: 0;
+  top: 22%;
+  width: 12cqh;
+  aspect-ratio: 60 / 24;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 24'%3E%3Cg fill='none' stroke='%232b3a4a' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M2 14 Q8 6 14 14 Q20 6 26 14'/%3E%3Cpath d='M36 8 Q40 3 44 8 Q48 3 52 8'/%3E%3C/g%3E%3C/svg%3E")
+    center / contain no-repeat;
+  animation: wt-gulls 28s linear infinite;
+}
+
+/* ----- Svatba: ivory and blush, gold frame, falling rose petals, wedding rings ----- */
+
+[data-theme='wedding'] {
+  background: radial-gradient(ellipse at 50% 40%, #fffaf4 0%, #f7e8e1 60%, #ecd3cb 100%);
+}
+
+.stage[data-theme='wedding'] {
+  --stage-fg: #6e4a3e;
+  --stage-muted: rgb(176 132 90 / 0.95);
+}
+
+.stage[data-theme='wedding'] .stage__title {
+  font-family: 'Segoe Script', 'Brush Script MT', 'Lucida Handwriting', cursive;
+  font-weight: 400;
+  color: #b0845a;
+}
+
+.stage[data-theme='wedding'] .digits {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 400;
+}
+
+/* Thin double gold frame. */
+.stage[data-theme='wedding'] .stage__fx i:nth-child(1) {
+  inset: 3.5cqh;
+  border: 1px solid rgb(176 132 90 / 0.6);
+  border-radius: 0.6cqh;
+  outline: 1px solid rgb(176 132 90 / 0.3);
+  outline-offset: 0.9cqh;
+}
+
+/* Falling rose petals: two layers like the snow in "Vánoce". */
+.stage[data-theme='wedding'] .stage__fx i:nth-child(2),
+.stage[data-theme='wedding'] .stage__fx i:nth-child(3) {
+  left: -5%;
+  right: -5%;
+  top: calc(-1 * var(--fall));
+  height: calc(100% + var(--fall));
+  animation:
+    wt-snowfall var(--speed) linear infinite,
+    wt-sway 9s ease-in-out infinite;
+}
+
+.stage[data-theme='wedding'] .stage__fx i:nth-child(2) {
+  --fall: 260px;
+  --speed: 22s;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cg%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(30 40) rotate(20) scale(1.3)' fill='%23f4b6c2'/%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(120 20) rotate(-40) scale(1.1)' fill='%23f9cfd7'/%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(210 80) rotate(70) scale(1.3)' fill='%23f2a7b6'/%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(70 130) rotate(140) scale(1.2)' fill='%23f9d3da'/%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(170 160) rotate(-10) scale(1.1)' fill='%23f4b6c2'/%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(40 220) rotate(95) scale(1.3)' fill='%23f2a7b6'/%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(230 230) rotate(-70) scale(1.1)' fill='%23f9cfd7'/%3E%3C/g%3E%3C/svg%3E")
+    0 0 / 260px 260px;
+  opacity: 0.75;
+}
+
+.stage[data-theme='wedding'] .stage__fx i:nth-child(3) {
+  --fall: 380px;
+  --speed: 14s;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='380' height='380'%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(60 70) rotate(35) scale(2.2)' fill='%23f2a7b6'/%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(260 150) rotate(-55) scale(2)' fill='%23f4b6c2'/%3E%3Cpath d='M0 0 C5 -9 15 -8 14 0 C13 7 4 8 0 0Z' transform='translate(150 300) rotate(120) scale(2.3)' fill='%23f9cfd7'/%3E%3C/svg%3E")
+    0 0 / 380px 380px;
+  animation-delay: 0s, -4s;
+}
+
+/* Interlocked wedding rings under the countdown. */
+.stage[data-theme='wedding'] .stage__fx i:nth-child(4) {
+  left: 50%;
+  bottom: 7%;
+  height: 9cqh;
+  aspect-ratio: 100 / 60;
+  translate: -50% 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f3d58c'/%3E%3Cstop offset='.5' stop-color='%23c9a05a'/%3E%3Cstop offset='1' stop-color='%23a57a3a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='40' cy='36' r='18' fill='none' stroke='url(%23g)' stroke-width='4'/%3E%3Ccircle cx='60' cy='36' r='18' fill='none' stroke='url(%23g)' stroke-width='4'/%3E%3Cpath d='M58 18.2 A18 18 0 0 1 58 53.8' fill='none' stroke='url(%23g)' stroke-width='4' opacity='0'/%3E%3Cpath d='M36 14 L40 9 L44 14 L40 19Z' fill='%23eef7ff' stroke='%23c9a05a' stroke-width='1'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+/* ----- Narození dítěte: pastel sky, drifting clouds, twinkling stars, sleepy moon ----- */
+
+[data-theme='baby'] {
+  background: linear-gradient(170deg, #ffe3e8 0%, #f1e6ff 45%, #dcf2ff 100%);
+}
+
+.stage[data-theme='baby'] {
+  --stage-fg: #5b6a9a;
+  --stage-muted: rgb(130 140 185 / 0.95);
+}
+
+.stage[data-theme='baby'] .stage__title {
+  font-family: 'Segoe Print', 'Bradley Hand', 'Chalkboard SE', 'Comic Neue', cursive;
+  color: #e58fa8;
+}
+
+.stage[data-theme='baby'] .digits {
+  font-weight: 700;
+  text-shadow: 0 0.04em 0 rgb(255 255 255 / 0.85);
+}
+
+.stage[data-theme='baby'] .unit__label {
+  text-shadow: none;
+}
+
+/* Two cloud layers; each tile is one stage wide, so sliding by half the element loops seamlessly. */
+.stage[data-theme='baby'] .stage__fx i:nth-child(1),
+.stage[data-theme='baby'] .stage__fx i:nth-child(2) {
+  left: 0;
+  width: 200%;
+  height: 25cqw;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='130' cy='112' rx='62' ry='22'/%3E%3Ccircle cx='104' cy='100' r='26'/%3E%3Ccircle cx='138' cy='86' r='34'/%3E%3Ccircle cx='172' cy='102' r='24'/%3E%3Cellipse cx='470' cy='66' rx='44' ry='16'/%3E%3Ccircle cx='452' cy='58' r='18'/%3E%3Ccircle cx='478' cy='48' r='24'/%3E%3Ccircle cx='502' cy='60' r='16'/%3E%3Cellipse cx='690' cy='142' rx='54' ry='18'/%3E%3Ccircle cx='668' cy='132' r='22'/%3E%3Ccircle cx='698' cy='120' r='28'/%3E%3Ccircle cx='726' cy='136' r='18'/%3E%3C/g%3E%3C/svg%3E")
+    0 0 / 50% auto repeat-x;
+  animation: wt-wave 90s linear infinite;
+}
+
+.stage[data-theme='baby'] .stage__fx i:nth-child(1) {
+  top: 2%;
+  opacity: 0.9;
+}
+
+.stage[data-theme='baby'] .stage__fx i:nth-child(2) {
+  top: 48%;
+  opacity: 0.55;
+  background-position: 37% 0;
+  animation-duration: 140s;
+}
+
+/* Little stars twinkling. */
+.stage[data-theme='baby'] .stage__fx i:nth-child(3) {
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cdefs%3E%3Cpath id='s' d='M0 -6 L1.6 -1.6 L6 0 L1.6 1.6 L0 6 L-1.6 1.6 L-6 0 L-1.6 -1.6Z'/%3E%3C/defs%3E%3Cuse href='%23s' transform='translate(24 30) scale(1.5)' fill='%23ffc94d'/%3E%3Cuse href='%23s' transform='translate(120 18) scale(1.1)' fill='%23ffffff'/%3E%3Cuse href='%23s' transform='translate(70 96) scale(1.3)' fill='%23ff9fb8'/%3E%3Cuse href='%23s' transform='translate(156 120) scale(1.5)' fill='%23ffc94d'/%3E%3Cuse href='%23s' transform='translate(30 160) scale(1)' fill='%23ffffff'/%3E%3C/svg%3E")
+    0 0 / 180px 180px;
+  animation: wt-twinkle 2.8s ease-in-out infinite alternate;
+}
+
+/* Sleepy crescent moon, gently rocking. */
+.stage[data-theme='baby'] .stage__fx i:nth-child(4) {
+  right: 9%;
+  top: 8%;
+  height: 18cqh;
+  aspect-ratio: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M62 8 A44 44 0 1 0 94 70 A36 36 0 1 1 62 8Z' fill='%23ffe9a8'/%3E%3Cpath d='M22 48 Q28 53 34 48' fill='none' stroke='%23c9a35a' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='30' cy='60' r='4' fill='%23ffb3c1' opacity='.7'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  filter: drop-shadow(0 0 2cqh rgb(255 233 168 / 0.7));
+  animation: wt-bob 6s ease-in-out infinite;
+}
+
 /* Finished: blink the digits (declared after themes so it wins over theme animations). */
 .stage.is-finished .digits {
   animation: wt-blink 1s ease-in-out infinite;
@@ -896,6 +1630,109 @@ body.pseudo-fullscreen .stage {
   }
 }
 
+@keyframes wt-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.15);
+  }
+  8% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12) translateY(8%);
+  }
+}
+
+@keyframes wt-rotate {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes wt-grass {
+  from {
+    transform: skewX(-4deg);
+  }
+  to {
+    transform: skewX(4deg);
+  }
+}
+
+@keyframes wt-palm {
+  from {
+    transform: rotate(-2.5deg);
+  }
+  to {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes wt-gulls {
+  from {
+    transform: translate(-15cqw, 0);
+  }
+  50% {
+    transform: translate(55cqw, -3cqh);
+  }
+  to {
+    transform: translate(125cqw, 0);
+  }
+}
+
+@keyframes wt-bob {
+  0%,
+  100% {
+    transform: translateY(-4%) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(4%) rotate(4deg);
+  }
+}
+
+@keyframes wt-steam {
+  0% {
+    opacity: 0;
+    transform: translateY(15%) scale(0.8, 0.7);
+  }
+  25% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30%) scale(1.2, 1.15) skewX(-6deg);
+  }
+}
+
+@keyframes wt-snowfall {
+  to {
+    translate: 0 var(--fall, 200px);
+  }
+}
+
+@keyframes wt-sway {
+  0%,
+  100% {
+    transform: translateX(-1.5%);
+  }
+  50% {
+    transform: translateX(1.5%);
+  }
+}
+
+@keyframes wt-twinkle {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes wt-rgb-spin {
   to {
     rotate: 360deg;
@@ -945,6 +1782,16 @@ body.pseudo-fullscreen .stage {
 
   .stage[data-theme='hud'] .stage__fx i:nth-child(-n + 3) {
     transform: translate(-50%, -50%);
+  }
+
+  /* Fireworks are invisible at the start of their animation; show them still instead. */
+  .stage[data-theme='newyear'] .stage__fx i:nth-child(-n + 4) {
+    opacity: 0.8;
+  }
+
+  /* Steam starts transparent in its animation; keep a still wisp instead. */
+  .stage[data-theme='coffee'] .stage__fx i:nth-child(n + 2):nth-child(-n + 4) {
+    opacity: 0.3;
   }
 
   /* Pencil digits appear at once instead of being drawn; erased ones vanish. */
@@ -1169,6 +2016,20 @@ label.field,
 
 .chip:hover {
   background: var(--surface-2);
+}
+
+.theme-groups {
+  display: grid;
+  gap: 16px;
+}
+
+.theme-group__title {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .themes {
