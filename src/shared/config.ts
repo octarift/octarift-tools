@@ -8,6 +8,8 @@ export const site = {
   ads: {
     /** Turn on once an ad provider (and a GDPR consent banner) is set up. */
     enabled: false,
+    /** Show the dashed "ad goes here" box in dev mode while ads are off. Hidden for now. */
+    showPlaceholder: false,
   },
 };
 
@@ -17,6 +19,8 @@ export const site = {
  * under utm_source=octarift-tools in Play Console's acquisition reports.
  */
 export const gamePromo = {
+  /** Promo card on/off. Hidden for now; the slots stay in the pages, ready to switch back on. */
+  enabled: false,
   name: 'Rift Defense',
   pitch: 'Vesmírná tower defense od autorů těchto nástrojů. Braňte stanici před vlnami nepřátel z červích děr.',
   platform: 'Zdarma pro Android',

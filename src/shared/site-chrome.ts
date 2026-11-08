@@ -22,6 +22,10 @@ export function mountSiteChrome(currentSlug?: string): void {
   }
 
   document.querySelectorAll<HTMLElement>('[data-promo]').forEach((slot) => {
+    if (!gamePromo.enabled) {
+      slot.remove();
+      return;
+    }
     const campaign = slot.dataset.promo || 'tools';
     slot.classList.add('promo');
     slot.setAttribute('aria-label', `Hra ${gamePromo.name}`);
@@ -38,7 +42,7 @@ export function mountSiteChrome(currentSlug?: string): void {
       // TODO: insert the ad provider's markup for slot.dataset.adSlot here.
       return;
     }
-    if (import.meta.env.DEV) {
+    if (import.meta.env.DEV && site.ads.showPlaceholder) {
       slot.classList.add('ad-slot--placeholder');
       slot.textContent = `Místo pro reklamu (${slot.dataset.adSlot ?? ''})`;
     } else {
