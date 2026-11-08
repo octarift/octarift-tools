@@ -1,6 +1,7 @@
-# Web Tools
+# Octarift Tools
 
-Sada jednoduchých webových nástrojů, které běží přímo v prohlížeči. První nástroj je **odpočet**:
+Sada jednoduchých webových nástrojů od [Octarift](https://octarift.com), které běží přímo v prohlížeči.
+Web: https://tools.octarift.com. První nástroj je **odpočet**:
 
 - časovač (délka) nebo odpočet k datu
 - předdefinovaná témata, z toho tři animovaná
@@ -25,7 +26,7 @@ Pak otevřete http://localhost:5173/countdown/.
 npm run build
 ```
 
-Výsledek je ve složce `dist/` a dá se nahrát na libovolný statický hosting
-(Cloudflare Pages, Netlify, GitHub Pages).
+Výsledek je ve složce `dist/`. Na GitHub Pages se web nasazuje automaticky
+při každém pushi do `main` (viz `.github/workflows/deploy.yml`).
 
 Podrobnosti o struktuře a pravidlech projektu jsou v [CLAUDE.md](CLAUDE.md).

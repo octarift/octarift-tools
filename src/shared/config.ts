@@ -1,11 +1,29 @@
 /** Site-wide settings shared by every tool. */
 export const site = {
-  name: 'Web Tools',
+  name: 'Octarift Tools',
+  /** The studio the tools belong to; linked from the footer. */
+  studio: { name: 'Octarift', url: 'https://octarift.com/' },
   /** Full Buy Me a Coffee URL, e.g. https://www.buymeacoffee.com/yourname. Empty = button hidden. */
   buyMeACoffeeUrl: '',
   ads: {
     /** Turn on once an ad provider (and a GDPR consent banner) is set up. */
     enabled: false,
+  },
+};
+
+/**
+ * House promotion for the studio's game, shown outside fullscreen only.
+ * The Play link carries a referrer, so installs coming from the tools show up
+ * under utm_source=octarift-tools in Play Console's acquisition reports.
+ */
+export const gamePromo = {
+  name: 'Rift Defense',
+  pitch: 'Vesmírná tower defense od autorů těchto nástrojů. Braňte stanici před vlnami nepřátel z červích děr.',
+  platform: 'Zdarma pro Android',
+  pageUrl: 'https://octarift.com/rift-defense/',
+  playUrl(campaign: string): string {
+    const referrer = `utm_source=octarift-tools&utm_medium=promo&utm_campaign=${campaign}`;
+    return `https://play.google.com/store/apps/details?id=com.octarift.riftdefense&referrer=${encodeURIComponent(referrer)}`;
   },
 };
 

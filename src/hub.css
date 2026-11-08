@@ -23,6 +23,10 @@
   list-style: none;
 }
 
+.hub .promo {
+  margin-top: 32px;
+}
+
 .tool-card {
   display: grid;
   gap: 6px;

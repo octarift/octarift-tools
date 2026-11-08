@@ -1,13 +1,26 @@
-# Web Tools
+# Octarift Tools
 
-A collection of small browser-based tools on one site. The first tool is a
+A collection of small browser-based tools on one site, published at
+https://tools.octarift.com under the Octarift studio brand. The first tool is a
 countdown (`/countdown/`); more tools will be added if the project takes off.
+
+The studio site (octarift.com, separate repo `octarift/octarift-web`, local
+`D:\Projects\octarift-web`) links here, and these tools promote the studio's
+game Rift Defense (`com.octarift.riftdefense` on Google Play).
+
+## Hosting
+
+- GitHub Pages, organisation `octarift`; `.github/workflows/deploy.yml` builds and deploys on push to `main`.
+- `public/CNAME` holds the custom domain. DNS (Forpsi): `tools` CNAME → `octarift.github.io`.
+- Future ads need `public/ads.txt` (the AdMob/AdSense publisher ID is in octarift-web's `app-ads.txt`).
 
 ## Goals and product rules
 
 - Everything runs in the browser. No backend, no accounts. Hosted as a static site.
 - **User files never leave the device.** Uploaded backgrounds etc. go to IndexedDB, never to a server.
-- **Ads and the Buy Me a Coffee button appear only outside fullscreen.** Fullscreen is the product; keep it clean.
+- **Ads, the Rift Defense promo card and the Buy Me a Coffee button appear only outside fullscreen.** Fullscreen is the product; keep it clean.
+- The promo card is filled into `<aside data-promo="campaign">` by `site-chrome.ts`; its Play link carries
+  `utm_source=octarift-tools&utm_campaign=<campaign>` so installs show in Play Console. Text lives in `gamePromo` in `config.ts`.
 - UI language is Czech (`lang="cs"`, formal "vy" form). Code, comments and commit messages are in English.
 - Respect `prefers-reduced-motion` for every animation; animated backgrounds must stay cheap (CSS/GPU, no heavy JS loops).
 - Mobile matters: layouts must work at 360 px width, touch targets ≥ 44 px.
