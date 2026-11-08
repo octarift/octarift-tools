@@ -63,6 +63,12 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* Mobile browsers flash a plain rectangle on tap; use a press state that keeps each control's shape. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(button, a, summary, label.button):active:not(:disabled) {
+  opacity: 0.7;
 }
 
 body {
