@@ -142,7 +142,17 @@ function pause(): void {
 }
 
 function reset(): void {
-  state = { ...state, status: 'idle', endsAt: null, remainingMs: null };
+  // Go back to what the settings currently say, not to the values of the last start.
+  const ms = readDuration();
+  const target = new Date(els.targetDate.value).getTime();
+  state = {
+    ...state,
+    status: 'idle',
+    endsAt: null,
+    remainingMs: null,
+    durationMs: ms > 0 ? ms : state.durationMs,
+    targetDate: Number.isFinite(target) ? target : state.targetDate,
+  };
   void wakeLock.disable();
   commit();
 }
@@ -461,7 +471,8 @@ document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((b) => {
 
 [els.hours, els.minutes, els.seconds].forEach((input) =>
   input.addEventListener('input', () => {
-    if (state.status !== 'idle') return; // edits apply to the next start
+    // Always store the new length: a running countdown follows its own endsAt and is not
+    // affected, while Reset and the next Start use this value.
     const ms = readDuration();
     if (ms > 0) {
       state = { ...state, durationMs: ms };
@@ -472,7 +483,8 @@ document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((b) => {
 
 els.targetDate.addEventListener('change', () => {
   const target = new Date(els.targetDate.value).getTime();
-  if (Number.isFinite(target) && state.status === 'idle') {
+  // Stored even while running (the countdown follows endsAt), so Reset shows the new date.
+  if (Number.isFinite(target)) {
     state = { ...state, targetDate: target };
     commit();
   }
