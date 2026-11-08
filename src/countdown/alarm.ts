@@ -5,7 +5,11 @@
  */
 let ctx: AudioContext | null = null;
 
+/** Sound switched off for now (to be reworked later); set to true to bring the beeps back. */
+export const ALARM_ENABLED = false;
+
 export function primeAudio(): void {
+  if (!ALARM_ENABLED) return;
   try {
     ctx ??= new AudioContext();
     if (ctx.state === 'suspended') void ctx.resume();
@@ -15,7 +19,7 @@ export function primeAudio(): void {
 }
 
 export function playAlarm(): void {
-  if (!ctx || ctx.state !== 'running') return;
+  if (!ALARM_ENABLED || !ctx || ctx.state !== 'running') return;
   const now = ctx.currentTime;
   for (let i = 0; i < 6; i++) {
     const start = now + i * 0.35;
