@@ -71,7 +71,7 @@ const en: typeof cs = {
   fullscreen: 'Fullscreen',
   exitFullscreen: 'Exit fullscreen',
   share: 'Share link',
-  shortcuts: 'Space starts or pauses, F toggles fullscreen, N opens settings.',
+  shortcuts: 'Space starts or pauses, F toggles fullscreen, S opens settings.',
   mode: 'Mode',
   modeTimer: 'Timer',
   modeDate: 'To a date',

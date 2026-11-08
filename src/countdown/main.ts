@@ -551,11 +551,14 @@ document.addEventListener('keydown', (e) => {
   if (e.target instanceof Element && e.target.closest('input, textarea, select, button, [contenteditable]')) return;
   // While the settings drawer is open, only its own keys apply (Esc closes it natively).
   if (els.settings.open) return;
+  // Leave browser shortcuts (Ctrl+S, Cmd+F…) alone.
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
   if (e.key === ' ') {
     e.preventDefault();
     if (state.status === 'running') pause();
     else start();
-  } else if ((e.key === 'n' || e.key === 'N') && !fullscreen.isOn()) {
+  } else if (/^[ns]$/i.test(e.key) && !fullscreen.isOn()) {
+    // N for Nastavení, S for Settings; both work in either language.
     openSettings();
   } else if (e.key === 'f' || e.key === 'F') {
     void fullscreen.toggle();
