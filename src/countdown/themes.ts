@@ -10,7 +10,7 @@ export const themes = [
   { id: 'warp', name: 'Hyperprostor', animated: true },
   { id: 'hud', name: 'HUD', animated: true },
   { id: 'business', name: 'Business', animated: true },
-  { id: 'paper', name: 'Papír', animated: false },
+  { id: 'paper', name: 'Tužka na papíře', animated: true },
   { id: 'custom', name: 'Vlastní', animated: false },
 ] as const;
 

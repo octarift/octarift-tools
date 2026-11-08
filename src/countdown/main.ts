@@ -12,6 +12,7 @@ import {
   MAX_BACKGROUND_BYTES,
   saveCustomBackground,
 } from './background';
+import { PencilDigits } from './pencil';
 import { buildShareUrl, loadState, MAX_DURATION_MS, saveState, type Mode } from './state';
 import { FALLBACK_THEME, isThemeId, themes, type ThemeId } from './themes';
 import { formatShort, msFromHMS, nextNewYear, pad, splitMs, toLocalInputValue } from './timer';
@@ -210,6 +211,7 @@ async function removeBackground(): Promise<void> {
 /* ---------- rendering ---------- */
 
 let lastDigitsKey = '';
+const pencil = new PencilDigits(els.digits);
 
 function renderDigits(ms: number): void {
   const p = splitMs(ms);
@@ -218,12 +220,19 @@ function renderDigits(ms: number): void {
   if (p.days > 0 || p.hours > 0) units.push([pad(p.hours), 'hod']);
   units.push([pad(p.minutes), 'min'], [pad(p.seconds), 'sek']);
 
-  const key = units.map((u) => u[0]).join(':');
+  // The paper theme draws digits with a pencil; every other theme uses plain text.
+  const pencilMode = els.stage.dataset.theme === 'paper';
+  const key = `${pencilMode ? 'pencil' : 'text'}|${units.map((u) => u[0]).join(':')}`;
   if (key === lastDigitsKey) return;
   lastDigitsKey = key;
 
   els.digits.dataset.units = String(units.length);
   els.digits.setAttribute('aria-label', formatShort(ms));
+  if (pencilMode) {
+    pencil.render(units);
+    return;
+  }
+  pencil.reset();
   els.digits.innerHTML = units
     .map(
       ([value, label], i) =>

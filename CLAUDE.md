@@ -42,6 +42,7 @@ src/
     state.ts                    state shape, persistence, share-link encoding
     timer.ts                    pure time helpers
     themes.ts + countdown.css   theme list and their look ([data-theme="id"])
+    pencil.ts                   hand-drawn SVG digits for the "paper" theme (drawn/erased per digit)
     background.ts, alarm.ts     custom background storage, end sound
 public/                         static files copied as-is (favicon, later robots.txt, ads.txt)
 ```
