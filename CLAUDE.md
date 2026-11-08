@@ -26,6 +26,9 @@ game Rift Defense (`com.octarift.riftdefense` on Google Play).
   **Never hard-code UI text**: add it to the tool's `strings.ts` (`en` is typed from `cs`, so a missing translation
   fails the build), shared text uses `tr({ cs, en })`, static HTML uses `data-i18n` / `data-i18n-attr`.
   Code, comments and commit messages are in English.
+- Light/dark/system switch in the header (`src/shared/color-scheme.ts`): the choice is a `scheme` cookie on
+  `.octarift.com`, shared with the studio site (its `scheme.js`); no cookie = follow the system. An inline
+  `<head>` snippet in every page applies it before paint, and base.css keeps the dark tokens in two equal blocks.
 - Respect `prefers-reduced-motion` for every animation; animated backgrounds must stay cheap (CSS/GPU, no heavy JS loops).
 - Mobile matters: layouts must work at 360 px width, touch targets ≥ 44 px.
 

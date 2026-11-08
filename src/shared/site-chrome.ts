@@ -1,4 +1,5 @@
 import { gamePromo, site, tools } from './config';
+import { bindSchemeSwitch, schemeSwitchHtml } from './color-scheme';
 import { lang, LANGS, langUrl, tr } from './i18n';
 
 const LANG_LABELS = { cs: 'Čeština', en: 'English' } as const;
@@ -27,7 +28,9 @@ export function mountSiteChrome(currentSlug?: string): void {
     header.innerHTML =
       `<a class="site-brand" href="/${q}">${site.name}</a>` +
       `<nav class="site-nav" aria-label="${tr({ cs: 'Nástroje', en: 'Tools' })}">${links}</nav>` +
-      `<nav class="lang-switch" aria-label="${tr({ cs: 'Jazyk', en: 'Language' })}">${switcher}</nav>`;
+      `<div class="site-switches">${schemeSwitchHtml()}` +
+      `<nav class="lang-switch" aria-label="${tr({ cs: 'Jazyk', en: 'Language' })}">${switcher}</nav></div>`;
+    bindSchemeSwitch(header);
   }
 
   const footer = document.querySelector<HTMLElement>('[data-site-footer]');

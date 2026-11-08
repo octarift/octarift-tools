@@ -18,8 +18,11 @@
   --font-mono: ui-monospace, 'Cascadia Mono', 'SF Mono', Consolas, 'Liberation Mono', monospace;
 }
 
+/* Dark tokens: for a dark system unless the user picked light, or whenever they picked dark
+   (html[data-scheme], set by color-scheme.ts and the inline <head> snippet). Keep both blocks equal. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-scheme='light']) {
+    color-scheme: dark;
     --bg: #0e1015;
     --surface: #161922;
     --surface-2: #1f2331;
@@ -31,6 +34,24 @@
     --focus: #8b83ff;
     --shadow: none;
   }
+}
+
+:root[data-scheme='dark'] {
+  color-scheme: dark;
+  --bg: #0e1015;
+  --surface: #161922;
+  --surface-2: #1f2331;
+  --text: #eceef3;
+  --muted: #9aa1b2;
+  --border: #2a2f3d;
+  --accent: #8b83ff;
+  --accent-contrast: #0e1015;
+  --focus: #8b83ff;
+  --shadow: none;
+}
+
+:root[data-scheme='light'] {
+  color-scheme: light;
 }
 
 *,
@@ -130,11 +151,48 @@ textarea {
   font-weight: 600;
 }
 
-/* Language switch (CS | EN) at the right end of the header. */
+/* Scheme switch and language switch (CS | EN) at the right end of the header. */
+.site-switches {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.scheme-switch {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.scheme-switch button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.scheme-switch button:hover {
+  color: var(--text);
+}
+
+.scheme-switch button[aria-pressed='true'] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+}
+
 .lang-switch {
   display: flex;
   gap: 2px;
-  margin-left: auto;
   padding: 3px;
   border-radius: 999px;
   background: var(--surface-2);
