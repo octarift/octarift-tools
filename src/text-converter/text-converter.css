@@ -179,3 +179,60 @@
   color: var(--muted);
   font-size: 0.8rem;
 }
+
+/* Find and replace fields, shown only for that conversion. */
+.tc-replace {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+@media (min-width: 640px) {
+  .tc-replace {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.tc-replace__field {
+  display: grid;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.tc-replace__field input {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 400;
+}
+
+.tc-replace__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  grid-column: 1 / -1;
+}
+
+.tc-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.tc-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}

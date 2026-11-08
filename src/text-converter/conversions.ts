@@ -5,7 +5,7 @@
 
 import type { ConversionLabelId } from './strings';
 
-export type ErrorKey = 'errUrl' | 'errBase64' | 'errUtf8' | 'errJson';
+export type ErrorKey = 'errUrl' | 'errBase64' | 'errUtf8' | 'errJson' | 'errRegex';
 
 export class ConversionError extends Error {
   constructor(
@@ -18,11 +18,24 @@ export class ConversionError extends Error {
 
 export type GroupId = 'case' | 'cleanup' | 'lines' | 'encoding';
 
+/** Settings of conversions that take user input (only find and replace so far). */
+export interface ReplaceOptions {
+  find: string;
+  replace: string;
+  caseSensitive: boolean;
+  regex: boolean;
+}
+
+export interface ConversionContext {
+  lang: string;
+  replace: ReplaceOptions;
+}
+
 export interface Conversion {
   /** Also the key of its label in strings.ts, so a missing label fails the build. */
   id: ConversionLabelId;
   group: GroupId;
-  run: (text: string, lang: string) => string;
+  run: (text: string, lang: string, ctx: ConversionContext) => string;
 }
 
 const perLine = (fn: (line: string) => string) => (text: string) => text.split('\n').map(fn).join('\n');
@@ -137,6 +150,28 @@ function stripHtml(text: string): string {
     .trim();
 }
 
+/* ---------- Find and replace ---------- */
+
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * Replaces every match. Plain mode replaces the text literally (no $ patterns);
+ * regex mode supports $1, $<name>, $& and \n / \t in the replacement.
+ */
+export function findReplace(text: string, o: ReplaceOptions): { text: string; count: number } {
+  if (o.find === '') return { text, count: 0 };
+  let re: RegExp;
+  try {
+    re = new RegExp(o.regex ? o.find : escapeRegExp(o.find), `g${o.caseSensitive ? '' : 'i'}u`);
+  } catch (e) {
+    throw new ConversionError('errRegex', e instanceof Error ? e.message : '');
+  }
+  const count = [...text.matchAll(re)].length;
+  if (!o.regex) return { text: text.replace(re, () => o.replace), count };
+  const replacement = o.replace.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+  return { text: text.replace(re, replacement), count };
+}
+
 /* ---------- Lines ---------- */
 
 const lines = (text: string) => text.split('\n');
@@ -223,6 +258,7 @@ export const conversions: Conversion[] = [
   { id: 'kebab', group: 'case', run: joined('-') },
   { id: 'constant', group: 'case', run: joined('_', true) },
 
+  { id: 'replace', group: 'cleanup', run: (t, _l, ctx) => findReplace(t, ctx.replace).text },
   { id: 'linearize', group: 'cleanup', run: linearize },
   { id: 'spaces', group: 'cleanup', run: normalizeSpaces },
   { id: 'diacritics', group: 'cleanup', run: removeDiacritics },

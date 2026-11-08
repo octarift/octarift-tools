@@ -24,6 +24,12 @@ const cs = {
   errBase64: 'Text není platný Base64.',
   errUtf8: 'Base64 se podařilo dekódovat, ale výsledek není text (jde nejspíš o binární soubor).',
   errJson: 'Text není platný JSON.',
+  errRegex: 'Neplatný regulární výraz.',
+  find: 'Najít',
+  replaceWith: 'Nahradit za',
+  caseSensitive: 'Rozlišovat velká a malá písmena',
+  regex: 'Regulární výraz',
+  replaceCount: 'Počet nahrazení',
   groups: {
     case: 'Velikost písmen',
     cleanup: 'Úpravy textu',
@@ -41,6 +47,7 @@ const cs = {
     snake: 'snake_case',
     kebab: 'kebab-case',
     constant: 'CONSTANT_CASE',
+    replace: 'Najít a nahradit',
     linearize: 'Sloučit řádky',
     spaces: 'Upravit mezery',
     diacritics: 'Odstranit diakritiku',
@@ -61,6 +68,8 @@ const cs = {
     jsonMinify: 'JSON zmenšit',
   },
   hints: {
+    replace:
+      'Nahradí všechny výskyty. S regulárním výrazem můžete v náhradě použít $1, $2… a \\n pro nový řádek.',
     linearize: 'Spojí všechny řádky do jednoho.',
     spaces: 'Sloučí vícenásobné mezery, odstraní mezery před interpunkcí a doplní chybějící mezery za ní.',
     diacritics: 'Funguje pro češtinu, slovenštinu, polštinu, němčinu, francouzštinu, skandinávské a další jazyky.',
@@ -92,6 +101,12 @@ const en: typeof cs = {
   errBase64: 'The text is not valid Base64.',
   errUtf8: 'The Base64 decoded, but the result is not text (probably a binary file).',
   errJson: 'The text is not valid JSON.',
+  errRegex: 'Invalid regular expression.',
+  find: 'Find',
+  replaceWith: 'Replace with',
+  caseSensitive: 'Match case',
+  regex: 'Regular expression',
+  replaceCount: 'Replacements',
   groups: {
     case: 'Letter case',
     cleanup: 'Clean up',
@@ -109,6 +124,7 @@ const en: typeof cs = {
     snake: 'snake_case',
     kebab: 'kebab-case',
     constant: 'CONSTANT_CASE',
+    replace: 'Find and replace',
     linearize: 'Join lines',
     spaces: 'Fix spacing',
     diacritics: 'Remove accents',
@@ -129,6 +145,7 @@ const en: typeof cs = {
     jsonMinify: 'Minify JSON',
   },
   hints: {
+    replace: 'Replaces every match. With a regular expression you can use $1, $2… and \\n for a new line in the replacement.',
     linearize: 'Joins all lines into one.',
     spaces: 'Collapses repeated spaces, removes spaces before punctuation and adds missing ones after it.',
     diacritics: 'Works for Czech, Slovak, Polish, German, French, Scandinavian and other languages.',

@@ -3,7 +3,7 @@ import './text-converter.css';
 import { applyStrings, lang, setMetaDescription } from '@shared/i18n';
 import { mountSiteChrome } from '@shared/site-chrome';
 import { readJSON, writeJSON } from '@shared/storage';
-import { ConversionError, conversions, groups, type Conversion } from './conversions';
+import { ConversionError, conversions, findReplace, groups, type Conversion, type ReplaceOptions } from './conversions';
 import { s } from './strings';
 
 applyStrings(s);
@@ -29,30 +29,45 @@ const els = {
   copy: $<HTMLButtonElement>('#tc-copy'),
   use: $<HTMLButtonElement>('#tc-use'),
   toast: $('#toast'),
+  replaceFields: $('#replace-fields'),
+  find: $<HTMLInputElement>('#tc-find'),
+  replace: $<HTMLInputElement>('#tc-replace'),
+  caseSensitive: $<HTMLInputElement>('#tc-case'),
+  regex: $<HTMLInputElement>('#tc-regex'),
 };
 
 /** The chosen conversion is remembered; the text itself only for this tab (sessionStorage). */
 const CONVERSION_KEY = 'text-converter:conversion';
 const INPUT_KEY = 'text-converter:input';
+const REPLACE_KEY = 'text-converter:replace';
 
 const byId = new Map(conversions.map((c) => [c.id, c]));
 let current: Conversion = byId.get(readJSON<Conversion['id']>(CONVERSION_KEY) ?? 'lower') ?? conversions[0]!;
 
-function readSession(): string {
+function readSession(key = INPUT_KEY): string {
   try {
-    return sessionStorage.getItem(INPUT_KEY) ?? '';
+    return sessionStorage.getItem(key) ?? '';
   } catch {
     return '';
   }
 }
 
-function writeSession(value: string): void {
+function writeSession(value: string, key = INPUT_KEY): void {
   try {
-    if (value) sessionStorage.setItem(INPUT_KEY, value);
-    else sessionStorage.removeItem(INPUT_KEY);
+    if (value) sessionStorage.setItem(key, value);
+    else sessionStorage.removeItem(key);
   } catch {
     // Storage blocked or full: the text just is not kept across reloads.
   }
+}
+
+function replaceOptions(): ReplaceOptions {
+  return {
+    find: els.find.value,
+    replace: els.replace.value,
+    caseSensitive: els.caseSensitive.checked,
+    regex: els.regex.checked,
+  };
 }
 
 /* ---------- Conversion list ---------- */
@@ -92,19 +107,28 @@ function render(): void {
   els.list.querySelectorAll<HTMLButtonElement>('[data-conversion]').forEach((b) => {
     b.setAttribute('aria-pressed', String(b.dataset.conversion === current.id));
   });
-  els.hint.textContent = (s.hints as Partial<Record<Conversion['id'], string>>)[current.id] ?? '';
+  const isReplace = current.id === 'replace';
+  els.replaceFields.hidden = !isReplace;
+  let hint = (s.hints as Partial<Record<Conversion['id'], string>>)[current.id] ?? '';
 
   const input = normalize(els.input.value);
   let result = '';
   let error = '';
   if (input !== '') {
     try {
-      result = current.run(input, lang);
+      if (isReplace) {
+        const replaced = findReplace(input, replaceOptions());
+        result = replaced.text;
+        if (els.find.value) hint = `${s.replaceCount}: ${replaced.count.toLocaleString(lang)}. ${hint}`;
+      } else {
+        result = current.run(input, lang, { lang, replace: replaceOptions() });
+      }
     } catch (e) {
       if (!(e instanceof ConversionError)) throw e;
       error = s[e.key] + (e.detail ? ` (${e.detail})` : '');
     }
   }
+  els.hint.textContent = hint;
   els.output.value = result;
   els.error.textContent = error;
   els.error.hidden = !error;
@@ -118,16 +142,27 @@ function render(): void {
 /* ---------- Actions ---------- */
 
 let renderQueued = false;
-els.input.addEventListener('input', () => {
-  writeSession(els.input.value);
-  // Coalesce fast typing into one conversion per frame.
+/** Coalesces fast typing into one conversion per frame. */
+function queueRender(): void {
   if (renderQueued) return;
   renderQueued = true;
   requestAnimationFrame(() => {
     renderQueued = false;
     render();
   });
+}
+
+els.input.addEventListener('input', () => {
+  writeSession(els.input.value);
+  queueRender();
 });
+
+for (const field of [els.find, els.replace, els.caseSensitive, els.regex]) {
+  field.addEventListener('input', () => {
+    writeSession(JSON.stringify(replaceOptions()), REPLACE_KEY);
+    queueRender();
+  });
+}
 
 els.clear.addEventListener('click', () => {
   els.input.value = '';
@@ -164,4 +199,13 @@ function toast(message: string): void {
 }
 
 els.input.value = readSession();
+try {
+  const saved = JSON.parse(readSession(REPLACE_KEY) || '{}') as Partial<ReplaceOptions>;
+  els.find.value = saved.find ?? '';
+  els.replace.value = saved.replace ?? '';
+  els.caseSensitive.checked = saved.caseSensitive ?? false;
+  els.regex.checked = saved.regex ?? false;
+} catch {
+  // Ignore a damaged saved value.
+}
 render();

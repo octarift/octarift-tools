@@ -27,6 +27,26 @@
       <section class="tc__conversions" aria-labelledby="tc-conversions-title">
         <h2 id="tc-conversions-title" class="visually-hidden" data-i18n="conversions">Převody</h2>
         <div id="conversion-list" class="tc-groups"></div>
+        <div id="replace-fields" class="tc-replace" hidden>
+          <label class="tc-replace__field"
+            ><span data-i18n="find">Najít</span
+            ><input id="tc-find" type="text" spellcheck="false" autocomplete="off"
+          /></label>
+          <label class="tc-replace__field"
+            ><span data-i18n="replaceWith">Nahradit za</span
+            ><input id="tc-replace" type="text" spellcheck="false" autocomplete="off"
+          /></label>
+          <div class="tc-replace__options">
+            <label class="tc-check"
+              ><input id="tc-case" type="checkbox" /><span data-i18n="caseSensitive"
+                >Rozlišovat velká a malá písmena</span
+              ></label
+            >
+            <label class="tc-check"
+              ><input id="tc-regex" type="checkbox" /><span data-i18n="regex">Regulární výraz</span></label
+            >
+          </div>
+        </div>
         <p id="conversion-hint" class="tc__hint" aria-live="polite"></p>
       </section>
 
