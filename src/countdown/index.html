@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Odpočet – Web Tools</title>
+    <meta
+      name="description"
+      content="Online odpočet k datu nebo časovač. Témata, animovaná pozadí, vlastní obrázek na pozadí a režim celé obrazovky."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <body>
+    <header class="site-header" data-site-header></header>
+
+    <main id="countdown" class="countdown">
+      <section id="stage" class="stage" data-theme="aurora" aria-label="Odpočet">
+        <video id="stage-video" class="stage__video" muted loop playsinline autoplay hidden></video>
+        <div class="stage__content">
+          <h1 id="stage-title" class="stage__title"></h1>
+          <div id="digits" class="digits" role="timer"></div>
+          <p id="done" class="stage__done" hidden>Čas vypršel!</p>
+        </div>
+        <button class="stage__exit" type="button" data-action="fullscreen" aria-label="Ukončit celou obrazovku">✕</button>
+      </section>
+
+      <section class="panel" aria-label="Nastavení odpočtu">
+        <div class="segmented" role="group" aria-label="Režim">
+          <button type="button" data-mode="timer">Časovač</button>
+          <button type="button" data-mode="date">K datu</button>
+        </div>
+
+        <div id="timer-fields" class="field-group">
+          <div class="duration">
+            <label>Hodiny<input id="dur-h" type="number" min="0" max="999" inputmode="numeric" /></label>
+            <label>Minuty<input id="dur-m" type="number" min="0" max="59" inputmode="numeric" /></label>
+            <label>Sekundy<input id="dur-s" type="number" min="0" max="59" inputmode="numeric" /></label>
+          </div>
+          <div class="chips" aria-label="Rychlá volba">
+            <button type="button" class="chip" data-preset="60">1 min</button>
+            <button type="button" class="chip" data-preset="300">5 min</button>
+            <button type="button" class="chip" data-preset="600">10 min</button>
+            <button type="button" class="chip" data-preset="900">15 min</button>
+            <button type="button" class="chip" data-preset="1500">25 min</button>
+            <button type="button" class="chip" data-preset="3600">1 hod</button>
+          </div>
+        </div>
+
+        <div id="date-fields" class="field-group" hidden>
+          <label class="field">Cílové datum a čas<input id="target-date" type="datetime-local" /></label>
+        </div>
+
+        <label class="field">
+          Nadpis (nepovinný)
+          <input id="title" type="text" maxlength="80" placeholder="např. Do Silvestra" />
+        </label>
+
+        <fieldset class="field">
+          <legend>Téma</legend>
+          <div id="theme-list" class="themes"></div>
+        </fieldset>
+
+        <div class="field">
+          <span class="field__label">Vlastní pozadí</span>
+          <div class="bg-row">
+            <label class="button">
+              Nahrát obrázek nebo video
+              <input id="bg-input" class="visually-hidden" type="file" accept="image/*,video/mp4,video/webm" />
+            </label>
+            <button id="bg-remove" class="button" type="button" hidden>Odebrat pozadí</button>
+          </div>
+          <p class="hint">Soubor zůstává jen ve vašem prohlížeči, nikam se nenahrává.</p>
+        </div>
+
+        <div class="actions">
+          <button id="start" class="button button--primary" type="button">Start</button>
+          <button id="pause" class="button" type="button" hidden>Pauza</button>
+          <button id="reset" class="button" type="button">Reset</button>
+          <button id="fullscreen" class="button" type="button" data-action="fullscreen">Celá obrazovka</button>
+          <button id="share" class="button" type="button">Kopírovat odkaz</button>
+        </div>
+        <p class="hint">Mezerník spustí nebo pozastaví, F přepne celou obrazovku.</p>
+      </section>
+
+      <aside class="ad-slot" data-ad-slot="countdown-bottom"></aside>
+    </main>
+
+    <footer class="site-footer" data-site-footer></footer>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>
