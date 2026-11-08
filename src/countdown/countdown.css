@@ -1907,6 +1907,8 @@ body.pseudo-fullscreen .stage {
 
 .panel {
   display: grid;
+  /* minmax(0, …) so a wide child (e.g. a native date input) cannot stretch the column past the drawer. */
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: 22px;
   min-height: 100%;
@@ -1985,6 +1987,20 @@ label.field,
   background: var(--bg);
   color: var(--text);
   font-weight: 400;
+}
+
+/* iPad/iPhone Safari gives date inputs a fixed native width that ignores width: 100%
+   and spills out of the drawer; dropping the native look lets it fit the panel. */
+.panel input[type='datetime-local'] {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.panel input[type='datetime-local']::-webkit-date-and-time-value {
+  text-align: left;
 }
 
 .duration {
