@@ -1816,9 +1816,10 @@ body.pseudo-fullscreen .stage {
   width: 200%;
   height: 26%;
   background:
-    radial-gradient(ellipse 22% 30% at 20% 60%, rgb(255 255 255 / 0.26), transparent 100%),
-    radial-gradient(ellipse 26% 26% at 62% 45%, rgb(255 255 255 / 0.2), transparent 100%),
-    radial-gradient(ellipse 16% 24% at 92% 70%, rgb(255 255 255 / 0.22), transparent 100%);
+    /* Each ellipse stays inside its tile (centre ± radius within 0–100 %), or the tile edge cuts it off. */
+    radial-gradient(ellipse 18% 30% at 22% 60%, rgb(255 255 255 / 0.26), transparent 100%),
+    radial-gradient(ellipse 20% 28% at 58% 45%, rgb(255 255 255 / 0.2), transparent 100%),
+    radial-gradient(ellipse 11% 24% at 87% 68%, rgb(255 255 255 / 0.22), transparent 100%);
   background-size: 50% 100%;
   background-repeat: repeat-x;
   animation: wt-wave 70s linear infinite;
