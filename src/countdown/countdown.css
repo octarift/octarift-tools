@@ -168,7 +168,8 @@
   opacity: 0;
 }
 
-/* Fullscreen: native API, or the CSS fallback for browsers without it. */
+/* Fullscreen: native API, or the CSS fallback for browsers without it. The "fill window" mode
+   (body.immersive) uses the same fallback layout on purpose. */
 .stage:fullscreen {
   width: 100vw;
   height: 100vh;
@@ -177,11 +178,11 @@
   border-radius: 0;
 }
 
-body.pseudo-fullscreen {
+body:is(.pseudo-fullscreen, .immersive) {
   overflow: hidden;
 }
 
-body.pseudo-fullscreen .stage {
+body:is(.pseudo-fullscreen, .immersive) .stage {
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -2539,12 +2540,12 @@ body {
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-body.pseudo-fullscreen .stage__content {
+body:is(.pseudo-fullscreen, .immersive) .stage__content {
   padding: max(4cqh, env(safe-area-inset-top)) max(4cqw, env(safe-area-inset-right))
     max(4cqh, env(safe-area-inset-bottom)) max(4cqw, env(safe-area-inset-left));
 }
 
-body.pseudo-fullscreen .stage__exit {
+body:is(.pseudo-fullscreen, .immersive) .stage__exit {
   top: calc(16px + env(safe-area-inset-top));
   right: calc(16px + env(safe-area-inset-right));
 }

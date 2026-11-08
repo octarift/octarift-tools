@@ -50,6 +50,7 @@ const els = {
   pause: $<HTMLButtonElement>('#pause'),
   reset: $<HTMLButtonElement>('#reset'),
   fullscreen: $<HTMLButtonElement>('#fullscreen'),
+  immersive: $<HTMLButtonElement>('#immersive'),
   share: $<HTMLButtonElement>('#share'),
   toast: $('#toast'),
   settings: $<HTMLDialogElement>('#settings'),
@@ -73,9 +74,27 @@ const wakeLock = createWakeLock();
 const fullscreen = createFullscreen(els.stage, (on) => {
   document.body.classList.toggle('is-fullscreen', on);
   els.fullscreen.textContent = on ? s.exitFullscreen : s.fullscreen;
+  if (on) setImmersive(false);
   wakeCursor();
   if (on) maybeShowIosTip();
   else iosTip.hidden = true;
+});
+
+/* ---------- Fill window: the stage covers the browser window, without real fullscreen ---------- */
+
+let immersive = false;
+
+function setImmersive(on: boolean): void {
+  if (immersive === on) return;
+  immersive = on;
+  document.body.classList.toggle('immersive', on);
+  wakeCursor();
+  if (on) toast(s.immersiveHint);
+}
+
+// Any click or tap on the countdown leaves the mode (buttons inside the stage keep their own job).
+els.stage.addEventListener('click', (e) => {
+  if (immersive && !(e.target as Element).closest('button, .ios-tip')) setImmersive(false);
 });
 
 /* ---------- iPhone: suggest Add to Home Screen ---------- */
@@ -463,7 +482,7 @@ let idleTimer = 0;
 function wakeCursor(): void {
   els.stage.classList.remove('is-idle');
   window.clearTimeout(idleTimer);
-  if (fullscreen.isOn()) {
+  if (fullscreen.isOn() || immersive) {
     idleTimer = window.setTimeout(() => els.stage.classList.add('is-idle'), 2500);
   }
 }
@@ -543,6 +562,7 @@ document.querySelectorAll<HTMLButtonElement>('[data-action="fullscreen"]').forEa
   b.addEventListener('click', () => void fullscreen.toggle());
 });
 els.stage.addEventListener('dblclick', () => void fullscreen.toggle());
+els.immersive.addEventListener('click', () => setImmersive(true));
 els.stage.addEventListener('pointermove', wakeCursor);
 
 // Any first interaction unlocks sound, so a countdown opened from a link can still ring.
@@ -560,11 +580,17 @@ document.addEventListener('keydown', (e) => {
     else start();
   } else if (/^[ns]$/i.test(e.key) && !fullscreen.isOn()) {
     // N for Nastavení, S for Settings; both work in either language.
+    setImmersive(false);
     openSettings();
+  } else if (/^[ow]$/i.test(e.key) && !fullscreen.isOn()) {
+    // O for Okno, W for Window.
+    setImmersive(!immersive);
   } else if (e.key === 'f' || e.key === 'F') {
     void fullscreen.toggle();
   } else if (e.key === 'Escape' && fullscreen.isOn()) {
     void fullscreen.exit();
+  } else if (e.key === 'Escape' && immersive) {
+    setImmersive(false);
   }
 });
 
