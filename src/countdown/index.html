@@ -17,6 +17,8 @@
     <main id="countdown" class="countdown">
       <section id="stage" class="stage" data-theme="aurora" aria-label="Odpočet">
         <video id="stage-video" class="stage__video" muted loop playsinline autoplay hidden></video>
+        <!-- Decorative layers; each theme styles the <i> elements it needs (sun, waves, rings…). -->
+        <div class="stage__fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
         <div class="stage__content">
           <h1 id="stage-title" class="stage__title"></h1>
           <div id="digits" class="digits" role="timer"></div>
