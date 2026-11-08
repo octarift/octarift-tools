@@ -1,13 +1,24 @@
 <!doctype html>
-<html lang="cs">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Odpočet – Octarift Tools</title>
-    <meta
-      name="description"
-      content="Online odpočet k datu nebo časovač. Témata, animovaná pozadí, vlastní obrázek na pozadí a režim celé obrazovky."
-    />
+    <title>Countdown – Octarift Tools</title>
+    <meta name="description" content="Online countdown to a date or timer. Themes, animated backgrounds, your own background image and fullscreen mode." />
+    <!-- Link previews (WhatsApp, Facebook, Slack…). Crawlers do not run scripts, so these stay in English;
+         the page switches to Czech for Czech visitors at runtime. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Octarift Tools" />
+    <meta property="og:title" content="Countdown" />
+    <meta property="og:description" content="Online countdown to a date or timer. Themes, animated backgrounds, your own background image and fullscreen mode." />
+    <meta property="og:url" content="https://tools.octarift.com/countdown/" />
+    <meta property="og:image" content="https://tools.octarift.com/og/countdown.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Countdown – Octarift Tools" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="cs_CZ" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="alternate" hreflang="cs" href="https://tools.octarift.com/countdown/?lang=cs" />
     <link rel="alternate" hreflang="en" href="https://tools.octarift.com/countdown/?lang=en" />
     <link rel="alternate" hreflang="x-default" href="https://tools.octarift.com/countdown/" />
@@ -20,7 +31,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Odpočet" />
+    <meta name="apple-mobile-web-app-title" content="Countdown" />
     <script type="module" src="./main.ts"></script>
   </head>
   <!-- Visible text is filled from strings.ts (data-i18n / data-i18n-attr); the Czech here is only the fallback. -->
