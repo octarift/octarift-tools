@@ -1,8 +1,8 @@
 # Octarift Tools
 
 A collection of small browser-based tools on one site, published at
-https://tools.octarift.com under the Octarift studio brand. The first tool is a
-countdown (`/countdown/`); more tools will be added if the project takes off.
+https://tools.octarift.com under the Octarift studio brand. Tools so far: a
+countdown (`/countdown/`) and a text converter (`/text-converter/`).
 
 The studio site (octarift.com, separate repo `octarift/octarift-web`, local
 `D:\Projects\octarift-web`) links here, and these tools promote the studio's
@@ -65,6 +65,9 @@ src/
     themes.ts + countdown.css   theme list grouped into categories, and their look ([data-theme="id"])
     pencil.ts                   hand-drawn SVG digits for themes flagged `pencil` (paper, chalkboard)
     background.ts, alarm.ts     custom background storage, end sound
+  text-converter/               the text converter (/text-converter/)
+    conversions.ts              pure conversion functions + their order and groups (id = label key in strings.ts)
+    main.ts, strings.ts, text-converter.css
 public/                         static files copied as-is (favicon, later robots.txt, ads.txt)
 ```
 

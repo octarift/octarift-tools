@@ -59,4 +59,13 @@ export const tools: ToolInfo[] = [
     },
     icon: '⏳',
   },
+  {
+    slug: 'text-converter',
+    name: { cs: 'Převod textu', en: 'Text converter' },
+    description: {
+      cs: 'Velká a malá písmena, camelCase, odstranění diakritiky, sloučení řádků, úprava mezer, URL, Base64 a JSON.',
+      en: 'Change letter case, camelCase, remove accents, join lines, fix spacing, URL, Base64 and JSON.',
+    },
+    icon: '🔤',
+  },
 ];

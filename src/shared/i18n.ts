@@ -52,16 +52,16 @@ export function langUrl(target: Lang): string {
  * - data-i18n="key" sets the element's text,
  * - data-i18n-attr="aria-label:key; placeholder:key2" sets attributes.
  */
-export function applyStrings(strings: Record<string, string>, root: ParentNode = document): void {
+export function applyStrings(strings: Record<string, unknown>, root: ParentNode = document): void {
   root.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => {
     const value = strings[el.dataset.i18n ?? ''];
-    if (value !== undefined) el.textContent = value;
+    if (typeof value === 'string') el.textContent = value;
   });
   root.querySelectorAll<HTMLElement>('[data-i18n-attr]').forEach((el) => {
     for (const pair of (el.dataset.i18nAttr ?? '').split(';')) {
       const [attr, key] = pair.split(':').map((p) => p.trim());
       const value = attr && key ? strings[key] : undefined;
-      if (attr && value !== undefined) el.setAttribute(attr, value);
+      if (attr && typeof value === 'string') el.setAttribute(attr, value);
     }
   });
 }
