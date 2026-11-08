@@ -337,10 +337,11 @@ function renderThemes(): void {
               `<span class="theme-swatch__preview" data-theme="${t.id}"></span><span>${tr(t.name)}</span></button>`,
           )
           .join('');
+        // Collapsible groups, all open when the drawer is first built.
         return (
-          `<section class="theme-group" aria-labelledby="theme-group-${category.id}">` +
-          `<h3 id="theme-group-${category.id}" class="theme-group__title">${tr(category.name)}</h3>` +
-          `<div class="themes">${swatches}</div></section>`
+          `<details class="theme-group" open>` +
+          `<summary class="theme-group__title">${tr(category.name)}</summary>` +
+          `<div class="themes">${swatches}</div></details>`
         );
       })
       .join('');

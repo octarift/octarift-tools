@@ -1,6 +1,7 @@
 /** Groups shown as headings in the theme picker, in display order. */
 export const themeCategories = [
   { id: 'mood', name: { cs: 'Nálada', en: 'Mood' } },
+  { id: 'nature', name: { cs: 'Příroda', en: 'Nature' } },
   { id: 'tech', name: { cs: 'Technologie a hry', en: 'Tech & Games' } },
   { id: 'work', name: { cs: 'Škola a práce', en: 'School & Work' } },
   { id: 'holiday', name: { cs: 'Svátky', en: 'Holidays' } },
@@ -19,6 +20,12 @@ export const themes = [
   { id: 'ocean', name: { cs: 'Moře při západu', en: 'Sea at Sunset' }, category: 'mood', animated: true },
   { id: 'sunset', name: { cs: 'Západ slunce', en: 'Sunset' }, category: 'mood', animated: true },
   { id: 'midnight', name: { cs: 'Půlnoc', en: 'Midnight' }, category: 'mood', animated: false },
+
+  { id: 'forest', name: { cs: 'Les', en: 'Forest' }, category: 'nature', animated: true },
+  { id: 'meadow', name: { cs: 'Louka', en: 'Meadow' }, category: 'nature', animated: true },
+  { id: 'underwater', name: { cs: 'Podmořský svět', en: 'Underwater' }, category: 'nature', animated: true },
+  { id: 'mountains', name: { cs: 'Hory', en: 'Mountains' }, category: 'nature', animated: true },
+  { id: 'rain', name: { cs: 'Déšť', en: 'Rain' }, category: 'nature', animated: true },
 
   { id: 'neon', name: { cs: 'Neon', en: 'Neon' }, category: 'tech', animated: true },
   { id: 'tech', name: { cs: 'Technologie', en: 'Tech' }, category: 'tech', animated: true },

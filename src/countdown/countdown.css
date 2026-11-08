@@ -1528,6 +1528,378 @@ body.pseudo-fullscreen .stage {
   animation: wt-blink 1s ease-in-out infinite;
 }
 
+/* ===== Nature themes ===== */
+
+/* ----- Les: sunbeams through a pine forest, drifting specks of light ----- */
+
+[data-theme='forest'] {
+  background: linear-gradient(to bottom, #b9e0a5 0%, #6aa86f 30%, #2f6e48 62%, #173f2b 85%, #0f2c1f 100%);
+}
+
+.stage[data-theme='forest'] {
+  --stage-fg: #f4fff0;
+  --stage-muted: rgb(232 255 224 / 0.92);
+}
+
+.stage[data-theme='forest'] .digits,
+.stage[data-theme='forest'] .stage__title {
+  text-shadow: 0 0.05em 0.2em rgb(8 40 20 / 0.6);
+}
+
+.stage[data-theme='forest'] .unit__label {
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgb(8 40 20 / 0.8);
+}
+
+/* Slanted sunbeams, slowly brightening and fading. */
+.stage[data-theme='forest'] .stage__fx i:nth-child(1) {
+  inset: -10% -10% 30% -10%;
+  background: repeating-linear-gradient(
+    105deg,
+    rgb(255 252 215 / 0) 0 7%,
+    rgb(255 250 205 / 0.2) 7% 10%,
+    rgb(255 252 215 / 0) 10% 17%
+  );
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+  animation: wt-pulse 7s ease-in-out infinite alternate;
+}
+
+/* Distant pines. */
+.stage[data-theme='forest'] .stage__fx i:nth-child(2) {
+  left: 0;
+  right: 0;
+  bottom: 14%;
+  height: 42%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'%3E%3Cpath d='M0 200 L30 80 L60 200Z M45 200 L82 30 L119 200Z M100 200 L132 95 L164 200Z M150 200 L192 20 L234 200Z M215 200 L247 85 L279 200Z M262 200 L302 40 L342 200Z M330 200 L365 75 L400 200Z' fill='%23336f4c' fill-opacity='.75'/%3E%3C/svg%3E")
+    0 100% / 34% 100% repeat-x;
+}
+
+/* Near pines and the forest floor. */
+.stage[data-theme='forest'] .stage__fx i:nth-child(3) {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48%;
+  background:
+    linear-gradient(#0f2c1f, #0f2c1f) 0 100% / 100% 12% no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'%3E%3Cpath d='M0 200 L45 10 L90 200Z M110 200 L150 60 L190 200Z M200 200 L250 0 L300 200Z M310 200 L355 50 L400 200Z' fill='%23143a28'/%3E%3C/svg%3E")
+      0 88% / 45% 88% repeat-x;
+}
+
+/* Specks of light rising slowly between the trees (a seamless tile loop). */
+.stage[data-theme='forest'] .stage__fx i:nth-child(4) {
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(100% + 160px);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cg fill='%23fff6b0'%3E%3Ccircle cx='20' cy='30' r='1.6' fill-opacity='.8'/%3E%3Ccircle cx='96' cy='12' r='1.2' fill-opacity='.6'/%3E%3Ccircle cx='132' cy='84' r='1.8' fill-opacity='.7'/%3E%3Ccircle cx='54' cy='104' r='1.2' fill-opacity='.5'/%3E%3Ccircle cx='112' cy='140' r='1.4' fill-opacity='.6'/%3E%3C/g%3E%3C/svg%3E")
+    0 0 / 160px 160px;
+  mask-image: linear-gradient(to top, transparent 0%, #000 30%, #000 60%, transparent 95%);
+  animation: wt-rise 20s linear infinite;
+}
+
+/* ----- Louka: blue sky, drifting clouds, flowery hills, swaying grass, a butterfly ----- */
+
+[data-theme='meadow'] {
+  background: linear-gradient(to bottom, #4aa8ea 0%, #93d2fa 45%, #d7f1ff 64%, #86c96f 64.2%, #5aa84f 100%);
+}
+
+.stage[data-theme='meadow'] {
+  --stage-fg: #ffffff;
+  --stage-muted: rgb(255 255 255 / 0.95);
+}
+
+.stage[data-theme='meadow'] .digits,
+.stage[data-theme='meadow'] .stage__title {
+  text-shadow: 0 0.05em 0.18em rgb(20 70 110 / 0.5);
+}
+
+.stage[data-theme='meadow'] .unit__label {
+  font-weight: 700;
+  text-shadow:
+    0 1px 2px rgb(20 60 90 / 0.85),
+    0 0 8px rgb(20 60 90 / 0.5);
+}
+
+/* Sun. */
+.stage[data-theme='meadow'] .stage__fx i:nth-child(1) {
+  right: 12%;
+  top: 9%;
+  width: 14cqh;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbe0 0 45%, #ffe066 62%, rgb(255 224 102 / 0) 72%);
+  box-shadow: 0 0 6cqh 2cqh rgb(255 230 120 / 0.4);
+  animation: wt-pulse 5s ease-in-out infinite alternate;
+}
+
+/* Clouds drifting across. */
+.stage[data-theme='meadow'] .stage__fx i:nth-child(2) {
+  left: 0;
+  top: 6%;
+  width: 200%;
+  height: 32%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 150' preserveAspectRatio='none'%3E%3Cg fill='%23fff'%3E%3Cellipse cx='90' cy='60' rx='60' ry='20' fill-opacity='.9'/%3E%3Cellipse cx='120' cy='46' rx='34' ry='22' fill-opacity='.9'/%3E%3Cellipse cx='380' cy='100' rx='70' ry='18' fill-opacity='.75'/%3E%3Cellipse cx='350' cy='88' rx='32' ry='18' fill-opacity='.75'/%3E%3Cellipse cx='530' cy='40' rx='40' ry='12' fill-opacity='.6'/%3E%3C/g%3E%3C/svg%3E")
+    0 0 / 50% 100% repeat-x;
+  animation: wt-wave 90s linear infinite;
+}
+
+/* Rolling hills dotted with flowers. */
+.stage[data-theme='meadow'] .stage__fx i:nth-child(3) {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 44%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'%3E%3Cpath d='M0 60 Q100 10 210 50 T400 40 V200 H0Z' fill='%2378bf62'/%3E%3Cpath d='M0 110 Q120 60 250 100 T400 90 V200 H0Z' fill='%235aa84f'/%3E%3Cg fill='%23ff6b8a'%3E%3Ccircle cx='40' cy='130' r='2.5'/%3E%3Ccircle cx='150' cy='150' r='2.5'/%3E%3Ccircle cx='300' cy='135' r='2.5'/%3E%3Ccircle cx='360' cy='170' r='2.5'/%3E%3C/g%3E%3Cg fill='%23ffe14d'%3E%3Ccircle cx='90' cy='160' r='2.5'/%3E%3Ccircle cx='220' cy='125' r='2.5'/%3E%3Ccircle cx='260' cy='175' r='2.5'/%3E%3C/g%3E%3Cg fill='%23fff'%3E%3Ccircle cx='70' cy='95' r='2'/%3E%3Ccircle cx='190' cy='170' r='2'/%3E%3Ccircle cx='330' cy='110' r='2'/%3E%3C/g%3E%3C/svg%3E")
+    center bottom / 100% 100% no-repeat;
+}
+
+/* Grass in the foreground, swaying in the wind. */
+.stage[data-theme='meadow'] .stage__fx i:nth-child(4) {
+  left: -4%;
+  right: -4%;
+  bottom: -1%;
+  height: 13%;
+  transform-origin: 50% 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60' preserveAspectRatio='none'%3E%3Cg fill='%233f8f3c'%3E%3Cpath d='M0 60 Q6 30 4 0 Q10 30 10 60Z'/%3E%3Cpath d='M14 60 Q22 34 26 8 Q26 36 22 60Z'/%3E%3Cpath d='M30 60 Q34 30 40 14 Q38 40 38 60Z'/%3E%3Cpath d='M46 60 Q48 26 44 2 Q54 30 54 60Z'/%3E%3Cpath d='M60 60 Q68 36 74 12 Q72 40 68 60Z'/%3E%3Cpath d='M76 60 Q80 28 78 6 Q88 34 86 60Z'/%3E%3Cpath d='M92 60 Q98 34 106 16 Q102 42 100 60Z'/%3E%3Cpath d='M106 60 Q110 30 116 4 Q118 34 116 60Z'/%3E%3C/g%3E%3C/svg%3E")
+    0 100% / 120px 100% repeat-x;
+  animation: wt-grass 3.5s ease-in-out infinite alternate;
+}
+
+/* A butterfly fluttering across. */
+.stage[data-theme='meadow'] .stage__fx i:nth-child(5) {
+  left: 0;
+  top: 46%;
+  width: 6cqh;
+  aspect-ratio: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 20 C12 4 2 8 6 18 C2 26 12 30 20 22Z' fill='%23ff8a3d'/%3E%3Cpath d='M20 20 C28 4 38 8 34 18 C38 26 28 30 20 22Z' fill='%23ffb03d'/%3E%3Cpath d='M20 12 V30' stroke='%23402a1a' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  animation: wt-gulls 26s linear infinite;
+}
+
+/* ----- Podmořský svět: light rays from above, rising bubbles, swaying kelp, fish ----- */
+
+[data-theme='underwater'] {
+  background: linear-gradient(to bottom, #39c3d6 0%, #138aaa 32%, #0b5a82 65%, #06304f 100%);
+}
+
+.stage[data-theme='underwater'] {
+  --stage-fg: #effdff;
+  --stage-muted: rgb(210 245 255 / 0.92);
+}
+
+.stage[data-theme='underwater'] .digits,
+.stage[data-theme='underwater'] .stage__title {
+  text-shadow: 0 0.05em 0.2em rgb(0 30 60 / 0.55);
+}
+
+.stage[data-theme='underwater'] .unit__label {
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgb(0 30 60 / 0.8);
+}
+
+/* Light rays from the surface, swaying gently. */
+.stage[data-theme='underwater'] .stage__fx i:nth-child(1) {
+  inset: -10% -15% 25% -15%;
+  background: repeating-linear-gradient(
+    98deg,
+    rgb(210 255 255 / 0) 0 6%,
+    rgb(210 255 255 / 0.13) 6% 9%,
+    rgb(210 255 255 / 0) 9% 16%
+  );
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+  animation: wt-sway 10s ease-in-out infinite;
+}
+
+/* Bubbles rising (a seamless tile loop). */
+.stage[data-theme='underwater'] .stage__fx i:nth-child(2) {
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(100% + 160px);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cg fill='none' stroke='%23e6ffff' stroke-opacity='.55' stroke-width='1.2'%3E%3Ccircle cx='24' cy='40' r='4'/%3E%3Ccircle cx='30' cy='22' r='2.5'/%3E%3Ccircle cx='110' cy='96' r='5'/%3E%3Ccircle cx='118' cy='76' r='3'/%3E%3Ccircle cx='70' cy='140' r='3'/%3E%3Ccircle cx='142' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E")
+    0 0 / 160px 160px;
+  mask-image: linear-gradient(to top, transparent 0%, #000 20%, #000 70%, transparent 100%);
+  animation: wt-rise 9s linear infinite;
+}
+
+/* Sandy seabed with coral and small kelp. */
+.stage[data-theme='underwater'] .stage__fx i:nth-child(3) {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'%3E%3Cpath d='M300 70 C296 50 306 40 300 20 M312 72 C318 54 306 44 314 26' fill='none' stroke='%232f8f5e' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M350 74 C346 60 340 56 342 44 M350 74 C354 62 362 58 360 46 M350 74 V50' fill='none' stroke='%23ff7a6b' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M0 70 Q80 55 170 68 T400 64 V100 H0Z' fill='%23c9a96e'/%3E%3Cpath d='M0 84 Q120 74 230 84 T400 80 V100 H0Z' fill='%23b08f57'/%3E%3C/svg%3E")
+    center bottom / 100% 100% no-repeat;
+}
+
+/* A tall kelp swaying on the left. */
+.stage[data-theme='underwater'] .stage__fx i:nth-child(4) {
+  left: 4%;
+  bottom: 6%;
+  height: min(58cqh, 46cqw);
+  aspect-ratio: 60 / 200;
+  transform-origin: 50% 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 200'%3E%3Cpath d='M30 200 C10 160 46 130 26 90 C10 60 40 34 30 4' fill='none' stroke='%23268a55' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='M30 200 C46 170 20 150 40 116' fill='none' stroke='%23319e63' stroke-width='5' stroke-linecap='round'/%3E%3Cg fill='%23319e63'%3E%3Cellipse cx='18' cy='120' rx='10' ry='4' transform='rotate(-30 18 120)'/%3E%3Cellipse cx='40' cy='70' rx='10' ry='4' transform='rotate(30 40 70)'/%3E%3Cellipse cx='20' cy='40' rx='9' ry='3.5' transform='rotate(-30 20 40)'/%3E%3C/g%3E%3C/svg%3E")
+    center bottom / contain no-repeat;
+  animation: wt-palm 4.5s ease-in-out infinite alternate;
+}
+
+/* A pair of fish swimming across. */
+.stage[data-theme='underwater'] .stage__fx i:nth-child(5) {
+  left: 0;
+  top: 28%;
+  width: 14cqh;
+  aspect-ratio: 70 / 34;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 70 34'%3E%3Cpath d='M6 10 Q18 0 30 10 Q18 20 6 10Z M7 10 L0 4 V16Z' fill='%23ffb347'/%3E%3Ccircle cx='25' cy='9' r='1.3' fill='%23402a1a'/%3E%3Cpath d='M42 24 Q55 13 68 24 Q55 35 42 24Z M43 24 L36 18 V30Z' fill='%23ffd166'/%3E%3Ccircle cx='63' cy='23' r='1.3' fill='%23402a1a'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  animation: wt-gulls 32s linear infinite;
+}
+
+/* ----- Hory: dawn sky, layered ranges with snowy peaks, drifting mist, birds ----- */
+
+[data-theme='mountains'] {
+  background: linear-gradient(to bottom, #f9c98e 0%, #f2a77d 22%, #c48fae 46%, #7477a8 70%, #3e4774 100%);
+}
+
+.stage[data-theme='mountains'] {
+  --stage-fg: #ffffff;
+  --stage-muted: rgb(255 244 236 / 0.92);
+}
+
+.stage[data-theme='mountains'] .digits,
+.stage[data-theme='mountains'] .stage__title {
+  text-shadow: 0 0.05em 0.2em rgb(40 30 70 / 0.55);
+}
+
+.stage[data-theme='mountains'] .unit__label {
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgb(40 30 70 / 0.8);
+}
+
+/* Low sun glowing behind the ridges. */
+.stage[data-theme='mountains'] .stage__fx i:nth-child(1) {
+  right: 16%;
+  top: 30%;
+  width: 18cqh;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff3d6 0 40%, #ffd08a 58%, rgb(255 200 130 / 0) 72%);
+  box-shadow: 0 0 10cqh 4cqh rgb(255 200 140 / 0.35);
+  animation: wt-pulse 6s ease-in-out infinite alternate;
+}
+
+/* Far range with snowy peaks. */
+.stage[data-theme='mountains'] .stage__fx i:nth-child(2) {
+  left: 0;
+  right: 0;
+  bottom: 18%;
+  height: 50%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'%3E%3Cpath d='M0 200 V120 L50 70 L90 110 L150 30 L210 100 L250 60 L310 120 L360 50 L400 90 V200Z' fill='%238c86b6'/%3E%3Cpath d='M150 30 L132 54 L142 50 L150 58 L160 48 L168 54Z M360 50 L346 70 L356 66 L362 72 L370 64 L374 68Z M50 70 L40 80 L50 78 L58 82Z' fill='%23f4f1ff' fill-opacity='.9'/%3E%3C/svg%3E")
+    center bottom / 100% 100% no-repeat;
+}
+
+/* Near range in front. */
+.stage[data-theme='mountains'] .stage__fx i:nth-child(3) {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'%3E%3Cpath d='M0 200 V90 L70 40 L120 100 L190 50 L260 120 L330 60 L400 110 V200Z' fill='%23474a7c'/%3E%3Cpath d='M0 200 V150 L90 110 L170 150 L260 120 L340 160 L400 140 V200Z' fill='%232f3158'/%3E%3C/svg%3E")
+    center bottom / 100% 100% no-repeat;
+}
+
+/* Soft mist drifting along the valley (two tiles wide, shifted by one tile, so it loops seamlessly). */
+.stage[data-theme='mountains'] .stage__fx i:nth-child(4) {
+  left: 0;
+  bottom: 12%;
+  width: 200%;
+  height: 26%;
+  background:
+    radial-gradient(ellipse 22% 30% at 20% 60%, rgb(255 255 255 / 0.26), transparent 100%),
+    radial-gradient(ellipse 26% 26% at 62% 45%, rgb(255 255 255 / 0.2), transparent 100%),
+    radial-gradient(ellipse 16% 24% at 92% 70%, rgb(255 255 255 / 0.22), transparent 100%);
+  background-size: 50% 100%;
+  background-repeat: repeat-x;
+  animation: wt-wave 70s linear infinite;
+}
+
+/* Birds gliding across. */
+.stage[data-theme='mountains'] .stage__fx i:nth-child(5) {
+  left: 0;
+  top: 18%;
+  width: 10cqh;
+  aspect-ratio: 60 / 24;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 24'%3E%3Cg fill='none' stroke='%233a2f4f' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M2 14 Q8 6 14 14 Q20 6 26 14'/%3E%3Cpath d='M36 8 Q40 3 44 8 Q48 3 52 8'/%3E%3C/g%3E%3C/svg%3E")
+    center / contain no-repeat;
+  animation: wt-gulls 36s linear infinite;
+}
+
+/* ----- Déšť: grey sky, drifting storm clouds, two layers of falling rain ----- */
+
+[data-theme='rain'] {
+  background: linear-gradient(to bottom, #3b4757 0%, #586a80 50%, #3d4959 100%);
+}
+
+.stage[data-theme='rain'] {
+  --stage-fg: #f2f6fb;
+  --stage-muted: rgb(220 230 242 / 0.9);
+}
+
+.stage[data-theme='rain'] .digits,
+.stage[data-theme='rain'] .stage__title {
+  text-shadow: 0 0.05em 0.2em rgb(10 20 35 / 0.6);
+}
+
+.stage[data-theme='rain'] .unit__label {
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgb(10 20 35 / 0.8);
+}
+
+/* Storm clouds drifting along the top. */
+.stage[data-theme='rain'] .stage__fx i:nth-child(1) {
+  left: 0;
+  top: -6%;
+  width: 200%;
+  height: 34%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 150' preserveAspectRatio='none'%3E%3Cg fill='%23283240'%3E%3Cellipse cx='80' cy='60' rx='120' ry='50' fill-opacity='.85'/%3E%3Cellipse cx='250' cy='40' rx='110' ry='45' fill-opacity='.8'/%3E%3Cellipse cx='420' cy='65' rx='130' ry='50' fill-opacity='.85'/%3E%3Cellipse cx='580' cy='45' rx='90' ry='40' fill-opacity='.8'/%3E%3C/g%3E%3C/svg%3E")
+    0 0 / 50% 100% repeat-x;
+  animation: wt-wave 80s linear infinite;
+}
+
+/* Falling rain: tiles shifted down by exactly one tile height, so the loop is seamless. */
+.stage[data-theme='rain'] .stage__fx i:nth-child(2),
+.stage[data-theme='rain'] .stage__fx i:nth-child(3) {
+  left: -5%;
+  right: -5%;
+  top: calc(-1 * var(--fall));
+  height: calc(100% + var(--fall));
+  animation: wt-snowfall var(--speed) linear infinite;
+}
+
+.stage[data-theme='rain'] .stage__fx i:nth-child(2) {
+  --fall: 200px;
+  --speed: 0.9s;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cg stroke='%23dbe7f5' stroke-opacity='.55' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M20 10 l-4 18'/%3E%3Cpath d='M90 60 l-4 18'/%3E%3Cpath d='M160 20 l-4 18'/%3E%3Cpath d='M60 130 l-4 18'/%3E%3Cpath d='M130 150 l-4 18'/%3E%3Cpath d='M190 100 l-4 18'/%3E%3C/g%3E%3C/svg%3E")
+    0 0 / 200px 200px;
+}
+
+.stage[data-theme='rain'] .stage__fx i:nth-child(3) {
+  --fall: 260px;
+  --speed: 1.4s;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cg stroke='%23c9d6e6' stroke-opacity='.35' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='M40 40 l-3 13'/%3E%3Cpath d='M120 10 l-3 13'/%3E%3Cpath d='M210 80 l-3 13'/%3E%3Cpath d='M80 170 l-3 13'/%3E%3Cpath d='M170 200 l-3 13'/%3E%3Cpath d='M240 230 l-3 13'/%3E%3Cpath d='M15 220 l-3 13'/%3E%3C/g%3E%3C/svg%3E")
+    0 0 / 260px 260px;
+}
+
+/* Misty ground where the rain lands. */
+.stage[data-theme='rain'] .stage__fx i:nth-child(4) {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 20%;
+  background: linear-gradient(to top, rgb(30 40 52 / 0.7), transparent);
+}
+
 @keyframes wt-drift {
   0%,
   100% {
@@ -2036,16 +2408,56 @@ label.field,
 
 .theme-groups {
   display: grid;
-  gap: 16px;
+  gap: 4px;
 }
 
 .theme-group__title {
-  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
   color: var(--muted);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.theme-group__title::-webkit-details-marker {
+  display: none;
+}
+
+.theme-group__title:hover {
+  color: var(--text);
+}
+
+/* Chevron pointing right when collapsed, down when open. */
+.theme-group__title::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s;
+}
+
+.theme-group[open] > .theme-group__title::before {
+  transform: rotate(45deg);
+}
+
+.theme-group[open] > .themes {
+  margin-bottom: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-group__title::before {
+    transition: none;
+  }
 }
 
 .themes {
