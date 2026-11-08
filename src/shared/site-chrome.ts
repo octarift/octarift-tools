@@ -26,7 +26,7 @@ export function mountSiteChrome(currentSlug?: string): void {
         `${l === lang ? ' aria-current="true"' : ''}>${l.toUpperCase()}</a>`,
     ).join('');
     header.innerHTML =
-      `<a class="site-brand" href="/${q}">${site.name}</a>` +
+      `<a class="site-brand" href="/${q}"><img src="/favicon.svg" alt="" width="30" height="30">${site.name}</a>` +
       `<nav class="site-nav" aria-label="${tr({ cs: 'Nástroje', en: 'Tools' })}">${links}</nav>` +
       `<div class="site-switches">${schemeSwitchHtml()}` +
       `<nav class="lang-switch" aria-label="${tr({ cs: 'Jazyk', en: 'Language' })}">${switcher}</nav></div>`;
