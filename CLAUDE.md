@@ -21,7 +21,11 @@ game Rift Defense (`com.octarift.riftdefense` on Google Play).
 - **Ads, the Rift Defense promo card and the Buy Me a Coffee button appear only outside fullscreen.** Fullscreen is the product; keep it clean.
 - The promo card is filled into `<aside data-promo="campaign">` by `site-chrome.ts`; its Play link carries
   `utm_source=octarift-tools&utm_campaign=<campaign>` so installs show in Play Console. Text lives in `gamePromo` in `config.ts`.
-- UI language is Czech (`lang="cs"`, formal "vy" form). Code, comments and commit messages are in English.
+- UI is bilingual: Czech (formal "vy" form) and English. Czech/Slovak browsers get Czech, everyone else English;
+  `?lang=cs|en` overrides and is remembered (`src/shared/i18n.ts`). Each page lists both versions with hreflang links.
+  **Never hard-code UI text**: add it to the tool's `strings.ts` (`en` is typed from `cs`, so a missing translation
+  fails the build), shared text uses `tr({ cs, en })`, static HTML uses `data-i18n` / `data-i18n-attr`.
+  Code, comments and commit messages are in English.
 - Respect `prefers-reduced-motion` for every animation; animated backgrounds must stay cheap (CSS/GPU, no heavy JS loops).
 - Mobile matters: layouts must work at 360 px width, touch targets ≥ 44 px.
 
@@ -52,6 +56,7 @@ src/
     styles/base.css             design tokens (light/dark), buttons, chrome
   countdown/                    the countdown tool (/countdown/)
     index.html, main.ts         page + UI wiring
+    strings.ts                  all countdown UI text in Czech and English
     state.ts                    state shape, persistence, share-link encoding
     timer.ts                    pure time helpers
     themes.ts + countdown.css   theme list grouped into categories, and their look ([data-theme="id"])

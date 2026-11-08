@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Octarift Tools</title>
     <meta name="description" content="Jednoduché online nástroje, které fungují přímo v prohlížeči." />
+    <link rel="alternate" hreflang="cs" href="https://tools.octarift.com/?lang=cs" />
+    <link rel="alternate" hreflang="en" href="https://tools.octarift.com/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://tools.octarift.com/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script type="module" src="./hub.ts"></script>
   </head>
   <body>
     <header class="site-header" data-site-header></header>
     <main class="hub">
-      <h1 class="hub__title">Nástroje</h1>
-      <p class="hub__lead">Jednoduché nástroje, které běží přímo ve vašem prohlížeči.</p>
+      <h1 class="hub__title" data-i18n="heading">Nástroje</h1>
+      <p class="hub__lead" data-i18n="lead">Jednoduché nástroje, které běží přímo ve vašem prohlížeči.</p>
       <ul id="tool-list" class="tool-list"></ul>
       <aside data-promo="hub"></aside>
     </main>

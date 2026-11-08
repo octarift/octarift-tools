@@ -1,3 +1,8 @@
+import type { Lang } from './i18n';
+
+/** Text in every UI language. */
+export type Localized = Record<Lang, string>;
+
 /** Site-wide settings shared by every tool. */
 export const site = {
   name: 'Octarift Tools',
@@ -22,8 +27,12 @@ export const gamePromo = {
   /** Promo card on/off. Hidden for now; the slots stay in the pages, ready to switch back on. */
   enabled: false,
   name: 'Rift Defense',
-  pitch: 'Vesmírná tower defense od autorů těchto nástrojů. Braňte stanici před vlnami nepřátel z červích děr.',
-  platform: 'Zdarma pro Android',
+  pitch: {
+    cs: 'Vesmírná tower defense od autorů těchto nástrojů. Braňte stanici před vlnami nepřátel z červích děr.',
+    en: 'A space tower defense game from the makers of these tools. Hold your station against waves of enemies pouring out of wormholes.',
+  } satisfies Localized,
+  platform: { cs: 'Zdarma pro Android', en: 'Free on Android' } satisfies Localized,
+  cta: { cs: 'Získat na Google Play', en: 'Get it on Google Play' } satisfies Localized,
   pageUrl: 'https://octarift.com/rift-defense/',
   playUrl(campaign: string): string {
     const referrer = `utm_source=octarift-tools&utm_medium=promo&utm_campaign=${campaign}`;
@@ -34,8 +43,8 @@ export const gamePromo = {
 export interface ToolInfo {
   /** Folder name under src/ and the URL path (/slug/). */
   slug: string;
-  name: string;
-  description: string;
+  name: Localized;
+  description: Localized;
   icon: string;
 }
 
@@ -43,8 +52,11 @@ export interface ToolInfo {
 export const tools: ToolInfo[] = [
   {
     slug: 'countdown',
-    name: 'Odpočet',
-    description: 'Odpočet k datu nebo časovač s tématy, animovaným pozadím a režimem celé obrazovky.',
+    name: { cs: 'Odpočet', en: 'Countdown' },
+    description: {
+      cs: 'Odpočet k datu nebo časovač s tématy, animovaným pozadím a režimem celé obrazovky.',
+      en: 'Count down to a date or run a timer, with themes, animated backgrounds and fullscreen mode.',
+    },
     icon: '⏳',
   },
 ];

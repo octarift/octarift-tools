@@ -8,26 +8,38 @@
       name="description"
       content="Online odpočet k datu nebo časovač. Témata, animovaná pozadí, vlastní obrázek na pozadí a režim celé obrazovky."
     />
+    <link rel="alternate" hreflang="cs" href="https://tools.octarift.com/countdown/?lang=cs" />
+    <link rel="alternate" hreflang="en" href="https://tools.octarift.com/countdown/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://tools.octarift.com/countdown/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script type="module" src="./main.ts"></script>
   </head>
+  <!-- Visible text is filled from strings.ts (data-i18n / data-i18n-attr); the Czech here is only the fallback. -->
   <body>
     <header class="site-header" data-site-header></header>
 
     <main id="countdown" class="countdown">
-      <section id="stage" class="stage" data-theme="aurora" aria-label="Odpočet">
+      <section id="stage" class="stage" data-theme="aurora" aria-label="Odpočet" data-i18n-attr="aria-label:stage">
         <video id="stage-video" class="stage__video" muted loop playsinline autoplay hidden></video>
         <!-- Decorative layers; each theme styles the <i> elements it needs (sun, waves, rings…). -->
         <div class="stage__fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
         <div class="stage__content">
           <h1 id="stage-title" class="stage__title"></h1>
           <div id="digits" class="digits" role="timer"></div>
-          <p id="done" class="stage__done" hidden>Čas vypršel!</p>
+          <p id="done" class="stage__done" data-i18n="done" hidden>Čas vypršel!</p>
         </div>
-        <button class="stage__exit" type="button" data-action="fullscreen" aria-label="Ukončit celou obrazovku">✕</button>
+        <button
+          class="stage__exit"
+          type="button"
+          data-action="fullscreen"
+          aria-label="Ukončit celou obrazovku"
+          data-i18n-attr="aria-label:exitFullscreen"
+        >
+          ✕
+        </button>
       </section>
 
-      <div class="controls" role="toolbar" aria-label="Ovládání odpočtu">
+      <div class="controls" role="toolbar" aria-label="Ovládání odpočtu" data-i18n-attr="aria-label:controls">
         <button
           id="settings-open"
           class="button"
@@ -36,16 +48,20 @@
           aria-expanded="false"
           aria-keyshortcuts="N"
         >
-          <span aria-hidden="true">☰</span> Nastavení
+          <span aria-hidden="true">☰</span> <span data-i18n="settings">Nastavení</span>
         </button>
         <span class="controls__spacer"></span>
         <button id="start" class="button button--primary" type="button">Start</button>
-        <button id="pause" class="button" type="button" hidden>Pauza</button>
-        <button id="reset" class="button" type="button">Reset</button>
-        <button id="fullscreen" class="button" type="button" data-action="fullscreen">Celá obrazovka</button>
-        <button id="share" class="button" type="button">Sdílet odkaz</button>
+        <button id="pause" class="button" type="button" data-i18n="pause" hidden>Pauza</button>
+        <button id="reset" class="button" type="button" data-i18n="reset">Reset</button>
+        <button id="fullscreen" class="button" type="button" data-action="fullscreen" data-i18n="fullscreen">
+          Celá obrazovka
+        </button>
+        <button id="share" class="button" type="button" data-i18n="share">Sdílet odkaz</button>
       </div>
-      <p class="hint controls__hint">Mezerník spustí nebo pozastaví, F přepne celou obrazovku, N otevře nastavení.</p>
+      <p class="hint controls__hint" data-i18n="shortcuts">
+        Mezerník spustí nebo pozastaví, F přepne celou obrazovku, N otevře nastavení.
+      </p>
 
       <aside data-promo="countdown"></aside>
       <aside class="ad-slot" data-ad-slot="countdown-bottom"></aside>
@@ -54,55 +70,80 @@
     <dialog id="settings" class="drawer" aria-labelledby="settings-title">
       <div class="panel">
         <div class="drawer__header">
-          <h2 id="settings-title" class="drawer__title">Nastavení</h2>
-          <button id="settings-close" class="icon-button" type="button" aria-label="Zavřít nastavení">✕</button>
+          <h2 id="settings-title" class="drawer__title" data-i18n="settings">Nastavení</h2>
+          <button
+            id="settings-close"
+            class="icon-button"
+            type="button"
+            aria-label="Zavřít nastavení"
+            data-i18n-attr="aria-label:closeSettings"
+          >
+            ✕
+          </button>
         </div>
 
-        <div class="segmented" role="group" aria-label="Režim">
-          <button type="button" data-mode="timer">Časovač</button>
-          <button type="button" data-mode="date">K datu</button>
+        <div class="segmented" role="group" aria-label="Režim" data-i18n-attr="aria-label:mode">
+          <button type="button" data-mode="timer" data-i18n="modeTimer">Časovač</button>
+          <button type="button" data-mode="date" data-i18n="modeDate">K datu</button>
         </div>
 
         <div id="timer-fields" class="field-group">
           <div class="duration">
-            <label>Hodiny<input id="dur-h" type="number" min="0" max="999" inputmode="numeric" /></label>
-            <label>Minuty<input id="dur-m" type="number" min="0" max="59" inputmode="numeric" /></label>
-            <label>Sekundy<input id="dur-s" type="number" min="0" max="59" inputmode="numeric" /></label>
+            <label
+              ><span data-i18n="hours">Hodiny</span
+              ><input id="dur-h" type="number" min="0" max="999" inputmode="numeric"
+            /></label>
+            <label
+              ><span data-i18n="minutes">Minuty</span
+              ><input id="dur-m" type="number" min="0" max="59" inputmode="numeric"
+            /></label>
+            <label
+              ><span data-i18n="seconds">Sekundy</span
+              ><input id="dur-s" type="number" min="0" max="59" inputmode="numeric"
+            /></label>
           </div>
-          <div class="chips" aria-label="Rychlá volba">
+          <div class="chips" aria-label="Rychlá volba" data-i18n-attr="aria-label:presets">
             <button type="button" class="chip" data-preset="60">1 min</button>
             <button type="button" class="chip" data-preset="300">5 min</button>
             <button type="button" class="chip" data-preset="600">10 min</button>
             <button type="button" class="chip" data-preset="900">15 min</button>
             <button type="button" class="chip" data-preset="1500">25 min</button>
-            <button type="button" class="chip" data-preset="3600">1 hod</button>
+            <button type="button" class="chip" data-preset="3600" data-i18n="presetHour">1 hod</button>
           </div>
         </div>
 
         <div id="date-fields" class="field-group" hidden>
-          <label class="field">Cílové datum a čas<input id="target-date" type="datetime-local" /></label>
+          <label class="field"
+            ><span data-i18n="targetDate">Cílové datum a čas</span><input id="target-date" type="datetime-local"
+          /></label>
         </div>
 
         <label class="field">
-          Nadpis (nepovinný)
-          <input id="title" type="text" maxlength="80" placeholder="např. Do Silvestra" />
+          <span data-i18n="title">Nadpis (nepovinný)</span>
+          <input
+            id="title"
+            type="text"
+            maxlength="80"
+            placeholder="např. Do Silvestra"
+            data-i18n-attr="placeholder:titlePlaceholder"
+          />
         </label>
 
         <fieldset class="field">
-          <legend>Téma</legend>
+          <legend data-i18n="theme">Téma</legend>
           <div id="theme-list" class="theme-groups"></div>
         </fieldset>
 
         <div class="field">
-          <span class="field__label">Vlastní pozadí</span>
+          <span class="field__label" data-i18n="customBg">Vlastní pozadí</span>
           <div class="bg-row">
             <label class="button">
-              Nahrát obrázek nebo video
+              <span data-i18n="uploadBg">Nahrát obrázek nebo video</span>
               <input id="bg-input" class="visually-hidden" type="file" accept="image/*,video/mp4,video/webm" />
             </label>
-            <button id="bg-remove" class="button" type="button" hidden>Odebrat pozadí</button>
+            <button id="bg-remove" class="button" type="button" data-i18n="removeBg" hidden>Odebrat pozadí</button>
           </div>
-          <p class="hint">Soubor zůstává jen ve vašem prohlížeči, nikam se nenahrává.</p>
+          <p class="hint" data-i18n="bgPrivacy">Soubor zůstává jen ve vašem prohlížeči, nikam se nenahrává.</p>
         </div>
       </div>
     </dialog>

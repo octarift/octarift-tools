@@ -12,11 +12,15 @@ import {
   MAX_BACKGROUND_BYTES,
   saveCustomBackground,
 } from './background';
+import { applyStrings, setMetaDescription, tr } from '@shared/i18n';
 import { PencilDigits } from './pencil';
+import { s } from './strings';
 import { buildShareUrl, loadState, MAX_DURATION_MS, saveState, type Mode } from './state';
 import { FALLBACK_THEME, isThemeId, themeCategories, themes, usesPencil, type ThemeId } from './themes';
 import { formatShort, msFromHMS, nextNewYear, pad, splitMs, toLocalInputValue } from './timer';
 
+applyStrings(s);
+setMetaDescription(s.metaDescription);
 mountSiteChrome('countdown');
 
 function $<T extends HTMLElement = HTMLElement>(selector: string): T {
@@ -68,7 +72,7 @@ let customBgUrl: string | null = null;
 const wakeLock = createWakeLock();
 const fullscreen = createFullscreen(els.stage, (on) => {
   document.body.classList.toggle('is-fullscreen', on);
-  els.fullscreen.textContent = on ? 'Ukončit celou obrazovku' : 'Celá obrazovka';
+  els.fullscreen.textContent = on ? s.exitFullscreen : s.fullscreen;
   wakeCursor();
 });
 
@@ -113,7 +117,7 @@ function start(): void {
   if (state.mode === 'timer') {
     const ms = state.status === 'paused' ? (state.remainingMs ?? 0) : readDuration();
     if (ms <= 0) {
-      toast('Nastavte délku odpočtu.');
+      toast(s.toastNoDuration);
       return;
     }
     if (state.status !== 'paused') state.durationMs = ms;
@@ -121,7 +125,7 @@ function start(): void {
   } else {
     const target = new Date(els.targetDate.value).getTime();
     if (!Number.isFinite(target) || target <= now) {
-      toast('Zvolte datum a čas v budoucnosti.');
+      toast(s.toastPastDate);
       return;
     }
     state = { ...state, status: 'running', targetDate: target, endsAt: target, remainingMs: null };
@@ -188,11 +192,11 @@ async function onBackgroundChosen(): Promise<void> {
   els.bgInput.value = '';
   if (!file) return;
   if (!isSupportedBackground(file)) {
-    toast('Podporované jsou obrázky a videa MP4 nebo WebM.');
+    toast(s.toastBadFile);
     return;
   }
   if (file.size > MAX_BACKGROUND_BYTES) {
-    toast('Soubor je příliš velký (maximum je 30 MB).');
+    toast(s.toastTooBig);
     return;
   }
   applyCustomBackground(file);
@@ -200,7 +204,7 @@ async function onBackgroundChosen(): Promise<void> {
   try {
     await saveCustomBackground(file);
   } catch {
-    toast('Pozadí se nepodařilo uložit, po obnovení stránky zmizí.');
+    toast(s.toastBgNotSaved);
   }
 }
 
@@ -219,9 +223,9 @@ const pencil = new PencilDigits(els.digits);
 function renderDigits(ms: number): void {
   const p = splitMs(ms);
   const units: Array<[value: string, label: string]> = [];
-  if (p.days > 0) units.push([String(p.days), 'dní']);
-  if (p.days > 0 || p.hours > 0) units.push([pad(p.hours), 'hod']);
-  units.push([pad(p.minutes), 'min'], [pad(p.seconds), 'sek']);
+  if (p.days > 0) units.push([String(p.days), s.unitDays]);
+  if (p.days > 0 || p.hours > 0) units.push([pad(p.hours), s.unitHours]);
+  units.push([pad(p.minutes), s.unitMinutes], [pad(p.seconds), s.unitSeconds]);
 
   // Pencil/chalk themes draw digits stroke by stroke; every other theme uses plain text.
   const pencilMode = usesPencil(els.stage.dataset.theme);
@@ -289,12 +293,12 @@ function renderThemes(): void {
           .map(
             (t) =>
               `<button type="button" class="theme-swatch" data-theme-id="${t.id}">` +
-              `<span class="theme-swatch__preview" data-theme="${t.id}"></span><span>${t.name}</span></button>`,
+              `<span class="theme-swatch__preview" data-theme="${t.id}"></span><span>${tr(t.name)}</span></button>`,
           )
           .join('');
         return (
           `<section class="theme-group" aria-labelledby="theme-group-${category.id}">` +
-          `<h3 id="theme-group-${category.id}" class="theme-group__title">${category.name}</h3>` +
+          `<h3 id="theme-group-${category.id}" class="theme-group__title">${tr(category.name)}</h3>` +
           `<div class="themes">${swatches}</div></section>`
         );
       })
@@ -304,18 +308,18 @@ function renderThemes(): void {
     const locked = b.dataset.themeId === 'custom' && !hasCustomBg;
     b.setAttribute('aria-pressed', String(b.dataset.themeId === state.theme));
     b.disabled = locked;
-    b.title = locked ? 'Nejdřív nahrajte vlastní pozadí' : '';
+    b.title = locked ? s.customLocked : '';
   });
 }
 
 function renderTitle(ms: number): void {
-  const label = state.title || 'Odpočet';
+  const label = state.title || s.pageTitle;
   document.title =
     state.status === 'running' || state.status === 'paused'
       ? `${formatShort(ms)} · ${label}`
       : state.status === 'finished'
-        ? `Hotovo! · ${label}`
-        : `Odpočet – ${site.name}`;
+        ? `${s.finishedTitle} · ${label}`
+        : `${s.pageTitle} – ${site.name}`;
 }
 
 function render(): void {
@@ -337,7 +341,7 @@ function render(): void {
   els.dateFields.hidden = state.mode !== 'date';
 
   els.start.hidden = running;
-  els.start.textContent = state.status === 'paused' ? 'Pokračovat' : 'Start';
+  els.start.textContent = state.status === 'paused' ? s.resume : s.start;
   els.pause.hidden = !(running && state.mode === 'timer');
   els.reset.disabled = state.status === 'idle';
   els.bgRemove.hidden = !hasCustomBg;
@@ -434,9 +438,9 @@ async function share(): Promise<void> {
   const url = buildShareUrl(state, location.href);
   try {
     await navigator.clipboard.writeText(url);
-    toast(state.theme === 'custom' ? 'Odkaz zkopírován (bez vlastního pozadí).' : 'Odkaz zkopírován.');
+    toast(state.theme === 'custom' ? s.toastCopiedNoBg : s.toastCopied);
   } catch {
-    window.prompt('Zkopírujte odkaz:', url);
+    window.prompt(s.copyPrompt, url);
   }
 }
 
