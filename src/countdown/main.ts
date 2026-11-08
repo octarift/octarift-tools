@@ -74,7 +74,38 @@ const fullscreen = createFullscreen(els.stage, (on) => {
   document.body.classList.toggle('is-fullscreen', on);
   els.fullscreen.textContent = on ? s.exitFullscreen : s.fullscreen;
   wakeCursor();
+  if (on) maybeShowIosTip();
+  else iosTip.hidden = true;
 });
+
+/* ---------- iPhone: suggest Add to Home Screen ---------- */
+
+// iPhone Safari has no Fullscreen API, so its bars stay visible. A Home Screen web app has none;
+// there is no way to open that dialog from a page, so the tip explains the two taps once.
+const IOS_TIP_KEY = 'countdown:ios-tip-seen';
+const iosTip = $('#ios-tip');
+const isIPhone = /iPhone|iPod/.test(navigator.userAgent);
+const isHomeScreenApp =
+  (navigator as Navigator & { standalone?: boolean }).standalone === true ||
+  matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches;
+
+function maybeShowIosTip(): void {
+  if (!isIPhone || isHomeScreenApp || !fullscreen.isPseudo()) return;
+  try {
+    if (localStorage.getItem(IOS_TIP_KEY)) return;
+    localStorage.setItem(IOS_TIP_KEY, '1');
+  } catch {
+    // Storage blocked: show the tip anyway, it just may come back next time.
+  }
+  iosTip.hidden = false;
+}
+
+$('#ios-tip-close').addEventListener('click', (e) => {
+  e.stopPropagation();
+  iosTip.hidden = true;
+});
+iosTip.addEventListener('dblclick', (e) => e.stopPropagation());
+document.querySelector('meta[name="apple-mobile-web-app-title"]')?.setAttribute('content', s.pageTitle);
 
 /* ---------- time ---------- */
 

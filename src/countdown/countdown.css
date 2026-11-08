@@ -2103,3 +2103,65 @@ label.field,
     flex-basis: 100%;
   }
 }
+
+/* ---------- iPhone notch / Home Screen app ---------- */
+/* The page uses viewport-fit=cover, so keep content out of the notch and the home indicator. */
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+body.pseudo-fullscreen .stage__content {
+  padding: max(4cqh, env(safe-area-inset-top)) max(4cqw, env(safe-area-inset-right))
+    max(4cqh, env(safe-area-inset-bottom)) max(4cqw, env(safe-area-inset-left));
+}
+
+body.pseudo-fullscreen .stage__exit {
+  top: calc(16px + env(safe-area-inset-top));
+  right: calc(16px + env(safe-area-inset-right));
+}
+
+/* One-time tip on iPhone: how to get real fullscreen (Add to Home Screen). */
+.ios-tip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 4;
+  display: grid;
+  gap: 12px;
+  width: min(420px, calc(100% - 32px));
+  padding: 16px;
+  transform: translateX(-50%);
+  border-radius: 14px;
+  background: rgb(11 14 26 / 0.92);
+  color: #e6e8f0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.ios-tip[hidden] {
+  display: none;
+}
+
+.ios-tip p {
+  margin: 0;
+}
+
+.ios-tip strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.ios-tip__share {
+  display: inline-block;
+  vertical-align: -3px;
+  margin: 0 2px;
+}
+
+.ios-tip .button {
+  justify-self: end;
+  border-color: transparent;
+  background: #5ad278;
+  color: #0b0e1a;
+  font-weight: 600;
+}

@@ -86,6 +86,9 @@ public/                         static files copied as-is (favicon, later robots
   The custom background is never part of a link.
 - Saved state lives in localStorage under `countdown:state:v1`; bump the version if the shape changes incompatibly.
 - Sound needs a user gesture first (`primeAudio()` on Start / first tap).
+- iPhone Safari has no Fullscreen API, so fullscreen there is the CSS fallback with Safari's bars visible.
+  Real fullscreen = Add to Home Screen (`public/countdown/manifest.webmanifest`, apple-* meta tags); the page
+  shows a one-time tip (`countdown:ios-tip-seen`) on iPhone. Home Screen apps get their own storage on iOS.
 
 ## Not done yet (ideas, in rough priority)
 

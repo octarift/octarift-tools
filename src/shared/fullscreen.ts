@@ -6,6 +6,8 @@ export interface FullscreenControl {
   toggle(): Promise<void>;
   exit(): Promise<void>;
   isOn(): boolean;
+  /** True while the CSS fallback is used instead of real fullscreen (browser bars stay visible). */
+  isPseudo(): boolean;
 }
 
 export function createFullscreen(el: HTMLElement, onChange: (on: boolean) => void): FullscreenControl {
@@ -58,5 +60,6 @@ export function createFullscreen(el: HTMLElement, onChange: (on: boolean) => voi
     toggle: () => (isOn() ? exit() : enter()),
     exit,
     isOn,
+    isPseudo: () => pseudo,
   };
 }
