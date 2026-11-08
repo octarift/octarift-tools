@@ -51,6 +51,7 @@ const els = {
   reset: $<HTMLButtonElement>('#reset'),
   fullscreen: $<HTMLButtonElement>('#fullscreen'),
   immersive: $<HTMLButtonElement>('#immersive'),
+  shortcuts: $('#shortcuts'),
   share: $<HTMLButtonElement>('#share'),
   toast: $('#toast'),
   settings: $<HTMLDialogElement>('#settings'),
@@ -400,6 +401,7 @@ function render(): void {
   });
   els.timerFields.hidden = state.mode !== 'timer';
   els.dateFields.hidden = state.mode !== 'date';
+  els.shortcuts.textContent = state.mode === 'date' ? s.shortcutsDate : s.shortcuts;
 
   els.start.hidden = running;
   els.start.textContent = state.status === 'paused' ? s.resume : s.start;

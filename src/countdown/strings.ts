@@ -20,6 +20,8 @@ const cs = {
   share: 'Sdílet odkaz',
   shortcuts:
     'Mezerník spustí nebo pozastaví, F přepne celou obrazovku, O roztáhne odpočet na celé okno, N otevře nastavení.',
+  // A countdown to a date cannot be paused, so its hint leaves that out.
+  shortcutsDate: 'Mezerník spustí, F přepne celou obrazovku, O roztáhne odpočet na celé okno, N otevře nastavení.',
   immersive: 'Celé okno',
   immersiveHint: 'Klepnutím do odpočtu se vrátíte zpět.',
   mode: 'Režim',
@@ -75,6 +77,7 @@ const en: typeof cs = {
   exitFullscreen: 'Exit fullscreen',
   share: 'Share link',
   shortcuts: 'Space starts or pauses, F toggles fullscreen, W fills the window, S opens settings.',
+  shortcutsDate: 'Space starts, F toggles fullscreen, W fills the window, S opens settings.',
   immersive: 'Fill window',
   immersiveHint: 'Click or tap the countdown to go back.',
   mode: 'Mode',
