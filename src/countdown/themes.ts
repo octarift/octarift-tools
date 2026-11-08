@@ -9,6 +9,7 @@ export const themes = [
   { id: 'terminal', name: 'Terminál', animated: true },
   { id: 'warp', name: 'Hyperprostor', animated: true },
   { id: 'hud', name: 'HUD', animated: true },
+  { id: 'gaming', name: 'Gaming', animated: true },
   { id: 'business', name: 'Business', animated: true },
   { id: 'paper', name: 'Tužka na papíře', animated: true },
   { id: 'custom', name: 'Vlastní', animated: false },

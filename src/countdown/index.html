@@ -27,7 +27,36 @@
         <button class="stage__exit" type="button" data-action="fullscreen" aria-label="Ukončit celou obrazovku">✕</button>
       </section>
 
-      <section class="panel" aria-label="Nastavení odpočtu">
+      <div class="controls" role="toolbar" aria-label="Ovládání odpočtu">
+        <button
+          id="settings-open"
+          class="button"
+          type="button"
+          aria-controls="settings"
+          aria-expanded="false"
+          aria-keyshortcuts="N"
+        >
+          <span aria-hidden="true">☰</span> Nastavení
+        </button>
+        <span class="controls__spacer"></span>
+        <button id="start" class="button button--primary" type="button">Start</button>
+        <button id="pause" class="button" type="button" hidden>Pauza</button>
+        <button id="reset" class="button" type="button">Reset</button>
+        <button id="fullscreen" class="button" type="button" data-action="fullscreen">Celá obrazovka</button>
+        <button id="share" class="button" type="button">Sdílet odkaz</button>
+      </div>
+      <p class="hint controls__hint">Mezerník spustí nebo pozastaví, F přepne celou obrazovku, N otevře nastavení.</p>
+
+      <aside class="ad-slot" data-ad-slot="countdown-bottom"></aside>
+    </main>
+
+    <dialog id="settings" class="drawer" aria-labelledby="settings-title">
+      <div class="panel">
+        <div class="drawer__header">
+          <h2 id="settings-title" class="drawer__title">Nastavení</h2>
+          <button id="settings-close" class="icon-button" type="button" aria-label="Zavřít nastavení">✕</button>
+        </div>
+
         <div class="segmented" role="group" aria-label="Režim">
           <button type="button" data-mode="timer">Časovač</button>
           <button type="button" data-mode="date">K datu</button>
@@ -74,19 +103,8 @@
           </div>
           <p class="hint">Soubor zůstává jen ve vašem prohlížeči, nikam se nenahrává.</p>
         </div>
-
-        <div class="actions">
-          <button id="start" class="button button--primary" type="button">Start</button>
-          <button id="pause" class="button" type="button" hidden>Pauza</button>
-          <button id="reset" class="button" type="button">Reset</button>
-          <button id="fullscreen" class="button" type="button" data-action="fullscreen">Celá obrazovka</button>
-          <button id="share" class="button" type="button">Kopírovat odkaz</button>
-        </div>
-        <p class="hint">Mezerník spustí nebo pozastaví, F přepne celou obrazovku.</p>
-      </section>
-
-      <aside class="ad-slot" data-ad-slot="countdown-bottom"></aside>
-    </main>
+      </div>
+    </dialog>
 
     <footer class="site-footer" data-site-footer></footer>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>

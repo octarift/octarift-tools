@@ -48,6 +48,9 @@ const els = {
   fullscreen: $<HTMLButtonElement>('#fullscreen'),
   share: $<HTMLButtonElement>('#share'),
   toast: $('#toast'),
+  settings: $<HTMLDialogElement>('#settings'),
+  settingsOpen: $<HTMLButtonElement>('#settings-open'),
+  settingsClose: $<HTMLButtonElement>('#settings-close'),
 };
 
 const loaded = loadState();
@@ -295,23 +298,67 @@ function render(): void {
   els.bgRemove.hidden = !hasCustomBg;
 
   renderThemes();
+  syncTerminalBlink();
+  scheduleTick();
 }
 
-/** Runs several times a second; cheap because the DOM only changes when the shown value does. */
+/**
+ * The shown seconds roll over whenever (anchor - now) crosses a whole second, so the
+ * anchor is the moment the countdown hits zero. Null when the display is not moving.
+ */
+function secondsAnchor(): number | null {
+  if (state.status === 'running') return state.endsAt;
+  if (state.status === 'idle' && state.mode === 'date') return state.targetDate;
+  return null;
+}
+
+let tickTimer = 0;
+
+/** Wakes up just after the displayed value changes instead of polling, so digits flip on time. */
+function scheduleTick(): void {
+  window.clearTimeout(tickTimer);
+  const anchor = secondsAnchor();
+  const now = Date.now();
+  const delay = anchor !== null && anchor > now ? ((anchor - now) % 1000 || 1000) + 5 : 500;
+  tickTimer = window.setTimeout(tick, delay);
+}
+
 function tick(): void {
   if (state.status === 'running' && remainingMs() <= 0) {
-    finish();
+    finish(); // re-renders and reschedules
     return;
   }
   const ms = remainingMs();
   renderDigits(ms);
   renderTitle(ms);
+  syncTerminalBlink();
+  scheduleTick();
+}
+
+/**
+ * Terminal theme: keeps the cursor blink (a 1 s CSS animation named wt-term-*)
+ * in step with the moment the seconds change.
+ */
+function syncTerminalBlink(): void {
+  if (els.stage.dataset.theme !== 'terminal') return;
+  const now = Date.now();
+  const phase = (((now - (secondsAnchor() ?? 0)) % 1000) + 1000) % 1000;
+  for (const anim of els.stage.getAnimations({ subtree: true })) {
+    if (!(anim instanceof CSSAnimation) || !anim.animationName.startsWith('wt-term-')) continue;
+    const current = (Number(anim.currentTime) || 0) % 1000;
+    const drift = Math.abs(current - phase);
+    // Only correct real drift; re-seeking every tick would cause visible stutter.
+    if (Math.min(drift, 1000 - drift) > 30) anim.currentTime = phase;
+  }
 }
 
 /* ---------- misc UI ---------- */
 
 let toastTimer = 0;
 function toast(message: string): void {
+  // An open modal dialog sits in the top layer above everything else, so show the toast inside it.
+  const host = els.settings.open ? els.settings : document.body;
+  if (els.toast.parentElement !== host) host.append(els.toast);
   els.toast.textContent = message;
   els.toast.hidden = false;
   window.clearTimeout(toastTimer);
@@ -410,10 +457,14 @@ document.addEventListener('pointerdown', primeAudio, { once: true });
 
 document.addEventListener('keydown', (e) => {
   if (e.target instanceof Element && e.target.closest('input, textarea, select, button, [contenteditable]')) return;
+  // While the settings drawer is open, only its own keys apply (Esc closes it natively).
+  if (els.settings.open) return;
   if (e.key === ' ') {
     e.preventDefault();
     if (state.status === 'running') pause();
     else start();
+  } else if ((e.key === 'n' || e.key === 'N') && !fullscreen.isOn()) {
+    openSettings();
   } else if (e.key === 'f' || e.key === 'F') {
     void fullscreen.toggle();
   } else if (e.key === 'Escape' && fullscreen.isOn()) {
@@ -423,6 +474,25 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('visibilitychange', tick);
 
+/* ---------- settings drawer ---------- */
+
+function openSettings(): void {
+  if (els.settings.open) return;
+  els.settings.showModal();
+  els.settingsOpen.setAttribute('aria-expanded', 'true');
+}
+
+els.settingsOpen.addEventListener('click', openSettings);
+els.settingsClose.addEventListener('click', () => els.settings.close());
+// The panel fills the dialog, so a click that lands on the dialog itself was on the backdrop.
+els.settings.addEventListener('click', (e) => {
+  if (e.target === els.settings) els.settings.close();
+});
+els.settings.addEventListener('close', () => {
+  els.settingsOpen.setAttribute('aria-expanded', 'false');
+  if (els.toast.parentElement !== document.body) document.body.append(els.toast);
+});
+
 /* ---------- init ---------- */
 
 writeDuration(state.durationMs);
@@ -430,7 +500,6 @@ els.targetDate.value = toLocalInputValue(state.targetDate ?? nextNewYear());
 els.title.value = state.title;
 render();
 if (state.status === 'running') void wakeLock.enable();
-window.setInterval(tick, 200);
 
 void loadCustomBackground().then((blob) => {
   if (!blob) return;
