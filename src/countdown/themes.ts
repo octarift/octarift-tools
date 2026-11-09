@@ -1,9 +1,9 @@
 /** Groups shown as headings in the theme picker, in display order. */
 export const themeCategories = [
+  { id: 'work', name: { cs: 'Škola a práce', en: 'School & Work' } },
+  { id: 'tech', name: { cs: 'Technologie', en: 'Tech' } },
   { id: 'mood', name: { cs: 'Nálada', en: 'Mood' } },
   { id: 'nature', name: { cs: 'Příroda', en: 'Nature' } },
-  { id: 'tech', name: { cs: 'Technologie a hry', en: 'Tech & Games' } },
-  { id: 'work', name: { cs: 'Škola a práce', en: 'School & Work' } },
   { id: 'holiday', name: { cs: 'Svátky', en: 'Holidays' } },
   { id: 'life', name: { cs: 'Volno a životní události', en: 'Time Off & Life Events' } },
   { id: 'own', name: { cs: 'Vlastní', en: 'Custom' } },
@@ -32,7 +32,7 @@ export const themes = [
   { id: 'terminal', name: { cs: 'Terminál', en: 'Terminal' }, category: 'tech', animated: true },
   { id: 'warp', name: { cs: 'Hyperprostor', en: 'Hyperspace' }, category: 'tech', animated: true },
   { id: 'hud', name: { cs: 'HUD', en: 'HUD' }, category: 'tech', animated: true },
-  { id: 'gaming', name: { cs: 'Gaming', en: 'Gaming' }, category: 'tech', animated: true },
+  { id: 'rgb', name: { cs: 'RGB setup', en: 'RGB Setup' }, category: 'tech', animated: true },
 
   { id: 'exam', name: { cs: 'Psaní testu', en: 'Exam Time' }, category: 'work', animated: true, pencil: true },
   { id: 'paper', name: { cs: 'Tužka na papíře', en: 'Pencil on Paper' }, category: 'work', animated: true, pencil: true },
