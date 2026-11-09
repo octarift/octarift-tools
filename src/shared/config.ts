@@ -19,12 +19,19 @@ export const site = {
 };
 
 /**
- * House promotion for the studio's game, shown outside fullscreen only.
+ * Any mention of the studio's game (promo card, footer link). Off for now so web filters such as
+ * Zscaler classify the site as web tools, not games. It is a plain literal so the bundler drops the
+ * game text from the build entirely while it is false; set to true to bring everything back.
+ */
+export const GAME_MENTIONS_ENABLED = false;
+
+/**
+ * House promotion for the studio's game, shown outside fullscreen only (and only with GAME_MENTIONS_ENABLED).
  * The Play link carries a referrer, so installs coming from the tools show up
  * under utm_source=octarift-tools in Play Console's acquisition reports.
  */
 export const gamePromo = {
-  /** Promo card on/off. Hidden for now; the slots stay in the pages, ready to switch back on. */
+  /** Promo card on/off (needs GAME_MENTIONS_ENABLED too). Hidden for now; the slots stay in the pages. */
   enabled: false,
   name: 'Rift Defense',
   pitch: {

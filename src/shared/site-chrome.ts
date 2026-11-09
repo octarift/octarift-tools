@@ -1,4 +1,4 @@
-import { gamePromo, site, tools } from './config';
+import { GAME_MENTIONS_ENABLED, gamePromo, site, tools } from './config';
 import { bindSchemeSwitch, schemeSwitchHtml } from './color-scheme';
 import { lang, LANGS, langUrl, tr } from './i18n';
 
@@ -37,11 +37,12 @@ export function mountSiteChrome(currentSlug?: string): void {
   if (footer) {
     footer.innerHTML =
       `<span>© ${new Date().getFullYear()} <a href="${site.studio.url}">${site.studio.name}</a>` +
-      ` · <a href="${gamePromo.pageUrl}">${gamePromo.name}</a></span>${coffeeButton()}`;
+      (GAME_MENTIONS_ENABLED ? ` · <a href="${gamePromo.pageUrl}">${gamePromo.name}</a>` : '') +
+      `</span>${coffeeButton()}`;
   }
 
   document.querySelectorAll<HTMLElement>('[data-promo]').forEach((slot) => {
-    if (!gamePromo.enabled) {
+    if (!GAME_MENTIONS_ENABLED || !gamePromo.enabled) {
       slot.remove();
       return;
     }
