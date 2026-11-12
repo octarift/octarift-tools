@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QR code generator – Octarift Tools</title>
+    <meta name="description" content="Free QR code generator for links, text, Wi-Fi, contacts, e-mail, SMS and SEPA payments. Download as PNG or SVG. Everything runs in your browser, nothing is uploaded." />
+    <!-- Link previews (WhatsApp, Facebook, Slack…). Crawlers do not run scripts, so these stay in English;
+         the page switches to Czech for Czech visitors at runtime. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Octarift Tools" />
+    <meta property="og:title" content="QR Code Generator" />
+    <meta property="og:description" content="Free QR code generator for links, text, Wi-Fi, contacts, e-mail, SMS and SEPA payments. Download as PNG or SVG. Everything runs in your browser, nothing is uploaded." />
+    <meta property="og:url" content="https://tools.octarift.com/qr-code/" />
+    <meta property="og:image" content="https://tools.octarift.com/og/qr-code.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="QR Code Generator – Octarift Tools" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="cs_CZ" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="cs" href="https://tools.octarift.com/qr-code/?lang=cs" />
+    <link rel="alternate" hreflang="en" href="https://tools.octarift.com/qr-code/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://tools.octarift.com/qr-code/" />
+    <!-- Apply the saved light/dark choice before first paint (see src/shared/color-scheme.ts). -->
+    <script>try{var m=document.cookie.match(/(?:^|; )scheme=(light|dark)/);if(m)document.documentElement.dataset.scheme=m[1]}catch(e){}</script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <!-- Visible text is filled from strings.ts (data-i18n / data-i18n-attr); the Czech here is only the fallback. -->
+  <body>
+    <header class="site-header" data-site-header></header>
+
+    <main class="qr">
+      <h1 class="qr__title" data-i18n="heading">Generátor QR kódů</h1>
+      <p class="qr__lead" data-i18n="lead"></p>
+
+      <section class="qr__form">
+        <div id="qr-modes" class="qr-modes" role="group" data-i18n-attr="aria-label:modesLabel"></div>
+        <div id="qr-payments" class="qr-modes qr-modes--sub" role="group" data-i18n-attr="aria-label:paymentTypes" hidden></div>
+        <p id="qr-mode-hint" class="qr__hint"></p>
+        <form id="qr-fields" class="qr-fields" novalidate autocomplete="off"></form>
+        <p id="qr-payment-note" class="qr__note" data-i18n="paymentNote" hidden></p>
+      </section>
+
+      <section class="qr__output" aria-live="polite">
+        <div class="qr-card">
+          <div id="qr-preview" class="qr-preview" role="img" data-i18n-attr="aria-label:previewLabel">
+            <p id="qr-empty" class="qr-preview__empty" data-i18n="previewEmpty"></p>
+          </div>
+          <p id="qr-error" class="qr__error" role="alert" hidden></p>
+          <p id="qr-warning" class="qr__warning" data-i18n="lowContrast" hidden></p>
+          <div class="qr-actions">
+            <button id="qr-png" class="button button--primary" type="button" data-i18n="downloadPng" disabled>
+              Stáhnout PNG
+            </button>
+            <button id="qr-svg" class="button" type="button" data-i18n="downloadSvg" disabled>Stáhnout SVG</button>
+            <button id="qr-copy" class="button" type="button" data-i18n="copyImage" disabled>Kopírovat obrázek</button>
+          </div>
+
+          <details class="qr-details">
+            <summary data-i18n="styleTitle">Vzhled</summary>
+            <div class="qr-style">
+              <label class="qr-field"
+                ><span data-i18n="ecc">Odolnost proti poškození</span><select id="qr-ecc"></select
+              ></label>
+              <label class="qr-field"
+                ><span data-i18n="pngSize">Velikost PNG</span
+                ><select id="qr-size">
+                  <option value="512">512 px</option>
+                  <option value="1024">1024 px</option>
+                  <option value="2048">2048 px</option>
+                </select></label
+              >
+              <label class="qr-field qr-field--color"
+                ><span data-i18n="foreground">Barva kódu</span><input id="qr-fg" type="color" value="#000000"
+              /></label>
+              <label class="qr-field qr-field--color"
+                ><span data-i18n="background">Barva pozadí</span><input id="qr-bg" type="color" value="#ffffff"
+              /></label>
+              <p id="qr-ecc-fixed" class="qr__hint qr-style__wide" data-i18n="eccFixed" hidden></p>
+            </div>
+          </details>
+
+          <details class="qr-details">
+            <summary data-i18n="content">Obsah kódu</summary>
+            <pre id="qr-content" class="qr-content"></pre>
+          </details>
+        </div>
+      </section>
+
+      <p class="qr__trademark" data-i18n="trademark"></p>
+      <aside class="qr__promo" data-promo="qr-code"></aside>
+      <aside class="ad-slot" data-ad-slot="qr-code-bottom"></aside>
+    </main>
+
+    <footer class="site-footer" data-site-footer></footer>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

@@ -149,7 +149,7 @@ els.list.innerHTML = groups
   .map((g) => {
     const buttons = conversions
       .filter((c) => c.group === g)
-      .map((c) => `<button type="button" class="tc-chip" data-conversion="${c.id}">${s.conv[c.id]}</button>`)
+      .map((c) => `<button type="button" class="chip" data-conversion="${c.id}">${s.conv[c.id]}</button>`)
       .join('');
     return `<div class="tc-group" role="group" aria-label="${s.groups[g]}"><h3 class="tc-group__title">${s.groups[g]}</h3><div class="tc-group__chips">${buttons}</div></div>`;
   })

@@ -2,7 +2,7 @@
 
 A collection of small browser-based tools on one site, published at
 https://tools.octarift.com under the Octarift studio brand. Tools so far: a
-countdown (`/countdown/`) and a text converter (`/text-converter/`).
+countdown (`/countdown/`), a text converter (`/text-converter/`) and a QR code generator (`/qr-code/`).
 
 The studio site (octarift.com, separate repo `octarift/octarift-web`, local
 `D:\Projects\octarift-web`) links here, and these tools promote the studio's
@@ -25,7 +25,7 @@ game Rift Defense (`com.octarift.riftdefense` on Google Play).
   `?lang=cs|en` overrides and is remembered (`src/shared/i18n.ts`). Each page lists both versions with hreflang links.
   **Never hard-code UI text**: add it to the tool's `strings.ts` (`en` is typed from `cs`, so a missing translation
   fails the build), shared text uses `tr({ cs, en })`, static HTML uses `data-i18n` / `data-i18n-attr`.
-  Code, comments and commit messages are in English.
+  Code, comments and commit messages are in English. English UI text uses US spelling (color, center).
 - Light/dark/system switch in the header (`src/shared/color-scheme.ts`): the choice is a `scheme` cookie on
   `.octarift.com`, shared with the studio site (its `scheme.js`); no cookie = follow the system. An inline
   `<head>` snippet in every page applies it before paint, and base.css keeps the dark tokens in two equal blocks.
@@ -52,6 +52,8 @@ src/
   index.html, hub.ts, hub.css   hub page listing all tools (/)
   shared/                       code used by every tool (import via "@shared/...")
     config.ts                   site name, Buy Me a Coffee URL, ads switch, list of tools
+    tool-icons.ts               hub icons (inline SVG in the logo's green ramp, on a dark tile)
+    text.ts                     shared text helpers (removeDiacritics)
     site-chrome.ts              fills <header data-site-header>, <footer data-site-footer>, <aside data-ad-slot>
     fullscreen.ts               Fullscreen API with CSS fallback (iPhone Safari)
     wake-lock.ts                keeps the screen on
@@ -68,6 +70,11 @@ src/
   text-converter/               the text converter (/text-converter/)
     conversions.ts              pure conversion functions + their order and groups (id = label key in strings.ts)
     main.ts, strings.ts, text-converter.css
+  qr-code/                      the QR code generator (/qr-code/), QR encoding by the `uqr` package
+    payloads.ts                 pure payload builders: QR Platba (SPD), EPC/SEPA, Wi-Fi, vCard, mailto, SMS,
+                                PayPal.me/Revolut.me links; IBAN and Czech account (mod 11) checks
+    modes.ts                    code types: form fields + how values become the payload
+    main.ts, strings.ts, qr-code.css
 public/                         static files copied as-is (favicon, later robots.txt, ads.txt)
 ```
 
@@ -89,6 +96,14 @@ public/                         static files copied as-is (favicon, later robots
 - iPhone Safari has no Fullscreen API, so fullscreen there is the CSS fallback with Safari's bars visible.
   Real fullscreen = Add to Home Screen (`public/countdown/manifest.webmanifest`, apple-* meta tags); the page
   shows a one-time tip (`countdown:ios-tip-seen`) on iPhone. Home Screen apps get their own storage on iOS.
+
+## QR code generator: things to keep right
+
+- Field values (Wi-Fi passwords, accounts) stay in sessionStorage only; mode and look in localStorage.
+- EPC codes must use error correction M (the mode sets `ecc: 'M'` and the select is locked).
+- QR Platba values drop accents and encode `*` as `%2A`; accounts are always sent as IBAN.
+- Slovak PAY by square is left out until ADELANTE (owner of the "by square" trademark) confirms the terms.
+- Any payload change: round-trip it through a decoder (e.g. jsQR) and scan it with a real banking app.
 
 ## Not done yet (ideas, in rough priority)
 

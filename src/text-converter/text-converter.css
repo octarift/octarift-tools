@@ -78,28 +78,6 @@
   gap: 6px;
 }
 
-.tc-chip {
-  min-height: 44px;
-  padding: 6px 14px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--text);
-  font-size: 0.92rem;
-  cursor: pointer;
-}
-
-.tc-chip:hover {
-  background: var(--surface-2);
-}
-
-.tc-chip[aria-pressed='true'] {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--accent-contrast);
-  font-weight: 600;
-}
-
 .tc__hint {
   min-height: 1.5em;
   margin: 10px 0 0;
@@ -132,12 +110,6 @@
 .tc-pane__label {
   margin-right: auto;
   font-weight: 600;
-}
-
-.button--small {
-  min-height: 40px;
-  padding: 6px 12px;
-  font-size: 0.9rem;
 }
 
 .tc-pane__text {

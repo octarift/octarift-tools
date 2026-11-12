@@ -38,3 +38,20 @@ export const textConverterIcon = svg(
   // text lines under the A
   `<path d="M8 33h12M8 40h16" stroke="#147d4c" stroke-width="3"/>`,
 );
+
+/** Three finder squares and a few modules, each in a different shade of the ramp. */
+export const qrCodeIcon = svg(
+  `<g stroke-width="3" stroke-linejoin="round">` +
+    `<rect x="7.5" y="7.5" width="12" height="12" rx="2.5" stroke="#c4f27a"/>` +
+    `<rect x="28.5" y="7.5" width="12" height="12" rx="2.5" stroke="#5ad278"/>` +
+    `<rect x="7.5" y="28.5" width="12" height="12" rx="2.5" stroke="#1f9a5a"/>` +
+    `</g>` +
+    `<rect x="11.5" y="11.5" width="4" height="4" rx="1" fill="#c4f27a"/>` +
+    `<rect x="32.5" y="11.5" width="4" height="4" rx="1" fill="#5ad278"/>` +
+    `<rect x="11.5" y="32.5" width="4" height="4" rx="1" fill="#1f9a5a"/>` +
+    `<rect x="27" y="27" width="5" height="5" rx="1" fill="#94e46a"/>` +
+    `<rect x="36" y="27" width="5" height="5" rx="1" fill="#33b866"/>` +
+    `<rect x="31.5" y="31.5" width="5" height="5" rx="1" fill="#5ad278"/>` +
+    `<rect x="27" y="36" width="5" height="5" rx="1" fill="#147d4c"/>` +
+    `<rect x="36" y="36" width="5" height="5" rx="1" fill="#0f5f3c"/>`,
+);

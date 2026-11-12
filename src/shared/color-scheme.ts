@@ -1,7 +1,7 @@
 import { tr } from './i18n';
 
 /**
- * Light / dark / system colour scheme switch.
+ * Light / dark / system color scheme switch.
  *
  * The choice is stored in a `scheme` cookie on the whole octarift.com domain, so the
  * studio site (octarift-web/scheme.js) and Tools share it. No cookie = follow the system.
