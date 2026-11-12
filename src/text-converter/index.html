@@ -59,6 +59,67 @@
             >
           </div>
         </div>
+        <div id="affix-fields" class="tc-replace" hidden>
+          <label class="tc-replace__field"
+            ><span data-i18n="prefix">Na začátek řádku</span
+            ><input id="tc-prefix" type="text" spellcheck="false" autocomplete="off"
+          /></label>
+          <label class="tc-replace__field"
+            ><span data-i18n="suffix">Na konec řádku</span
+            ><input id="tc-suffix" type="text" spellcheck="false" autocomplete="off"
+          /></label>
+          <div class="tc-replace__options">
+            <label class="tc-check"
+              ><input id="tc-affix-skip" type="checkbox" /><span data-i18n="skipEmpty"
+                >Vynechat prázdné řádky</span
+              ></label
+            >
+          </div>
+        </div>
+        <div id="number-fields" class="tc-replace" hidden>
+          <label class="tc-replace__field"
+            ><span data-i18n="numberStart">Začít od</span
+            ><input id="tc-number-start" type="number" inputmode="numeric" step="1" value="1"
+          /></label>
+          <label class="tc-replace__field"
+            ><span data-i18n="numberSeparator">Za číslem</span
+            ><input id="tc-number-sep" type="text" spellcheck="false" autocomplete="off" value=". "
+          /></label>
+          <div class="tc-replace__options">
+            <label class="tc-check"
+              ><input id="tc-number-pad" type="checkbox" /><span data-i18n="numberPad"
+                >Doplnit nuly (01, 02…)</span
+              ></label
+            >
+            <label class="tc-check"
+              ><input id="tc-number-skip" type="checkbox" /><span data-i18n="skipEmpty"
+                >Vynechat prázdné řádky</span
+              ></label
+            >
+          </div>
+        </div>
+        <div id="list-fields" class="tc-replace" hidden>
+          <label class="tc-replace__field"
+            ><span data-i18n="listSeparator">Oddělovač</span
+            ><input id="tc-list-sep" type="text" spellcheck="false" autocomplete="off" value=", "
+          /></label>
+        </div>
+        <div id="filter-fields" class="tc-replace" hidden>
+          <label class="tc-replace__field"
+            ><span data-i18n="filterFind">Řádky obsahující</span
+            ><input id="tc-filter-find" type="text" spellcheck="false" autocomplete="off"
+          /></label>
+          <div class="tc-replace__options">
+            <label class="tc-check"
+              ><input id="tc-filter-case" type="checkbox" /><span data-i18n="caseSensitive"
+                >Rozlišovat velká a malá písmena</span
+              ></label
+            >
+            <label class="tc-check"
+              ><input id="tc-filter-regex" type="checkbox" /><span data-i18n="regex">Regulární výraz</span></label
+            >
+          </div>
+        </div>
         <p id="conversion-hint" class="tc__hint" aria-live="polite"></p>
       </section>
 

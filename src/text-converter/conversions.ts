@@ -18,7 +18,8 @@ export class ConversionError extends Error {
 
 export type GroupId = 'case' | 'cleanup' | 'lines' | 'encoding';
 
-/** Settings of conversions that take user input (only find and replace so far). */
+/* Settings of the conversions that take user input. */
+
 export interface ReplaceOptions {
   find: string;
   replace: string;
@@ -26,9 +27,41 @@ export interface ReplaceOptions {
   regex: boolean;
 }
 
+/** Text added to the start and end of every line. */
+export interface AffixOptions {
+  prefix: string;
+  suffix: string;
+  skipEmpty: boolean;
+}
+
+/** Line numbering: first number, text between the number and the line, empty lines left unnumbered. */
+export interface NumberOptions {
+  start: number;
+  separator: string;
+  /** Pad with zeros to the widest number (01 … 12). */
+  pad: boolean;
+  skipEmpty: boolean;
+}
+
+/** Separator between list items, for lines ↔ list. */
+export interface ListOptions {
+  separator: string;
+}
+
+/** Keep / remove lines that contain the text. */
+export interface FilterOptions {
+  find: string;
+  caseSensitive: boolean;
+  regex: boolean;
+}
+
 export interface ConversionContext {
   lang: string;
   replace: ReplaceOptions;
+  affix: AffixOptions;
+  numbering: NumberOptions;
+  list: ListOptions;
+  filter: FilterOptions;
 }
 
 export interface Conversion {
@@ -154,18 +187,22 @@ function stripHtml(text: string): string {
 
 const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+/** The search text as a RegExp: literal unless `regex`; a broken pattern throws ConversionError. */
+function buildRegExp(find: string, caseSensitive: boolean, regex: boolean, flags: string): RegExp {
+  try {
+    return new RegExp(regex ? find : escapeRegExp(find), `${flags}${caseSensitive ? '' : 'i'}u`);
+  } catch (e) {
+    throw new ConversionError('errRegex', e instanceof Error ? e.message : '');
+  }
+}
+
 /**
  * Replaces every match. Plain mode replaces the text literally (no $ patterns);
  * regex mode supports $1, $<name>, $& and \n / \t in the replacement.
  */
 export function findReplace(text: string, o: ReplaceOptions): { text: string; count: number } {
   if (o.find === '') return { text, count: 0 };
-  let re: RegExp;
-  try {
-    re = new RegExp(o.regex ? o.find : escapeRegExp(o.find), `g${o.caseSensitive ? '' : 'i'}u`);
-  } catch (e) {
-    throw new ConversionError('errRegex', e instanceof Error ? e.message : '');
-  }
+  const re = buildRegExp(o.find, o.caseSensitive, o.regex, 'g');
   const count = [...text.matchAll(re)].length;
   if (!o.regex) return { text: text.replace(re, () => o.replace), count };
   const replacement = o.replace.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
@@ -188,6 +225,87 @@ const removeEmptyLines = (text: string) =>
     .filter((l) => l.trim() !== '')
     .join('\n');
 const reverseLines = (text: string) => lines(text).reverse().join('\n');
+
+/** \t typed in a field stands for a tab, so columns can be built for spreadsheets. */
+const tabs = (text: string) => text.replace(/\\t/g, '\t');
+
+function affixLines(text: string, o: AffixOptions): string {
+  const prefix = tabs(o.prefix);
+  const suffix = tabs(o.suffix);
+  return lines(text)
+    .map((l) => (o.skipEmpty && l.trim() === '' ? l : prefix + l + suffix))
+    .join('\n');
+}
+
+function numberLines(text: string, o: NumberOptions): string {
+  const all = lines(text);
+  const start = Number.isFinite(o.start) ? Math.trunc(o.start) : 1;
+  const count = o.skipEmpty ? all.filter((l) => l.trim() !== '').length : all.length;
+  const last = start + Math.max(count, 1) - 1;
+  // Negative starts are not padded ("-1" would become "0-1").
+  const width = o.pad && start >= 0 ? String(last).length : 0;
+  const separator = tabs(o.separator);
+  let n = start;
+  return all
+    .map((l) => (o.skipEmpty && l.trim() === '' ? l : String(n++).padStart(width, '0') + separator + l))
+    .join('\n');
+}
+
+const trimLines = (text: string) =>
+  lines(text)
+    .map((l) => l.trim())
+    .join('\n');
+
+/** Shortest line first; lines of equal length keep their order (sort is stable). */
+const sortByLength = (text: string) =>
+  lines(text)
+    .sort((a, b) => [...a].length - [...b].length)
+    .join('\n');
+
+/** Fisher–Yates with crypto randomness, so every order is equally likely. */
+function shuffleLines(text: string): string {
+  const all = lines(text);
+  const random = new Uint32Array(1);
+  for (let i = all.length - 1; i > 0; i--) {
+    crypto.getRandomValues(random);
+    const j = random[0]! % (i + 1);
+    [all[i], all[j]] = [all[j]!, all[i]!];
+  }
+  return all.join('\n');
+}
+
+/** Lines → "a, b, c" with the chosen separator; empty lines are dropped. */
+function linesToList(text: string, o: ListOptions): string {
+  return lines(text)
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .join(tabs(o.separator));
+}
+
+/** "a, b, c" → one item per line. Spaces around the separator are ignored, so ", " also splits "a,b". */
+function listToLines(text: string, o: ListOptions): string {
+  const separator = tabs(o.separator);
+  const splitOn = separator.trim() || separator;
+  if (splitOn === '') return text;
+  return text
+    .split('\n')
+    .flatMap((l) => l.split(splitOn))
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .join('\n');
+}
+
+/** Lines that contain the text (or match the regular expression) are kept, or removed. */
+export function filterLines(text: string, o: FilterOptions, keep: boolean): { text: string; count: number } {
+  if (o.find === '') return { text, count: 0 };
+  const re = buildRegExp(o.find, o.caseSensitive, o.regex, '');
+  const all = lines(text);
+  const matching = all.map((l) => re.test(l));
+  return {
+    text: all.filter((_, i) => matching[i] === keep).join('\n'),
+    count: matching.filter(Boolean).length,
+  };
+}
 
 /* ---------- Encoding ---------- */
 
@@ -267,9 +385,18 @@ export const conversions: Conversion[] = [
 
   { id: 'sortAsc', group: 'lines', run: (t, l) => sortLines(t, l) },
   { id: 'sortDesc', group: 'lines', run: (t, l) => sortLines(t, l, true) },
+  { id: 'sortLength', group: 'lines', run: sortByLength },
+  { id: 'shuffle', group: 'lines', run: shuffleLines },
+  { id: 'reverseLines', group: 'lines', run: reverseLines },
   { id: 'dedupe', group: 'lines', run: dedupeLines },
   { id: 'removeEmpty', group: 'lines', run: removeEmptyLines },
-  { id: 'reverseLines', group: 'lines', run: reverseLines },
+  { id: 'trimLines', group: 'lines', run: trimLines },
+  { id: 'keepLines', group: 'lines', run: (t, _l, ctx) => filterLines(t, ctx.filter, true).text },
+  { id: 'dropLines', group: 'lines', run: (t, _l, ctx) => filterLines(t, ctx.filter, false).text },
+  { id: 'affix', group: 'lines', run: (t, _l, ctx) => affixLines(t, ctx.affix) },
+  { id: 'numberLines', group: 'lines', run: (t, _l, ctx) => numberLines(t, ctx.numbering) },
+  { id: 'toList', group: 'lines', run: (t, _l, ctx) => linesToList(t, ctx.list) },
+  { id: 'fromList', group: 'lines', run: (t, _l, ctx) => listToLines(t, ctx.list) },
 
   { id: 'urlEncode', group: 'encoding', run: encodeURIComponent },
   { id: 'urlDecode', group: 'encoding', run: urlDecode },
