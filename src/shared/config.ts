@@ -1,4 +1,5 @@
 import type { Lang } from './i18n';
+import { countdownIcon, textConverterIcon } from './tool-icons';
 
 /** Text in every UI language. */
 export type Localized = Record<Lang, string>;
@@ -52,6 +53,7 @@ export interface ToolInfo {
   slug: string;
   name: Localized;
   description: Localized;
+  /** Inline SVG markup (see tool-icons.ts). */
   icon: string;
 }
 
@@ -64,7 +66,7 @@ export const tools: ToolInfo[] = [
       cs: 'Odpočet k datu nebo časovač s tématy, animovaným pozadím a režimem celé obrazovky.',
       en: 'Count down to a date or run a timer, with themes, animated backgrounds and fullscreen mode.',
     },
-    icon: '⏳',
+    icon: countdownIcon,
   },
   {
     slug: 'text-converter',
@@ -73,6 +75,6 @@ export const tools: ToolInfo[] = [
       cs: 'Velká a malá písmena, camelCase, odstranění diakritiky, sloučení řádků, úprava mezer, URL, Base64 a JSON.',
       en: 'Change letter case, camelCase, remove accents, join lines, fix spacing, URL, Base64 and JSON.',
     },
-    icon: '🔤',
+    icon: textConverterIcon,
   },
 ];

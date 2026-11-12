@@ -29,6 +29,8 @@
 
 .tool-card {
   display: grid;
+  /* Rows keep their natural height; without this a taller neighbour stretches the gaps unevenly. */
+  align-content: start;
   gap: 6px;
   height: 100%;
   padding: 20px;
@@ -46,7 +48,15 @@
 }
 
 .tool-card__icon {
-  font-size: 1.8rem;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  /* Always dark, like an app icon, so every shade of the logo green stays visible. */
+  background: linear-gradient(145deg, #13241c, #0b130f);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
 }
 
 .tool-card__name {
