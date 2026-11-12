@@ -252,9 +252,38 @@
 .qr-details summary {
   display: flex;
   align-items: center;
+  gap: 10px;
   min-height: 44px;
   font-weight: 600;
+  list-style: none;
   cursor: pointer;
+  user-select: none;
+}
+
+.qr-details summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Chevron pointing right when collapsed, down when open (same as the countdown's theme groups). */
+.qr-details summary::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-left: 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s;
+}
+
+.qr-details[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qr-details summary::before {
+    transition: none;
+  }
 }
 
 .qr-style {
@@ -262,6 +291,11 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   padding-bottom: 8px;
+}
+
+/* Labels that wrap to two lines must not push their control below its neighbour's. */
+.qr-style .qr-field {
+  align-content: end;
 }
 
 .qr-style__wide {

@@ -105,7 +105,7 @@ const cs = {
     bic: 'BIC má 8 nebo 11 znaků, např. GIBACZPX.',
   },
   styleTitle: 'Vzhled',
-  ecc: 'Odolnost proti poškození',
+  ecc: 'Odolnost kódu',
   eccLevels: {
     L: 'Nízká (7 %)',
     M: 'Střední (15 %)',
@@ -235,7 +235,7 @@ const en: typeof cs = {
     bic: 'A BIC has 8 or 11 characters, e.g. DEUTDEFF.',
   },
   styleTitle: 'Appearance',
-  ecc: 'Damage tolerance',
+  ecc: 'Error correction',
   eccLevels: {
     L: 'Low (7%)',
     M: 'Medium (15%)',
