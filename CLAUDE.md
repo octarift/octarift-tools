@@ -35,6 +35,9 @@ game Rift Defense (`com.octarift.riftdefense` on Google Play).
 ## Stack
 
 - Vite (multi-page) + TypeScript, **no UI framework**. Keep dependencies minimal.
+- Runtime dependencies (code that ends up in the scripts, so far only `uqr`) need their license in
+  `public/third-party-licenses.txt` (linked from the footer) and an entry in `NOTICES` in `vite.config.ts`,
+  which puts a notice comment at the top of every built script that contains their code.
 - Node.js 20.19+ is required (Vite 7).
 
 ## Commands
