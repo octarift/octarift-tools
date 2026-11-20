@@ -4,7 +4,17 @@ import { applyStrings, setMetaDescription } from '@shared/i18n';
 import { mountSiteChrome } from '@shared/site-chrome';
 import { readJSON, writeJSON } from '@shared/storage';
 import { encode } from 'uqr';
-import { FieldError, isComplete, modes, type Field, type Mode, type Values } from './modes';
+import {
+  FieldError,
+  isComplete,
+  loadPayBySquare,
+  modes,
+  payBySquareFrameSvg,
+  payBySquareReady,
+  type Field,
+  type Mode,
+  type Values,
+} from './modes';
 import { s, type EccLevel, type ModeId } from './strings';
 
 applyStrings(s);
@@ -33,6 +43,7 @@ const els = {
   copy: $<HTMLButtonElement>('#qr-copy'),
   ecc: $<HTMLSelectElement>('#qr-ecc'),
   eccFixed: $('#qr-ecc-fixed'),
+  colorsFixed: $('#qr-colors-fixed'),
   size: $<HTMLSelectElement>('#qr-size'),
   fg: $<HTMLInputElement>('#qr-fg'),
   bg: $<HTMLInputElement>('#qr-bg'),
@@ -213,8 +224,9 @@ for (const control of [els.ecc, els.size, els.fg, els.bg]) {
     // A format with a fixed level (EPC) disables the select, so its value never overwrites the user's choice.
     if (!els.ecc.disabled) settings.ecc = els.ecc.value as EccLevel;
     settings.size = els.size.value;
-    settings.fg = els.fg.value;
-    settings.bg = els.bg.value;
+    // The same goes for the colors, which PAY by square fixes to black on white.
+    if (!els.fg.disabled) settings.fg = els.fg.value;
+    if (!els.bg.disabled) settings.bg = els.bg.value;
     saveSettings();
     queueRender();
   });
@@ -224,6 +236,38 @@ for (const control of [els.ecc, els.size, els.fg, els.bg]) {
 
 let matrix: boolean[][] | null = null;
 let payload = '';
+
+/** Colors in use: PAY by square codes are always black on white (the mark is made for light backgrounds). */
+function colors(): { fg: string; bg: string } {
+  return current().payBySquareFrame ? { fg: '#000000', bg: '#ffffff' } : { fg: settings.fg, bg: settings.bg };
+}
+
+/* The official PAY by square mark: a 64 × 75 drawing whose open square (inside 1–63) holds the code. */
+const FRAME = { width: 64, height: 75, inset: 1, inner: 62 };
+const frameInner = () => payBySquareFrameSvg().replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+let frameImage: Promise<HTMLImageElement> | null = null;
+
+function loadFrameImage(): Promise<HTMLImageElement> {
+  frameImage ??= new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(payBySquareFrameSvg())}`;
+  });
+  return frameImage;
+}
+
+/** The finished image: the code alone, or the code inside the PAY by square mark. */
+function imageSvg(m: boolean[][]): string {
+  const { fg, bg } = colors();
+  if (!current().payBySquareFrame) return svgMarkup(m, fg, bg);
+  const { width, height, inset, inner } = FRAME;
+  const code = svgMarkup(m, fg, bg).replace('<svg ', `<svg x="${inset}" y="${inset}" width="${inner}" height="${inner}" `);
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">` +
+    `<rect width="${width}" height="${height}" fill="#ffffff"/>${frameInner()}${code}</svg>`
+  );
+}
 
 /** One path for all dark modules, merged into horizontal runs (small SVG, no hairline seams). */
 function svgMarkup(m: boolean[][], fg: string, bg: string): string {
@@ -257,10 +301,21 @@ function luminance(hex: string): number {
 
 function render(): void {
   const mode = current();
+  if (mode.payBySquareFrame && !payBySquareReady()) {
+    loadPayBySquare().then(queueRender, () => {
+      els.error.textContent = s.loadFailed;
+      els.error.hidden = false;
+    });
+  }
   const ecc: EccLevel = mode.ecc ?? settings.ecc;
   els.ecc.value = ecc;
   els.ecc.disabled = Boolean(mode.ecc);
   els.eccFixed.hidden = !mode.ecc;
+  els.fg.disabled = els.bg.disabled = Boolean(mode.payBySquareFrame);
+  els.colorsFixed.hidden = !mode.payBySquareFrame;
+  const { fg, bg } = colors();
+  els.fg.value = fg;
+  els.bg.value = bg;
 
   // Clear previous field errors.
   els.form.querySelectorAll<HTMLElement>('.qr-field__error').forEach((el) => (el.textContent = ''));
@@ -290,13 +345,14 @@ function render(): void {
 
   els.preview.querySelector('svg')?.remove();
   els.empty.hidden = Boolean(matrix);
-  if (matrix) els.preview.insertAdjacentHTML('beforeend', svgMarkup(matrix, settings.fg, settings.bg));
+  if (matrix) els.preview.insertAdjacentHTML('beforeend', imageSvg(matrix));
   els.preview.classList.toggle('has-code', Boolean(matrix));
+  els.preview.classList.toggle('has-frame', Boolean(matrix && mode.payBySquareFrame));
   els.error.textContent = error;
   els.error.hidden = !error;
 
-  const lf = luminance(settings.fg);
-  const lb = luminance(settings.bg);
+  const lf = luminance(fg);
+  const lb = luminance(bg);
   // Scanners expect dark modules on a light background with decent contrast.
   els.warning.hidden = !matrix || (lf < lb && (lb + 0.05) / (lf + 0.05) >= 4);
 
@@ -316,16 +372,31 @@ function queueRender(): void {
 
 /* ---------- Downloads ---------- */
 
-/** Draws the code at exactly `size` px; module edges are rounded to whole pixels so there are no seams. */
-function pngBlob(m: boolean[][], size: number): Promise<Blob> {
+/**
+ * Draws the image `size` px wide. Module edges are rounded to whole pixels so there are no seams; with the
+ * PAY by square mark the image is taller (64 × 75) and the code sits inside the mark's square.
+ */
+async function pngBlob(m: boolean[][], size: number): Promise<Blob> {
+  const framed = Boolean(current().payBySquareFrame);
+  const { fg, bg } = colors();
   const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = size;
+  canvas.width = size;
+  canvas.height = framed ? Math.round((size * FRAME.height) / FRAME.width) : size;
   const ctx = canvas.getContext('2d')!;
-  ctx.fillStyle = settings.bg;
-  ctx.fillRect(0, 0, size, size);
-  ctx.fillStyle = settings.fg;
+  let origin = 0;
+  let span = size;
+  if (framed) {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(await loadFrameImage(), 0, 0, canvas.width, canvas.height);
+    origin = Math.round((size * FRAME.inset) / FRAME.width);
+    span = Math.round((size * (FRAME.inset + FRAME.inner)) / FRAME.width) - origin;
+  }
+  ctx.fillStyle = bg;
+  ctx.fillRect(origin, origin, span, span);
+  ctx.fillStyle = fg;
   const n = m.length;
-  const edge = (i: number) => Math.round((i * size) / n);
+  const edge = (i: number) => origin + Math.round((i * span) / n);
   m.forEach((row, y) =>
     row.forEach((dark, x) => {
       if (dark) ctx.fillRect(edge(x), edge(y), edge(x + 1) - edge(x), edge(y + 1) - edge(y));
@@ -354,7 +425,7 @@ els.png.addEventListener('click', async () => {
 });
 
 els.svg.addEventListener('click', () => {
-  if (matrix) download(new Blob([svgMarkup(matrix, settings.fg, settings.bg)], { type: 'image/svg+xml' }), fileName('svg'));
+  if (matrix) download(new Blob([imageSvg(matrix)], { type: 'image/svg+xml' }), fileName('svg'));
 });
 
 els.copy.addEventListener('click', async () => {

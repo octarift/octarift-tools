@@ -21,7 +21,8 @@ import {
   wifi,
   type WifiSecurity,
 } from './payloads';
-import type { FieldId, ModeId, OptionId } from './strings';
+import type { SkPayment } from './pay-by-square';
+import type { EccLevel, FieldId, ModeId, OptionId } from './strings';
 
 export interface Field {
   id: FieldId;
@@ -47,11 +48,32 @@ export interface Mode {
   fields: Field[];
   /** The text to encode. Throws FieldError for invalid values. */
   build: (v: Values) => string;
-  /** Error correction level required by the format (EPC demands M). */
-  ecc?: 'M';
+  /** Error correction level required by the format (EPC: M, PAY by square: L). */
+  ecc?: EccLevel;
+  /**
+   * The code must be shown inside the official PAY by square mark; its colors are then fixed to black on white
+   * (the mark's color variants are defined for light backgrounds).
+   */
+  payBySquareFrame?: true;
   /** Payment types share one "Payment" chip and are picked in a second row. */
   payment?: true;
 }
+
+/**
+ * The PAY by square encoder (with its LZMA compressor, about 60 kB) is loaded only when that type is opened;
+ * until then the type's build returns '' and the preview waits.
+ */
+let payBySquare: ((p: SkPayment) => string) | null = null;
+let frameSvg = '';
+export async function loadPayBySquare(): Promise<void> {
+  if (payBySquare) return;
+  const module = await import('./pay-by-square');
+  frameSvg = module.frameSvg;
+  payBySquare = module.payBySquare;
+}
+export const payBySquareReady = () => payBySquare !== null;
+/** The official PAY by square mark (SVG markup), once loadPayBySquare has finished. */
+export const payBySquareFrameSvg = () => frameSvg;
 
 const str = (v: Values, id: FieldId) => (typeof v[id] === 'string' ? (v[id] as string) : '');
 
@@ -146,6 +168,43 @@ export const modes: Mode[] = [
         recipient: str(v, 'recipient'),
         message: str(v, 'czMessage'),
       }),
+  },
+  {
+    id: 'skPayment',
+    payment: true,
+    ecc: 'L',
+    payBySquareFrame: true,
+    fields: [
+      { id: 'euName', type: 'text', required: true, maxLength: 70, autocomplete: 'off', wide: true },
+      { id: 'iban', type: 'text', required: true, autocomplete: 'off' },
+      { id: 'bic', type: 'text', autocomplete: 'off' },
+      { id: 'skAmount', type: 'text', inputMode: 'decimal', autocomplete: 'off' },
+      { id: 'skCurrency', type: 'select', options: ['EUR', 'CZK'] },
+      { id: 'vs', type: 'text', inputMode: 'numeric', maxLength: 10, autocomplete: 'off' },
+      { id: 'ss', type: 'text', inputMode: 'numeric', maxLength: 10, autocomplete: 'off' },
+      { id: 'ks', type: 'text', inputMode: 'numeric', maxLength: 4, autocomplete: 'off' },
+      { id: 'dueDate', type: 'date' },
+      { id: 'skNote', type: 'text', maxLength: 140, autocomplete: 'off', wide: true },
+      { id: 'skAddress1', type: 'text', maxLength: 70, autocomplete: 'off' },
+      { id: 'skAddress2', type: 'text', maxLength: 70, autocomplete: 'off' },
+    ],
+    build: (v) => {
+      if (!payBySquare) return '';
+      return payBySquare({
+        beneficiaryName: str(v, 'euName'),
+        iban: parseIban('iban', str(v, 'iban')),
+        bic: parseBic('bic', str(v, 'bic')),
+        amount: parseAmount('skAmount', str(v, 'skAmount'), 999_999_999.99),
+        currency: str(v, 'skCurrency') || 'EUR',
+        vs: parseSymbol('vs', str(v, 'vs'), 10),
+        ss: parseSymbol('ss', str(v, 'ss'), 10),
+        ks: parseSymbol('ks', str(v, 'ks'), 4),
+        dueDate: str(v, 'dueDate'),
+        note: str(v, 'skNote'),
+        beneficiaryAddress1: str(v, 'skAddress1'),
+        beneficiaryAddress2: str(v, 'skAddress2'),
+      });
+    },
   },
   {
     id: 'euPayment',

@@ -32,6 +32,10 @@ const NOTICES: { match: RegExp; notice: string }[] = [
     notice: 'uqr | MIT License | Copyright (c) Project Nayuki, Copyright (c) 2023 Anthony Fu',
   },
   {
+    match: /[\\/]node_modules[\\/]lzma1[\\/]/,
+    notice: 'lzma1 | MIT License | Copyright (c) Filip Seman and lzma1 contributors',
+  },
+  {
     match: /vite[\\/]modulepreload-polyfill/,
     notice: 'Vite module preload helper | MIT License | Copyright (c) 2019-present, VoidZero Inc. and Vite contributors',
   },

@@ -206,6 +206,11 @@
   border: 0;
 }
 
+/* PAY by square: the code inside the official mark, which is taller than wide (64 × 75). */
+.qr-preview.has-frame {
+  aspect-ratio: 64 / 75;
+}
+
 .qr-preview svg {
   display: block;
   width: 100%;

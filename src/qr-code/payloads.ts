@@ -115,7 +115,8 @@ export function czPayment(p: CzPayment): string {
 /** Variable, specific and constant symbols: digits only, up to `max` of them. */
 export function parseSymbol(field: FieldId, text: string, max: number): string {
   const clean = compact(text);
-  if (clean !== '' && !new RegExp(`^\\d{1,${max}}$`).test(clean)) throw new FieldError(field, 'symbol');
+  if (clean !== '' && !/^\d+$/.test(clean)) throw new FieldError(field, 'symbol');
+  if (clean.length > max) throw new FieldError(field, max === 4 ? 'symbolLength4' : 'symbolLength');
   return clean;
 }
 

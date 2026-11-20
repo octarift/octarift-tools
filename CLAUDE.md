@@ -35,7 +35,7 @@ game Rift Defense (`com.octarift.riftdefense` on Google Play).
 ## Stack
 
 - Vite (multi-page) + TypeScript, **no UI framework**. Keep dependencies minimal.
-- Runtime dependencies (code that ends up in the scripts, so far only `uqr`) need their license in
+- Runtime dependencies (code that ends up in the scripts, so far `uqr` and `lzma1`) need their license in
   `public/third-party-licenses.txt` (linked from the footer) and an entry in `NOTICES` in `vite.config.ts`,
   which puts a notice comment at the top of every built script that contains their code.
 - Node.js 20.19+ is required (Vite 7).
@@ -76,6 +76,8 @@ src/
   qr-code/                      the QR code generator (/qr-code/), QR encoding by the `uqr` package
     payloads.ts                 pure payload builders: QR Platba (SPD), EPC/SEPA, Wi-Fi, vCard, mailto, SMS,
                                 PayPal.me/Revolut.me links; IBAN and Czech account (mod 11) checks
+    pay-by-square.ts            Slovak PAY by square encoder (spec 1.2.0: tab fields, CRC32, LZMA, Base32hex)
+    pay-by-square-frame.svg     official PAY by square mark (SBA logo pack, unchanged) drawn around those codes
     modes.ts                    code types: form fields + how values become the payload
     main.ts, strings.ts, qr-code.css
 public/                         static files copied as-is (favicon, later robots.txt, ads.txt)
@@ -103,9 +105,12 @@ public/                         static files copied as-is (favicon, later robots
 ## QR code generator: things to keep right
 
 - Field values (Wi-Fi passwords, accounts) stay in sessionStorage only; mode and look in localStorage.
-- EPC codes must use error correction M (the mode sets `ecc: 'M'` and the select is locked).
+- EPC codes must use error correction M, PAY by square codes L (the mode sets `ecc` and the select is locked).
 - QR Platba values drop accents and encode `*` as `%2A`; accounts are always sent as IBAN.
-- Slovak PAY by square is left out until ADELANTE (owner of the "by square" trademark) confirms the terms.
+- PAY by square (SBA terms: free for implementations that follow the spec) must always be shown inside the
+  official mark, so those codes are fixed to black on white and PNG/SVG include the mark. The header writes
+  type version 1 (data model with beneficiary fields): version 2 (= spec 1.2.0) would make banking apps that
+  are not yet updated reject the code. Spec, logo manual and logo pack: sbaonline.sk (PAY by square section).
 - Any payload change: round-trip it through a decoder (e.g. jsQR) and scan it with a real banking app.
 
 ## Not done yet (ideas, in rough priority)

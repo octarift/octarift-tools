@@ -81,7 +81,7 @@ export const tools: ToolInfo[] = [
     slug: 'qr-code',
     name: { cs: 'QR kódy', en: 'QR codes' },
     description: {
-      cs: 'QR kód pro odkaz, Wi-Fi, kontakt, e-mail, SMS nebo QR Platbu. Stažení v PNG a SVG.',
+      cs: 'QR kód pro odkaz, Wi-Fi, kontakt, e-mail, SMS, QR Platbu nebo PAY by square. Stažení v PNG a SVG.',
       en: 'QR codes for links, Wi-Fi, contacts, e-mail, SMS and SEPA payments. Download as PNG or SVG.',
     },
     icon: qrCodeIcon,
