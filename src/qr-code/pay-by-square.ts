@@ -8,6 +8,7 @@
  * shown with the official PAY by square mark (pay-by-square-frame.svg).
  */
 
+import { crc32 } from '@shared/crc32';
 import { removeDiacritics } from '@shared/text';
 import { compress } from 'lzma1';
 
@@ -68,23 +69,6 @@ export function payBySquareSequence(p: SkPayment): string {
     field(p.beneficiaryAddress1),
     field(p.beneficiaryAddress2),
   ].join('\t');
-}
-
-let crcTable: Uint32Array | null = null;
-
-/** CRC-32 (IEEE 802.3, polynomial 0xEDB88320), as used by ZIP and PNG. */
-export function crc32(bytes: Uint8Array): number {
-  if (!crcTable) {
-    crcTable = new Uint32Array(256);
-    for (let n = 0; n < 256; n++) {
-      let c = n;
-      for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-      crcTable[n] = c >>> 0;
-    }
-  }
-  let crc = 0xffffffff;
-  for (const b of bytes) crc = crcTable[(crc ^ b) & 0xff]! ^ (crc >>> 8);
-  return (crc ^ 0xffffffff) >>> 0;
 }
 
 const BASE32HEX = '0123456789ABCDEFGHIJKLMNOPQRSTUV';

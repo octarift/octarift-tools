@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Image compressor – Octarift Tools</title>
+    <meta name="description" content="Free online image compressor: resize and compress JPG, PNG, WebP and iPhone HEIC photos, convert formats and remove GPS and EXIF data. Images are never uploaded; everything runs in your browser." />
+    <!-- Link previews (WhatsApp, Facebook, Slack…). Crawlers do not run scripts, so these stay in English;
+         the page switches to Czech for Czech visitors at runtime. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Octarift Tools" />
+    <meta property="og:title" content="Image Compressor" />
+    <meta property="og:description" content="Free online image compressor: resize and compress JPG, PNG, WebP and iPhone HEIC photos, convert formats and remove GPS and EXIF data. Images are never uploaded; everything runs in your browser." />
+    <meta property="og:url" content="https://tools.octarift.com/image-compressor/" />
+    <meta property="og:image" content="https://tools.octarift.com/og/image-compressor.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Image Compressor – Octarift Tools" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="cs_CZ" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="cs" href="https://tools.octarift.com/image-compressor/?lang=cs" />
+    <link rel="alternate" hreflang="en" href="https://tools.octarift.com/image-compressor/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://tools.octarift.com/image-compressor/" />
+    <!-- Apply the saved light/dark choice before first paint (see src/shared/color-scheme.ts). -->
+    <script>try{var m=document.cookie.match(/(?:^|; )scheme=(light|dark)/);if(m)document.documentElement.dataset.scheme=m[1]}catch(e){}</script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <!-- Visible text is filled from strings.ts (data-i18n / data-i18n-attr); the Czech here is only the fallback. -->
+  <body>
+    <header class="site-header" data-site-header></header>
+
+    <main class="ic">
+      <h1 class="ic__title" data-i18n="heading">Zmenšení a komprese obrázků</h1>
+      <p class="ic__lead" data-i18n="lead"></p>
+
+      <section class="ic-settings" data-i18n-attr="aria-label:settings">
+        <div class="ic-setting">
+          <span class="ic-setting__label" id="ic-format-label" data-i18n="format">Formát</span>
+          <div id="ic-formats" class="ic-formats" role="group" aria-labelledby="ic-format-label"></div>
+          <p id="ic-format-hint" class="ic__hint"></p>
+        </div>
+        <label id="ic-quality-field" class="ic-setting">
+          <span class="ic-setting__label"
+            ><span data-i18n="quality">Kvalita</span> <output id="ic-quality-value" for="ic-quality"></output
+          ></span>
+          <input id="ic-quality" type="range" min="10" max="100" step="5" value="80" />
+          <span class="ic__hint" data-i18n="qualityHint"></span>
+        </label>
+        <div class="ic-setting">
+          <label class="ic-setting__label" for="ic-size" data-i18n="maxSide">Delší strana</label>
+          <select id="ic-size"></select>
+          <label id="ic-custom" class="ic-custom" hidden>
+            <span class="visually-hidden" data-i18n="customSide">Vlastní delší strana v pixelech</span>
+            <input id="ic-custom-side" type="number" inputmode="numeric" min="16" max="10000" step="1" />
+            <span aria-hidden="true">px</span>
+          </label>
+          <span id="ic-custom-error" class="ic__error" role="alert" hidden></span>
+          <span class="ic__hint" data-i18n="sizeHint"></span>
+        </div>
+      </section>
+
+      <label id="ic-drop" class="ic-drop">
+        <input id="ic-input" class="visually-hidden" type="file" accept="image/*,.heic,.heif" multiple />
+        <svg class="ic-drop__icon" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor"
+          stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2.5" />
+          <circle cx="9" cy="9.5" r="1.8" />
+          <path d="m4 18 5.5-5.5 4 4L16 14l4 4" />
+        </svg>
+        <span class="ic-drop__title" data-i18n="dropTitle">Přetáhněte sem obrázky</span>
+        <span class="ic-drop__or" data-i18n="dropOr">nebo</span>
+        <span class="button button--primary" data-i18n="choose">Vyberte soubory</span>
+        <span class="ic__hint" data-i18n="dropFormats"></span>
+        <span class="ic__hint" data-i18n="privacy"></span>
+      </label>
+
+      <section id="ic-results" class="ic-results" aria-labelledby="ic-results-title" hidden>
+        <div class="ic-results__head">
+          <h2 id="ic-results-title" class="ic-results__title" data-i18n="results">Výsledky</h2>
+          <p id="ic-total" class="ic-results__total" aria-live="polite"></p>
+          <div class="ic-results__actions">
+            <button id="ic-zip" class="button button--primary button--small" type="button" data-i18n="downloadAll">
+              Stáhnout vše (ZIP)
+            </button>
+            <button id="ic-clear" class="button button--small" type="button" data-i18n="clearAll">Vymazat</button>
+          </div>
+        </div>
+        <ul id="ic-list" class="ic-list"></ul>
+      </section>
+
+      <aside class="ic__promo" data-promo="image-compressor"></aside>
+      <aside class="ad-slot" data-ad-slot="image-compressor-bottom"></aside>
+    </main>
+
+    <footer class="site-footer" data-site-footer></footer>
+  </body>
+</html>

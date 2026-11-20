@@ -2,7 +2,8 @@
 
 A collection of small browser-based tools on one site, published at
 https://tools.octarift.com under the Octarift studio brand. Tools so far: a
-countdown (`/countdown/`), a text converter (`/text-converter/`) and a QR code generator (`/qr-code/`).
+countdown (`/countdown/`), a text converter (`/text-converter/`), a QR code generator (`/qr-code/`)
+and an image compressor (`/image-compressor/`).
 
 The studio site (octarift.com, separate repo `octarift/octarift-web`, local
 `D:\Projects\octarift-web`) links here, and these tools promote the studio's
@@ -38,6 +39,8 @@ game Rift Defense (`com.octarift.riftdefense` on Google Play).
 - Runtime dependencies (code that ends up in the scripts, so far `uqr` and `lzma1`) need their license in
   `public/third-party-licenses.txt` (linked from the footer) and an entry in `NOTICES` in `vite.config.ts`,
   which puts a notice comment at the top of every built script that contains their code.
+- LGPL code is never bundled: libheif (HEIC decoding) is an unmodified file in `public/vendor/libheif-js-<version>/`
+  with its LICENSE and a README (versions, source links, how to update), loaded by URL at runtime.
 - Node.js 20.19+ is required (Vite 7).
 
 ## Commands
@@ -57,6 +60,7 @@ src/
     config.ts                   site name, Buy Me a Coffee URL, ads switch, list of tools
     tool-icons.ts               hub icons (inline SVG in the logo's green ramp, on a dark tile)
     text.ts                     shared text helpers (removeDiacritics)
+    crc32.ts                    CRC-32 (ZIP export, PAY by square)
     site-chrome.ts              fills <header data-site-header>, <footer data-site-footer>, <aside data-ad-slot>
     fullscreen.ts               Fullscreen API with CSS fallback (iPhone Safari)
     wake-lock.ts                keeps the screen on
@@ -80,7 +84,12 @@ src/
     pay-by-square-frame.svg     official PAY by square mark (SBA logo pack, unchanged) drawn around those codes
     modes.ts                    code types: form fields + how values become the payload
     main.ts, strings.ts, qr-code.css
-public/                         static files copied as-is (favicon, later robots.txt, ads.txt)
+  image-compressor/             the image compressor (/image-compressor/)
+    process.ts                  decode → resize (halving steps) → encode on a canvas; metadata is dropped
+    heic.ts                     HEIC detection; native decode first (Safari), else libheif from public/vendor
+    zip.ts                      store-only ZIP writer for "download all"
+    main.ts, strings.ts, image-compressor.css
+public/                         static files copied as-is (favicon, og images, vendor/, later robots.txt, ads.txt)
 ```
 
 ## Adding a new tool
@@ -112,6 +121,13 @@ public/                         static files copied as-is (favicon, later robots
   type version 1 (data model with beneficiary fields): version 2 (= spec 1.2.0) would make banking apps that
   are not yet updated reject the code. Spec, logo manual and logo pack: sbaonline.sk (PAY by square section).
 - Any payload change: round-trip it through a decoder (e.g. jsQR) and scan it with a real banking app.
+
+## Image compressor: things to keep right
+
+- Images stay in memory only (never uploaded, never stored); only the settings are saved (localStorage).
+- HEIC: try `createImageBitmap` first; only if that fails load libheif (~0.7 MB gzipped), once per page.
+- JPEG output gets a white background (transparent areas would turn black). Results bigger than the
+  original are flagged, not hidden.
 
 ## Not done yet (ideas, in rough priority)
 

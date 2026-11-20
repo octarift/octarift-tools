@@ -1,0 +1,350 @@
+/* Image compressor: settings, a drop zone, then the list of results. */
+.ic {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* main fills the page height; without this the rows would share the leftover space. */
+  align-content: start;
+  gap: 16px;
+  width: min(100% - 32px, var(--content));
+  margin-inline: auto;
+  padding-top: 16px;
+}
+
+.ic__title {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.ic__lead {
+  margin: -8px 0 0;
+  color: var(--muted);
+}
+
+.ic__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+/* Settings */
+.ic-settings {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px 24px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+@media (min-width: 760px) {
+  .ic-settings {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ic-setting {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ic-setting__label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ic-setting__label output {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.ic-formats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ic-setting select {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.ic-setting input[type='range'] {
+  width: 100%;
+  min-height: 44px;
+  accent-color: var(--accent);
+}
+
+/* Drop zone: the whole box is a label for the hidden file input. */
+.ic-drop {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 32px 16px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.ic-drop:hover,
+.ic-drop.is-over {
+  border-color: var(--accent);
+}
+
+.ic-drop.is-over {
+  background: var(--surface-2);
+}
+
+.ic-drop:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.ic-drop__icon {
+  color: var(--accent);
+}
+
+.ic-drop__title {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.ic-drop__or {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Results */
+.ic-results__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 10px;
+}
+
+.ic-results__title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.ic-results__total {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.ic-results__actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.ic-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ic-item {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.ic-item__thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--surface-2);
+}
+
+.ic-item__thumb--empty {
+  display: block;
+}
+
+.ic-item__body {
+  min-width: 0;
+}
+
+.ic-item__name {
+  margin: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ic-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.ic-item__meta strong {
+  color: var(--text);
+}
+
+.ic-item__saved {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.ic-item__note,
+.ic-item__error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+}
+
+.ic-item__note {
+  color: var(--muted);
+}
+
+.ic-item__error {
+  color: #d23c3c;
+}
+
+.ic-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Touch targets of at least 44 px (the shared small button is 40 px). */
+.ic-item .button,
+.ic-results__actions .button {
+  min-height: 44px;
+}
+
+.ic-item__remove {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.ic-item__remove:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* On phones the download button moves under the text. */
+@media (max-width: 520px) {
+  .ic-item {
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'thumb body remove'
+      'thumb actions actions';
+  }
+
+  .ic-item__thumb {
+    grid-area: thumb;
+    width: 56px;
+    height: 56px;
+    align-self: start;
+  }
+
+  .ic-item__body {
+    grid-area: body;
+  }
+
+  .ic-item__actions {
+    display: contents;
+  }
+
+  .ic-item__actions .button {
+    grid-area: actions;
+    justify-self: start;
+  }
+
+  .ic-item__remove {
+    grid-area: remove;
+    align-self: start;
+  }
+}
+
+.ic-spinner {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: ic-spin 0.8s linear infinite;
+}
+
+@keyframes ic-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ic-spinner {
+    animation: none;
+    border-right-color: currentColor;
+    opacity: 0.6;
+  }
+
+  .ic-drop {
+    transition: none;
+  }
+}
+
+.ic .ad-slot {
+  margin-top: 0;
+}
+
+/* Custom longest side: number input with a "px" suffix under the size select. */
+.ic-custom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ic-custom input {
+  width: 9em;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.ic-custom input[aria-invalid] {
+  border-color: #d23c3c;
+}
+
+.ic__error {
+  color: #d23c3c;
+  font-size: 0.85rem;
+}

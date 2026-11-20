@@ -62,6 +62,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
+libheif and libde265 (HEIC photo decoding in the image compressor)
+https://github.com/strukturag/libheif, https://github.com/strukturag/libde265
+-------------------------------------------------------------------------
+
+libheif 1.23.5 - Copyright (c) struktur AG, Dirk Farin and contributors
+libde265 1.0.15 - Copyright (c) struktur AG, Dirk Farin and contributors
+Both are licensed under the GNU Lesser General Public License, version 3.
+The WebAssembly build also contains Emscripten runtime code (MIT License,
+Copyright (c) Emscripten authors).
+
+The decoder is the unmodified file libheif-bundle.mjs from the npm package
+libheif-js 1.23.5, served on its own and loaded only when a HEIC photo has to
+be converted; it is not part of the site's other scripts and can be replaced
+with another compatible build. Full license texts (LGPL v3 and GPL v3),
+the corresponding source and build details:
+https://tools.octarift.com/vendor/libheif-js-1.23.5/LICENSE.txt
+https://tools.octarift.com/vendor/libheif-js-1.23.5/README.txt
+
+
 PAY by square mark
 ------------------
 

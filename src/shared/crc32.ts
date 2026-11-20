@@ -1,0 +1,16 @@
+let table: Uint32Array | null = null;
+
+/** CRC-32 (IEEE 802.3, polynomial 0xEDB88320), as used by ZIP, PNG and PAY by square. */
+export function crc32(bytes: Uint8Array): number {
+  if (!table) {
+    table = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+      table[n] = c >>> 0;
+    }
+  }
+  let crc = 0xffffffff;
+  for (const b of bytes) crc = table[(crc ^ b) & 0xff]! ^ (crc >>> 8);
+  return (crc ^ 0xffffffff) >>> 0;
+}

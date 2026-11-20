@@ -55,3 +55,15 @@ export const qrCodeIcon = svg(
     `<rect x="27" y="36" width="5" height="5" rx="1" fill="#147d4c"/>` +
     `<rect x="36" y="36" width="5" height="5" rx="1" fill="#0f5f3c"/>`,
 );
+
+/** A photo (sun and two hills) with corner arrows pointing inwards: made smaller. */
+export const imageCompressorIcon = svg(
+  `<rect x="11" y="13" width="26" height="22" rx="3" stroke="#5ad278" stroke-width="3"/>` +
+    `<circle cx="18.5" cy="20" r="2.6" fill="#c4f27a"/>` +
+    `<path d="M13 33l7-7 4.5 4.5 3.5-3.5 7 6z" fill="#33b866"/>` +
+    `<path d="M24.5 30.5 28 27l7 6H26.5z" fill="#147d4c"/>` +
+    `<g stroke="#94e46a" stroke-width="2.6" stroke-linejoin="round">` +
+    `<path d="M4 4l5 5M9 5v4H5"/>` +
+    `<path d="M44 44l-5-5M39 43v-4h4"/>` +
+    `</g>`,
+);

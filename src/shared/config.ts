@@ -1,5 +1,5 @@
 import type { Lang } from './i18n';
-import { countdownIcon, qrCodeIcon, textConverterIcon } from './tool-icons';
+import { countdownIcon, imageCompressorIcon, qrCodeIcon, textConverterIcon } from './tool-icons';
 
 /** Text in every UI language. */
 export type Localized = Record<Lang, string>;
@@ -85,5 +85,14 @@ export const tools: ToolInfo[] = [
       en: 'QR codes for links, Wi-Fi, contacts, e-mail, SMS and SEPA payments. Download as PNG or SVG.',
     },
     icon: qrCodeIcon,
+  },
+  {
+    slug: 'image-compressor',
+    name: { cs: 'Zmenšení obrázků', en: 'Image compressor' },
+    description: {
+      cs: 'Zmenšete a zkomprimujte fotky, i HEIC z iPhonu. Převod do JPG, WebP a PNG, odstranění GPS a EXIF.',
+      en: 'Resize and compress photos, including iPhone HEIC. Convert to JPG, WebP or PNG and strip GPS and EXIF data.',
+    },
+    icon: imageCompressorIcon,
   },
 ];
