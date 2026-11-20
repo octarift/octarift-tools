@@ -22,15 +22,25 @@ game Rift Defense (`com.octarift.riftdefense` on Google Play).
 - **Ads, the Rift Defense promo card and the Buy Me a Coffee button appear only outside fullscreen.** Fullscreen is the product; keep it clean.
 - The promo card is filled into `<aside data-promo="campaign">` by `site-chrome.ts`; its Play link carries
   `utm_source=octarift-tools&utm_campaign=<campaign>` so installs show in Play Console. Text lives in `gamePromo` in `config.ts`.
-- UI is in Czech (formal "vy" form), English and German (formal "Sie"). Czech/Slovak browsers get Czech, browsers
-  that list German before English get German, everyone else English; `?lang=cs|en|de` overrides and is remembered
-  (`src/shared/i18n.ts`). Each page lists all versions with hreflang links.
-  **Never hard-code UI text**: add it to the tool's `strings.ts` (`en` and `de` are typed from `cs`, so a missing
-  translation fails the build), shared text uses `tr({ cs, en, de })`, static HTML uses `data-i18n` / `data-i18n-attr`.
-- German is written by Claude and not reviewed by a native speaker: the footer shows "Übersetzungsfehler melden"
-  (mailto) in German, and the German privacy policy says the Czech version prevails. Keep the established terms:
-  Countdown, Stoppuhr, Text umwandeln, QR-Code-Generator, Bilder verkleinern, Zufallsgenerator, Design (theme),
-  Vollbild, WLAN, GiroCode (SEPA). German "remove accents" and slugs write ä/ö/ü as ae/oe/ue.
+- UI languages (`LANGS` in `src/shared/i18n.ts`, alphabetical = menu order): cs, de, en, es, fr, it, pl, sk.
+  Detection: `?lang=` (remembered), else the saved choice, else the browser's list: if it contains cs or sk, the
+  first of those; otherwise the first supported language; otherwise English. Each page lists all versions with
+  hreflang links and og:locale:alternate.
+  **Never hard-code UI text**: add it to the tool's `strings.ts` (every language is typed from `cs`, so a missing
+  translation fails the build), shared text uses `tr({ cs, de, en, es, fr, it, pl, sk })`, static HTML uses
+  `data-i18n` / `data-i18n-attr`.
+- Address forms: formal in Czech/Slovak ("vy"), German ("Sie") and French ("vous"); informal in Polish ("ty"),
+  Spanish (Spain, "tú") and Italian ("tu").
+- Everything except Czech and English is written by Claude and not reviewed by native speakers: in those languages
+  the footer shows a "report a translation error" mailto (`REPORT_TRANSLATION_ERROR` in site-chrome.ts). Their
+  privacy policies say the English version prevails.
+- Established terms. German: Countdown, Stoppuhr, Text umwandeln, QR-Code-Generator, Bilder verkleinern,
+  Zufallsgenerator, Design (theme), Vollbild, WLAN, GiroCode (SEPA); "remove accents" and slugs write ä/ö/ü as
+  ae/oe/ue. Tool names: es Cuenta atrás y cronómetro / Convertidor de texto / Códigos QR / Comprimir imágenes /
+  Sorteo aleatorio; fr Compte à rebours et chronomètre / Convertisseur de texte / Codes QR / Compresser des images /
+  Tirage au sort; it Conto alla rovescia e cronometro / Convertitore di testo / Codici QR / Comprimi immagini /
+  Sorteggio casuale; pl Odliczanie i stoper / Konwerter tekstu / Kody QR / Zmniejszanie zdjęć / Losowanie;
+  sk Odpočet a stopky / Prevod textu / QR kódy / Zmenšenie obrázkov / Losovanie.
   Code, comments and commit messages are in English. English UI text uses US spelling (color, center).
 - Light/dark/system switch in the header (`src/shared/color-scheme.ts`): the choice is a `scheme` cookie on
   `.octarift.com`, shared with the studio site (its `scheme.js`); no cookie = follow the system. An inline
@@ -76,7 +86,7 @@ src/
     styles/base.css             design tokens (light/dark), buttons, chrome
   countdown/                    the countdown tool (/countdown/)
     index.html, main.ts         page + UI wiring
-    strings.ts                  all countdown UI text in Czech and English
+    strings.ts                  all countdown UI text (every UI language)
     state.ts                    state shape, persistence, share-link encoding
     timer.ts                    pure time helpers
     phases.ts                   Pomodoro and interval phase sequences, stopwatch time format (pure)
@@ -100,14 +110,15 @@ src/
     zip.ts                      store-only ZIP writer for "download all"
     main.ts, strings.ts, image-compressor.css
   odpocet-do-vanoc/             Christmas countdown landing page (SEO): Czech-first static HTML; a 24/25 Dec toggle
-                                (default 24 in Czech and German, in English 24 for browsers with a Christmas-Eve-country
+                                (`defaultDay` 24 in cs/de/pl/sk; in en/es/fr/it 24 for browsers with a Christmas-Eve-country
                                 language, else 25; remembered, ?day= in links); christmas.ts = dates/Advent (pure)
   odpocet-do-noveho-roku/       New Year countdown landing page (SEO), same pattern as Christmas; newyear.ts (pure);
                                 Fireworks theme (id `newyear`); both holiday pages share shared/styles/holiday-page.css
   jak-vytvorit-qr-platbu/, heic-na-jpg/, pomodoro-technika/, tabata-trenink/
-                                guides (SEO articles): Czech article in the HTML, English and German in strings.ts, via
-                                shared/guide-page.ts (the QR Platba guide has no German: German visitors get English,
-                                it is in NO_GERMAN in vite.config.ts and has no de hreflang); each links to its tool and to the other guides; listed on
+                                guides (SEO articles): Czech article in the HTML, other languages in strings.ts, via
+                                shared/guide-page.ts (the QR Platba guide is cs/en only: other visitors get English, it is
+                                in PAGE_LANGS in vite.config.ts, has only cs/en hreflang, and the hub, the other guides'
+                                lists and the QR page drop its link outside cs/en); each links to its tool and to the other guides; listed on
                                 the hub (Návody) and linked from the QR generator, image compressor and countdown
   privacy/, about/              text pages (privacy policy, about and contact) via shared/text-page.ts;
                                 not tools, so not in `tools`; linked from the footer
@@ -150,6 +161,7 @@ public/                         static files copied as-is (favicon, og images, v
 - Field values (Wi-Fi passwords, accounts) stay in sessionStorage only; mode and look in localStorage.
 - EPC codes must use error correction M, PAY by square codes L (the mode sets `ecc` and the select is locked).
 - QR Platba values drop accents and encode `*` as `%2A`; accounts are always sent as IBAN.
+- The default payment type follows the UI language: cs → QR Platba, sk → PAY by square, everyone else → EPC (SEPA).
 - PAY by square (SBA terms: free for implementations that follow the spec) must always be shown inside the
   official mark, so those codes are fixed to black on white and PNG/SVG include the mark. The header writes
   type version 1 (data model with beneficiary fields): version 2 (= spec 1.2.0) would make banking apps that
@@ -174,8 +186,8 @@ public/                         static files copied as-is (favicon, og images, v
 
 - New guides: same template as the existing ones (head with hreflang, `#guide` article, `.guide-cta` button to the
   tool with useful presets, "Další návody" list); add them to every guide's list and to the hub's `guideList`.
-- `sitemap.xml` is generated at build time from the page folders (vite.config.ts), with cs/en/de/x-default
-  alternates; `public/robots.txt` points to it. Landing pages that are not tools (e.g. Christmas) are linked
+- `sitemap.xml` is generated at build time from the page folders (vite.config.ts), with one URL per language
+  plus x-default alternates (`PAGE_LANGS` limits a page to fewer languages); `public/robots.txt` points to it. Landing pages that are not tools (e.g. Christmas) are linked
   from the hub's "Oblíbené odpočty".
 - `%CHRISTMAS_YEAR%`, `%NEW_YEAR%` and `%OLD_YEAR%` in HTML are filled at build time (`holidayYears` in
   vite.config.ts); deploy once after 27 December and once after 2 January so the static text shows the next

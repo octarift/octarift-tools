@@ -1,6 +1,6 @@
 import '@shared/styles/base.css';
 import './qr-code.css';
-import { applyStrings, setMetaDescription } from '@shared/i18n';
+import { applyStrings, lang, setMetaDescription } from '@shared/i18n';
 import { mountSiteChrome } from '@shared/site-chrome';
 import { readJSON, writeJSON } from '@shared/storage';
 import { encode } from 'uqr';
@@ -18,6 +18,8 @@ import {
 import { s, type EccLevel, type ModeId } from './strings';
 
 applyStrings(s);
+// The guide is about Czech QR Platba and exists only in Czech and English: other languages get no link.
+if (lang !== 'cs' && lang !== 'en') document.querySelector('.qr__guide')?.remove();
 setMetaDescription(s.metaDescription);
 document.title = `${s.pageTitle} – Octarift Tools`;
 mountSiteChrome('qr-code');
@@ -72,7 +74,15 @@ const isColor = (v: unknown): v is string => typeof v === 'string' && /^#[0-9a-f
 const saved = readJSON<Partial<Settings>>(SETTINGS_KEY) ?? {};
 const settings: Settings = {
   mode: saved.mode && byId.has(saved.mode) ? saved.mode : 'url',
-  payment: saved.payment && byId.get(saved.payment)?.payment ? saved.payment : 'czPayment',
+  // The payment code people use where the language is spoken: QR Platba in Czech, PAY by square in Slovak, else SEPA.
+  payment:
+    saved.payment && byId.get(saved.payment)?.payment
+      ? saved.payment
+      : lang === 'cs'
+        ? 'czPayment'
+        : lang === 'sk'
+          ? 'skPayment'
+          : 'euPayment',
   ecc: saved.ecc && saved.ecc in s.eccLevels ? saved.ecc : 'M',
   size: ['512', '1024', '2048'].includes(saved.size ?? '') ? saved.size! : '1024',
   fg: isColor(saved.fg) ? saved.fg : '#000000',

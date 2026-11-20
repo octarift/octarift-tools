@@ -86,10 +86,12 @@ const SITE_URL = 'https://tools.octarift.com';
 
 /**
  * Writes sitemap.xml from the pages Vite builds (pageInputs), so new tools are listed automatically.
- * Each page has a Czech, an English and a German URL (?lang=cs / en / de) plus the plain one as x-default,
- * matching the hreflang links in the pages. Pages without a German version are listed in NO_GERMAN.
+ * Each page has a URL per language (?lang=cs, ?lang=de…) plus the plain one as x-default,
+ * matching the hreflang links in the pages. Exceptions are listed in PAGE_LANGS.
  */
-const NO_GERMAN = new Set(['/jak-vytvorit-qr-platbu/']);
+const LANGS = ['cs', 'de', 'en', 'es', 'fr', 'it', 'pl', 'sk'];
+/** Pages that exist in fewer languages (the QR Platba guide is Czech and English only). */
+const PAGE_LANGS: Record<string, string[]> = { '/jak-vytvorit-qr-platbu/': ['cs', 'en'] };
 
 function sitemap(): Plugin {
   return {
@@ -100,7 +102,7 @@ function sitemap(): Plugin {
       const paths = Object.keys(pageInputs())
         .map((name) => (name === 'hub' ? '/' : `/${name}/`))
         .sort((a, b) => (a === '/' ? -1 : b === '/' ? 1 : a.localeCompare(b)));
-      const langs = (path: string) => (NO_GERMAN.has(path) ? ['cs', 'en'] : ['cs', 'en', 'de']);
+      const langs = (path: string) => PAGE_LANGS[path] ?? LANGS;
       const alternates = (path: string) =>
         [
           ...langs(path).map(
