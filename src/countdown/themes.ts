@@ -41,7 +41,7 @@ export const themes = [
 
   { id: 'christmas', name: { cs: 'Vánoce', en: 'Christmas' }, category: 'holiday', animated: true },
   { id: 'tree', name: { cs: 'Vánoční stromeček', en: 'Christmas Tree' }, category: 'holiday', animated: true },
-  { id: 'newyear', name: { cs: 'Silvestr', en: "New Year's Eve" }, category: 'holiday', animated: true },
+  { id: 'newyear', name: { cs: 'Ohňostroj', en: 'Fireworks' }, category: 'holiday', animated: true },
   { id: 'easter', name: { cs: 'Velikonoce', en: 'Easter' }, category: 'holiday', animated: true },
 
   { id: 'holidays', name: { cs: 'Prázdniny', en: 'Summer Holidays' }, category: 'life', animated: true },

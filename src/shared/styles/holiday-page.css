@@ -1,5 +1,5 @@
-/* Christmas countdown page: heading, the countdown stage (styles from countdown.css), actions and text. */
-.xmas {
+/* Holiday countdown pages (Christmas, New Year): heading, the countdown stage (styles from countdown.css), actions and text. */
+.holiday {
   display: grid;
   align-content: start;
   gap: 16px;
@@ -8,20 +8,20 @@
   padding-top: 16px;
 }
 
-.xmas__title {
+.holiday__title {
   margin: 0;
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   text-align: center;
 }
 
-.xmas__lead {
+.holiday__lead {
   margin: 0;
   color: var(--muted);
   font-size: 1.05rem;
   text-align: center;
 }
 
-.xmas__actions {
+.holiday__actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -29,16 +29,16 @@
 }
 
 /* The text column below; the shared text-page width and padding, without the extra outer margin. */
-.xmas__text {
+.holiday__text {
   width: min(100%, 760px);
   padding-top: 0;
 }
 
 /* 24 / 25 December choice under the countdown (the .segmented look comes from countdown.css). */
-.xmas__days {
+.holiday__days {
   justify-self: center;
 }
 
-.xmas__days button {
+.holiday__days button {
   min-height: 44px;
 }

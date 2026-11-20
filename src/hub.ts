@@ -11,6 +11,7 @@ const strings = tr({
     description: 'Jednoduché online nástroje, které fungují přímo v prohlížeči.',
     popular: 'Oblíbené odpočty',
     christmas: 'Odpočet do Vánoc',
+    newYear: 'Odpočet do Nového roku',
   },
   en: {
     heading: 'Tools',
@@ -18,6 +19,7 @@ const strings = tr({
     description: 'Simple online tools that work right in your browser.',
     popular: 'Popular countdowns',
     christmas: 'Christmas countdown',
+    newYear: 'New Year countdown',
   },
 });
 
@@ -43,5 +45,6 @@ const popular = document.querySelector<HTMLElement>('#popular');
 if (popular) {
   popular.innerHTML =
     `<h2 class="hub__subtitle">${strings.popular}</h2>` +
-    `<ul class="hub-links"><li><a href="/odpocet-do-vanoc/?lang=${lang}">🎄 ${strings.christmas}</a></li></ul>`;
+    `<ul class="hub-links"><li><a href="/odpocet-do-vanoc/?lang=${lang}">🎄 ${strings.christmas}</a></li>` +
+    `<li><a href="/odpocet-do-noveho-roku/?lang=${lang}">🎆 ${strings.newYear}</a></li></ul>`;
 }

@@ -1,7 +1,7 @@
 import '@shared/styles/base.css';
 import '@shared/styles/text-page.css';
 import '../countdown/countdown.css';
-import './christmas-page.css';
+import '@shared/styles/holiday-page.css';
 import { site } from '@shared/config';
 import { readJSON, writeJSON } from '@shared/storage';
 import { lang, setMetaDescription } from '@shared/i18n';
@@ -19,15 +19,15 @@ function $<T extends HTMLElement = HTMLElement>(selector: string): T {
 }
 
 const els = {
-  heading: $('#xmas-heading'),
-  stageTitle: $('#xmas-stage-title'),
-  digits: $('#xmas-digits'),
-  merry: $('#xmas-merry'),
-  lead: $('#xmas-lead'),
-  days: $('#xmas-days'),
-  open: $<HTMLAnchorElement>('#xmas-open'),
-  share: $<HTMLButtonElement>('#xmas-share'),
-  text: $('#xmas-text'),
+  heading: $('#holiday-heading'),
+  stageTitle: $('#holiday-stage-title'),
+  digits: $('#holiday-digits'),
+  merry: $('#holiday-merry'),
+  lead: $('#holiday-lead'),
+  days: $('#holiday-days'),
+  open: $<HTMLAnchorElement>('#holiday-open'),
+  share: $<HTMLButtonElement>('#holiday-share'),
+  text: $('#holiday-text'),
   toast: $('#toast'),
 };
 
@@ -116,7 +116,6 @@ function renderTexts(now: Date): void {
       : '';
   const day = (d: number) => dateText(new Date(year, 11, d), s.dateFormat);
   const advent = info.advent.map((d) => dateText(d, s.dateFormat));
-  const newYear = new Date(year + 1, 0, 1);
   els.text.innerHTML = fill(s.body, {
     year,
     daysLeft,
@@ -128,7 +127,7 @@ function renderTexts(now: Date): void {
     a2: advent[1]!,
     a3: advent[2]!,
     a4: advent[3]!,
-    newYearLink: countdownLink(newYear, lang === 'cs' ? 'Do Nového roku' : 'Until New Year', 'newyear'),
+    newYearLink: `/odpocet-do-noveho-roku/?lang=${lang}`,
   });
 }
 

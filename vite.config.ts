@@ -61,17 +61,23 @@ function licenseNotices(): Plugin {
 }
 
 /**
- * Fills %CHRISTMAS_YEAR% in page HTML with the year of the next Christmas (from 27 December on, next
- * year's). The static text is what search engines read first; the page itself updates it live.
- * After New Year a fresh deploy is needed for the static text to follow.
+ * Fills the years of the holiday pages at build time: %CHRISTMAS_YEAR% (the next Christmas; from 27 December
+ * on, next year's) and %NEW_YEAR% / %OLD_YEAR% (the year that begins at the next New Year's midnight, and the
+ * one that ends; 1 January still counts as the one that just began). The static text is what search engines
+ * read first; the pages themselves update it live. A deploy after the holidays moves the static text on.
  */
-function christmasYear(): Plugin {
+function holidayYears(): Plugin {
   return {
-    name: 'christmas-year',
+    name: 'holiday-years',
     transformIndexHtml(html) {
       const now = new Date();
-      const year = now >= new Date(now.getFullYear(), 11, 27) ? now.getFullYear() + 1 : now.getFullYear();
-      return html.replaceAll('%CHRISTMAS_YEAR%', String(year));
+      const y = now.getFullYear();
+      const christmas = now >= new Date(y, 11, 27) ? y + 1 : y;
+      const newYear = now < new Date(y, 0, 2) ? y : y + 1;
+      return html
+        .replaceAll('%CHRISTMAS_YEAR%', String(christmas))
+        .replaceAll('%NEW_YEAR%', String(newYear))
+        .replaceAll('%OLD_YEAR%', String(newYear - 1));
     },
   };
 }
@@ -118,7 +124,7 @@ function sitemap(): Plugin {
 export default defineConfig({
   root,
   publicDir: resolve(here, 'public'),
-  plugins: [licenseNotices(), christmasYear(), sitemap()],
+  plugins: [licenseNotices(), holidayYears(), sitemap()],
   resolve: {
     alias: { '@shared': resolve(root, 'shared') },
   },

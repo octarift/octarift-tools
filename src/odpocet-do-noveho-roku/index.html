@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- A Czech-first page (people search "odpočet do Nového roku", "odpočet do Silvestra"), so like the Christmas
+     page its static text is Czech; English visitors get English at runtime. %NEW_YEAR% (the year that begins) and
+     %OLD_YEAR% are filled in at build time (vite.config.ts). -->
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Odpočet do Nového roku %NEW_YEAR% – kolik zbývá do Silvestra a půlnoci | Octarift Tools</title>
+    <meta name="description" content="Kolik zbývá do Nového roku %NEW_YEAR%? Živý odpočet do silvestrovské půlnoci až na sekundy, s motivem ohňostroje, na celou obrazovku. Kdy je Silvestr %OLD_YEAR%." />
+    <!-- Link previews stay in English like on the other pages. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Octarift Tools" />
+    <meta property="og:title" content="New Year Countdown %NEW_YEAR%" />
+    <meta property="og:description" content="How long until New Year? A live countdown to midnight with fireworks, fullscreen ready." />
+    <meta property="og:url" content="https://tools.octarift.com/odpocet-do-noveho-roku/" />
+    <meta property="og:image" content="https://tools.octarift.com/og/new-year.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="New Year Countdown – Octarift Tools" />
+    <meta property="og:locale" content="cs_CZ" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="cs" href="https://tools.octarift.com/odpocet-do-noveho-roku/?lang=cs" />
+    <link rel="alternate" hreflang="en" href="https://tools.octarift.com/odpocet-do-noveho-roku/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://tools.octarift.com/odpocet-do-noveho-roku/" />
+    <!-- Apply the saved light/dark choice before first paint (see src/shared/color-scheme.ts). -->
+    <script>try{var m=document.cookie.match(/(?:^|; )scheme=(light|dark)/);if(m)document.documentElement.dataset.scheme=m[1]}catch(e){}</script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <body>
+    <header class="site-header" data-site-header></header>
+
+    <main class="holiday">
+      <h1 id="ny-heading" class="holiday__title">Odpočet do Nového roku %NEW_YEAR%</h1>
+
+      <section class="stage" data-theme="newyear" aria-labelledby="ny-heading">
+        <div class="stage__fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="stage__content">
+          <p id="ny-stage-title" class="stage__title">Do Nového roku</p>
+          <div id="ny-digits" class="digits" role="timer"></div>
+          <p id="ny-happy" class="stage__done" hidden>Šťastný nový rok!</p>
+        </div>
+      </section>
+
+      <p id="ny-lead" class="holiday__lead"></p>
+      <div class="holiday__actions">
+        <a id="ny-open" class="button button--primary" href="/countdown/">Otevřít na celou obrazovku</a>
+        <button id="ny-share" class="button" type="button">Sdílet odkaz</button>
+      </div>
+
+      <article id="ny-text" class="text-page holiday__text">
+        <h2>Kolik zbývá do Nového roku</h2>
+        <p>Živý odpočet do silvestrovské půlnoci a Nového roku %NEW_YEAR% až na sekundy, s motivem ohňostroje.</p>
+      </article>
+    </main>
+
+    <footer class="site-footer" data-site-footer></footer>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

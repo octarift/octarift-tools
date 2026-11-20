@@ -1129,7 +1129,7 @@ body:is(.pseudo-fullscreen, .immersive) .stage {
   animation: wt-pulse 3s ease-in-out infinite alternate;
 }
 
-/* ----- Silvestr: city skyline at night with fireworks ----- */
+/* ----- Ohňostroj (id newyear): city skyline at night with rockets bursting above it ----- */
 
 [data-theme='newyear'] {
   background:
@@ -1163,48 +1163,121 @@ body:is(.pseudo-fullscreen, .immersive) .stage {
   text-shadow: none;
 }
 
-/* Firework bursts: a ring of rays that expands, droops and fades, each on its own schedule. */
+/* Fireworks: elements 1-4 are launch columns. Each rocket climbs from behind the skyline (element 5,
+   painted on top) with a glowing trail and bursts at the top of its column, each on its own rhythm. */
 .stage[data-theme='newyear'] .stage__fx i:nth-child(-n + 4) {
-  width: var(--size, 32cqh);
+  left: var(--x);
+  bottom: 0;
+  width: 0;
+  height: var(--h);
+}
+
+/* The rocket: a short glowing streak that climbs the column, then goes out. */
+.stage[data-theme='newyear'] .stage__fx i:nth-child(-n + 4)::before {
+  content: '';
+  position: absolute;
+  left: -0.3cqh;
+  bottom: 0;
+  width: 0.6cqh;
+  height: 11cqh;
+  border-radius: 1cqh;
+  background: linear-gradient(to top, transparent, rgb(255 236 200 / 0.95));
+  box-shadow: 0 -0.5cqh 1.5cqh rgb(255 220 150 / 0.6);
+  opacity: 0;
+  animation: wt-rocket var(--d) ease-out var(--delay) infinite;
+}
+
+/* The burst at the top of the column. Without animation (reduced motion) it simply stays lit. */
+.stage[data-theme='newyear'] .stage__fx i:nth-child(-n + 4)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--size);
   aspect-ratio: 1;
   translate: -50% -50%;
   border-radius: 50%;
   background:
-    radial-gradient(circle, rgb(255 255 255 / 0.5) 0 3%, transparent 6%),
-    repeating-conic-gradient(var(--c) 0 3deg, transparent 3deg 15deg);
-  mask-image: radial-gradient(circle, #000 4%, transparent 8%, transparent 20%, #000 32%, #000 46%, transparent 50%);
-  opacity: 0;
-  animation: wt-burst 3.4s ease-out infinite;
+    radial-gradient(circle, rgb(255 255 255 / 0.7) 0 3%, transparent 6%),
+    repeating-conic-gradient(var(--c) 0 2.5deg, transparent 2.5deg 11deg);
+  mask-image: radial-gradient(circle, #000 4%, transparent 8%, transparent 22%, #000 34%, #000 46%, transparent 50%);
+  filter: drop-shadow(0 0 1.2cqh var(--c));
+  animation: wt-rocket-burst var(--d) ease-out var(--delay) infinite;
 }
 
 .stage[data-theme='newyear'] .stage__fx i:nth-child(1) {
+  --x: 16%;
+  --h: 74cqh;
   --c: #ffd54a;
-  left: 18%;
-  top: 26%;
+  --size: 30cqh;
+  --d: 4.2s;
+  --delay: 0s;
 }
 
 .stage[data-theme='newyear'] .stage__fx i:nth-child(2) {
+  --x: 40%;
+  --h: 86cqh;
   --c: #ff4fa3;
-  --size: 28cqh;
-  left: 80%;
-  top: 20%;
-  animation-delay: -0.85s;
+  --size: 26cqh;
+  --d: 3.8s;
+  --delay: -1.1s;
 }
 
 .stage[data-theme='newyear'] .stage__fx i:nth-child(3) {
+  --x: 64%;
+  --h: 80cqh;
   --c: #4fe3ff;
-  --size: 24cqh;
-  left: 44%;
-  top: 14%;
-  animation-delay: -1.7s;
+  --size: 32cqh;
+  --d: 4.5s;
+  --delay: -2.4s;
 }
 
 .stage[data-theme='newyear'] .stage__fx i:nth-child(4) {
+  --x: 86%;
+  --h: 72cqh;
   --c: #7dff6a;
-  --size: 26cqh;
-  left: 90%;
-  top: 52%;
-  animation-delay: -2.55s;
+  --size: 24cqh;
+  --d: 4s;
+  --delay: -3.2s;
+}
+
+/* Rocket climbs during the first third of the cycle and goes out as the burst starts. */
+@keyframes wt-rocket {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  4% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(calc(11cqh - var(--h)));
+  }
+  33%,
+  100% {
+    opacity: 0;
+    transform: translateY(calc(11cqh - var(--h)));
+  }
+}
+
+@keyframes wt-rocket-burst {
+  0%,
+  31% {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+  35% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12) translateY(7%);
+  }
 }
 
 /* City skyline with lit windows, repeated along the bottom. */
@@ -2144,7 +2217,8 @@ body:is(.pseudo-fullscreen, .immersive) .stage {
   .stage .digits,
   .stage__title::after,
   .stage__fx *,
-  .stage__fx i::before {
+  .stage__fx i::before,
+  .stage__fx i::after {
     animation: none !important;
   }
 

@@ -96,6 +96,8 @@ src/
   odpocet-do-vanoc/             Christmas countdown landing page (SEO): Czech-first static HTML; a 24/25 Dec toggle
                                 (default 24 in Czech, in English 24 for browsers with a Christmas-Eve-country language,
                                 else 25; remembered, ?day= in links); christmas.ts = dates/Advent (pure)
+  odpocet-do-noveho-roku/       New Year countdown landing page (SEO), same pattern as Christmas; newyear.ts (pure);
+                                Fireworks theme (id `newyear`); both holiday pages share shared/styles/holiday-page.css
   privacy/, about/              text pages (privacy policy, about and contact) via shared/text-page.ts;
                                 not tools, so not in `tools`; linked from the footer
   random/                       random picker (/random/): names with a wheel of fortune, teams, order, dice, coin, numbers
@@ -159,8 +161,9 @@ public/                         static files copied as-is (favicon, og images, v
 - `sitemap.xml` is generated at build time from the page folders (vite.config.ts), with cs/en/x-default
   alternates; `public/robots.txt` points to it. Landing pages that are not tools (e.g. Christmas) are linked
   from the hub's "Oblíbené odpočty".
-- `%CHRISTMAS_YEAR%` in HTML is filled at build time; deploy once after 27 December so the static text
-  shows the next year (the page itself updates live).
+- `%CHRISTMAS_YEAR%`, `%NEW_YEAR%` and `%OLD_YEAR%` in HTML are filled at build time (`holidayYears` in
+  vite.config.ts); deploy once after 27 December and once after 2 January so the static text shows the next
+  year (the pages themselves update live).
 
 ## Not done yet (ideas, in rough priority)
 
