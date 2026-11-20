@@ -4,9 +4,6 @@
  */
 let ctx: AudioContext | null = null;
 
-/** End-of-countdown alarm switched off for now (to be reworked later); set to true to bring it back. */
-export const ALARM_ENABLED = false;
-
 export function primeAudio(): void {
   try {
     ctx ??= new AudioContext();
@@ -32,9 +29,13 @@ function beep(frequency: number, delay: number, length: number, volume = 0.25): 
   osc.stop(start + length + 0.02);
 }
 
+/** End of a timer or a countdown to a date: a rising three-note chime, played twice. */
 export function playAlarm(): void {
-  if (!ALARM_ENABLED) return;
-  for (let i = 0; i < 6; i++) beep(i % 2 ? 660 : 880, i * 0.35, 0.3, 0.3);
+  for (const offset of [0, 1.3]) {
+    beep(784, offset, 0.35, 0.28); // G5
+    beep(988, offset + 0.28, 0.35, 0.28); // B5
+    beep(1319, offset + 0.56, 0.6, 0.3); // E6
+  }
 }
 
 /**

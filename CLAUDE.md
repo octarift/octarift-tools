@@ -77,7 +77,7 @@ src/
     phases.ts                   Pomodoro and interval phase sequences, stopwatch time format (pure)
     themes.ts + countdown.css   theme list grouped into categories, and their look ([data-theme="id"])
     pencil.ts                   hand-drawn SVG digits for themes flagged `pencil` (paper, chalkboard)
-    background.ts, alarm.ts     custom background storage, sounds (end alarm is off; phase cues are on)
+    background.ts, alarm.ts     custom background storage, sounds (end chime and phase cues; one on/off setting)
   text-converter/               the text converter (/text-converter/)
     conversions.ts              pure conversion functions + their order and groups (id = label key in strings.ts)
     main.ts, strings.ts, text-converter.css

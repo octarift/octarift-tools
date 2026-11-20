@@ -81,6 +81,7 @@ const els = {
   customTexts: $('#custom-texts'),
   labelFields: $('#label-fields'),
   sound: $<HTMLInputElement>('#sound'),
+  soundLabel: $('#sound-label'),
   title: $<HTMLInputElement>('#title'),
   themeList: $('#theme-list'),
   bgInput: $<HTMLInputElement>('#bg-input'),
@@ -298,8 +299,11 @@ function reset(): void {
 function finish(): void {
   state = { ...state, status: 'finished', endsAt: null, remainingMs: null };
   void wakeLock.disable();
-  if (state.mode === 'interval') cue('end');
-  else playAlarm();
+  // The sound setting covers the end sound of every counting mode (the stopwatch has no end).
+  if (state.sound) {
+    if (state.mode === 'interval') playCue('end');
+    else playAlarm();
+  }
   commit();
 }
 
@@ -733,7 +737,8 @@ function render(): void {
   els.dateFields.hidden = state.mode !== 'date';
   els.pomodoroFields.hidden = state.mode !== 'pomodoro';
   els.intervalFields.hidden = state.mode !== 'interval';
-  els.soundField.hidden = !phased;
+  els.soundField.hidden = state.mode === 'stopwatch';
+  els.soundLabel.textContent = phased ? s.sound : s.soundEnd;
   renderLabelFields();
   els.modeHint.textContent = s.modeHints[state.mode];
   els.modeHint.hidden = !s.modeHints[state.mode];
