@@ -90,8 +90,9 @@ src/
     heic.ts                     HEIC detection; native decode first (Safari), else libheif from public/vendor
     zip.ts                      store-only ZIP writer for "download all"
     main.ts, strings.ts, image-compressor.css
-  odpocet-do-vanoc/             Christmas countdown landing page (SEO): Czech-first static HTML, 24 Dec in Czech,
-                                25 Dec in English; christmas.ts = dates/Advent (pure); links into /countdown/
+  odpocet-do-vanoc/             Christmas countdown landing page (SEO): Czech-first static HTML; a 24/25 Dec toggle
+                                (default 24 in Czech, in English 24 for browsers with a Christmas-Eve-country language,
+                                else 25; remembered, ?day= in links); christmas.ts = dates/Advent (pure)
   privacy/, about/              text pages (privacy policy, about and contact) via shared/text-page.ts;
                                 not tools, so not in `tools`; linked from the footer
 public/                         static files copied as-is (favicon, og images, vendor/, robots.txt, later ads.txt)

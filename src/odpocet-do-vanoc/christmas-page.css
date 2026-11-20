@@ -33,3 +33,12 @@
   width: min(100%, 760px);
   padding-top: 0;
 }
+
+/* 24 / 25 December choice under the countdown (the .segmented look comes from countdown.css). */
+.xmas__days {
+  justify-self: center;
+}
+
+.xmas__days button {
+  min-height: 44px;
+}

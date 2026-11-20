@@ -3,6 +3,7 @@ import '@shared/styles/text-page.css';
 import '../countdown/countdown.css';
 import './christmas-page.css';
 import { site } from '@shared/config';
+import { readJSON, writeJSON } from '@shared/storage';
 import { lang, setMetaDescription } from '@shared/i18n';
 import { mountSiteChrome } from '@shared/site-chrome';
 import { pad, splitMs } from '../countdown/timer';
@@ -23,14 +24,37 @@ const els = {
   digits: $('#xmas-digits'),
   merry: $('#xmas-merry'),
   lead: $('#xmas-lead'),
+  days: $('#xmas-days'),
   open: $<HTMLAnchorElement>('#xmas-open'),
   share: $<HTMLButtonElement>('#xmas-share'),
   text: $('#xmas-text'),
   toast: $('#toast'),
 };
 
-const mainDay = s.mainDay === 25 ? 25 : 24;
+type MainDay = 24 | 25;
+const isDay = (v: unknown): v is MainDay => v === 24 || v === 25;
+const DAY_KEY = 'christmas:day';
+
+/**
+ * Languages of countries where Christmas Eve (24 Dec) is the main day. English visitors whose browser
+ * also lists one of these start with the 24th; everyone else in English with Christmas Day (25th).
+ */
+const EVE_LANGUAGES = /^(cs|sk|de|pl|hu|sv|nb|nn|no|da|fi|et|lv|lt|is)\b/i;
+
+/** ?day= from a shared link, then the visitor's earlier choice, then a default for the language. */
+function initialDay(): MainDay {
+  const fromUrl = Number(new URLSearchParams(location.search).get('day'));
+  if (isDay(fromUrl)) return fromUrl;
+  const saved = readJSON<number>(DAY_KEY);
+  if (isDay(saved)) return saved;
+  if (s.defaultDay === 24) return 24;
+  const languages = navigator.languages?.length ? navigator.languages : [navigator.language];
+  return languages.some((l) => EVE_LANGUAGES.test(l)) ? 24 : 25;
+}
+
+let mainDay: MainDay = initialDay();
 let info = christmasInfo(new Date(), mainDay);
+const dayText = () => s.byDay[mainDay];
 
 const fill = (text: string, values: Record<string, string | number>) =>
   text.replace(/\{(\w+)\}/g, (m, key: string) => (key in values ? String(values[key]) : m));
@@ -58,28 +82,30 @@ function renderTexts(now: Date): void {
   document.title = `${fill(s.pageTitle, { year })} | ${site.name}`;
   setMetaDescription(fill(s.metaDescription, { year }));
   els.heading.textContent = fill(s.heading, { year });
-  els.stageTitle.textContent = s.stageTitle;
+  els.stageTitle.textContent = dayText().stageTitle;
   els.merry.textContent = s.merry;
   els.open.textContent = s.open;
   els.share.textContent = s.share;
-  els.open.href = countdownLink(info.target, s.appTitle, 'christmas');
+  els.open.href = countdownLink(info.target, dayText().appTitle, 'christmas');
+  els.days.setAttribute('aria-label', s.dayChoice);
+  for (const b of els.days.querySelectorAll<HTMLButtonElement>('[data-day]')) {
+    const d = Number(b.dataset.day) as MainDay;
+    b.textContent = s.byDay[d].choice;
+    b.setAttribute('aria-pressed', String(d === mainDay));
+  }
 
   els.lead.textContent = info.celebrating
     ? s.leadMerry
-    : fill(s.lead, {
+    : fill(dayText().lead, {
         year,
         weekday: dateText(info.target, { weekday: 'long' }),
         date: dateText(info.target, { day: 'numeric', month: 'long' }),
       });
 
   const days = calendarDaysUntil(now, info.target);
-  const daysLeft =
-    days <= 0
-      ? s.daysLeft.zero
-      : fill(
-          plural.select(days) === 'one' ? s.daysLeft.one : plural.select(days) === 'few' ? s.daysLeft.few : s.daysLeft.many,
-          { days },
-        );
+  const left = dayText().daysLeft;
+  const rule = plural.select(days);
+  const daysLeft = days <= 0 ? left.zero : fill(rule === 'one' ? left.one : rule === 'few' ? left.few : left.many, { days });
   const fullWeeks = Math.floor(days / 7);
   const restDays = days % 7;
   const weeks =
@@ -132,6 +158,7 @@ function renderDigits(ms: number): void {
 }
 
 let textDay = '';
+let tickTimer = 0;
 
 function tick(): void {
   const now = new Date();
@@ -148,7 +175,7 @@ function tick(): void {
   if (!info.celebrating) renderDigits(info.target.getTime() - now.getTime());
   // Wake up just after the next whole second, like the countdown tool.
   const msLeft = info.target.getTime() - Date.now();
-  window.setTimeout(tick, info.celebrating ? 60_000 : (msLeft % 1000 || 1000) + 5);
+  tickTimer = window.setTimeout(tick, info.celebrating ? 60_000 : (msLeft % 1000 || 1000) + 5);
 }
 
 document.addEventListener('visibilitychange', () => {
@@ -159,7 +186,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 els.share.addEventListener('click', async () => {
-  const url = `${location.origin}${location.pathname}?lang=${lang}`;
+  const url = `${location.origin}${location.pathname}?lang=${lang}&day=${mainDay}`;
   try {
     await navigator.clipboard.writeText(url);
     toast(s.copied);
@@ -175,5 +202,17 @@ function toast(message: string): void {
   window.clearTimeout(toastTimer);
   toastTimer = window.setTimeout(() => (els.toast.hidden = true), 2400);
 }
+
+els.days.addEventListener('click', (e) => {
+  const button = (e.target as Element).closest<HTMLButtonElement>('[data-day]');
+  const day = Number(button?.dataset.day);
+  if (!isDay(day) || day === mainDay) return;
+  mainDay = day;
+  writeJSON(DAY_KEY, day);
+  textDay = ''; // rebuild all texts for the other day
+  lastKey = '';
+  window.clearTimeout(tickTimer);
+  tick();
+});
 
 tick();
