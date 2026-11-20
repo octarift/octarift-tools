@@ -2,7 +2,7 @@
 
 A collection of small browser-based tools on one site, published at
 https://tools.octarift.com under the Octarift studio brand. Tools so far: a
-countdown (`/countdown/`), a text converter (`/text-converter/`), a QR code generator (`/qr-code/`)
+countdown with stopwatch, Pomodoro and interval modes (`/countdown/`), a text converter (`/text-converter/`), a QR code generator (`/qr-code/`)
 and an image compressor (`/image-compressor/`).
 
 The studio site (octarift.com, separate repo `octarift/octarift-web`, local
@@ -71,9 +71,10 @@ src/
     strings.ts                  all countdown UI text in Czech and English
     state.ts                    state shape, persistence, share-link encoding
     timer.ts                    pure time helpers
+    phases.ts                   Pomodoro and interval phase sequences, stopwatch time format (pure)
     themes.ts + countdown.css   theme list grouped into categories, and their look ([data-theme="id"])
     pencil.ts                   hand-drawn SVG digits for themes flagged `pencil` (paper, chalkboard)
-    background.ts, alarm.ts     custom background storage, end sound
+    background.ts, alarm.ts     custom background storage, sounds (end alarm is off; phase cues are on)
   text-converter/               the text converter (/text-converter/)
     conversions.ts              pure conversion functions + their order and groups (id = label key in strings.ts)
     main.ts, strings.ts, text-converter.css
@@ -101,10 +102,15 @@ public/                         static files copied as-is (favicon, og images, v
 
 ## Countdown: things to keep right
 
-- Remaining time is always computed as `endsAt - Date.now()`, never by decrementing a counter
-  (background tabs throttle timers, so counters drift).
-- Share links: `?to=<ISO date>` (date mode) or `?d=<seconds>` (timer), plus `t=<title>` and `theme=<id>`.
+- Modes: timer, date, stopwatch, pomodoro, interval (`Mode` in state.ts).
+- Remaining time is always computed as `endsAt - Date.now()` (stopwatch: `Date.now() - startedAt`), never by
+  decrementing a counter (background tabs throttle timers, so counters drift). Pomodoro/interval phases chain
+  exactly (`endsAt += next phase`), so `advancePhases()` catches up after a sleeping tab or a reload.
+- Share links: `?to=<ISO date>` (date mode), `?d=<seconds>` (timer), `?mode=stopwatch`,
+  `?mode=pomodoro&w=&b=&l=&n=` or `?mode=interval&p=&w=&r=&n=` (seconds, n = rounds), plus `t=<title>` and `theme=<id>`.
   The custom background is never part of a link.
+- Phase names and end messages can be replaced by the user (`labels` in state, `MODE_LABELS` says which mode
+  shows which; empty = built-in text from strings.ts); links carry them as `l_<key>=<text>`.
 - Saved state lives in localStorage under `countdown:state:v1`; bump the version if the shape changes incompatibly.
 - Sound needs a user gesture first (`primeAudio()` on Start / first tap).
 - iPhone Safari has no Fullscreen API, so fullscreen there is the CSS fallback with Safari's bars visible.

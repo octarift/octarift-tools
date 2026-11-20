@@ -61,10 +61,10 @@ export interface ToolInfo {
 export const tools: ToolInfo[] = [
   {
     slug: 'countdown',
-    name: { cs: 'Odpočet', en: 'Countdown' },
+    name: { cs: 'Odpočet a stopky', en: 'Countdown & stopwatch' },
     description: {
-      cs: 'Odpočet k datu nebo časovač s tématy, animovaným pozadím a režimem celé obrazovky.',
-      en: 'Count down to a date or run a timer, with themes, animated backgrounds and fullscreen mode.',
+      cs: 'Odpočet k datu, časovač, stopky s mezičasy, Pomodoro a intervalový trénink. Témata a celá obrazovka.',
+      en: 'Countdown to a date, timer, stopwatch with laps, Pomodoro and interval training. Themes and fullscreen.',
     },
     icon: countdownIcon,
   },

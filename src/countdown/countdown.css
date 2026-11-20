@@ -2595,3 +2595,161 @@ body:is(.pseudo-fullscreen, .immersive) .stage__exit {
   color: #0b0e1a;
   font-weight: 600;
 }
+
+/* ---------- stopwatch, Pomodoro and intervals ---------- */
+
+/* Five modes: let the switch wrap to a second row in the narrow drawer. */
+.segmented {
+  flex-wrap: wrap;
+}
+
+.mode-hint {
+  margin-top: -10px;
+}
+
+/* Hundredths of the stopwatch: smaller, sitting on the same baseline as the seconds.
+   A column's baseline is its first line (the digits), so baseline alignment lines the digits up. */
+.digits:has(.unit--fraction) {
+  align-items: baseline;
+}
+
+.unit--fraction .unit__value {
+  font-size: 0.55em;
+}
+
+/* The decimal comma/point hangs below the baseline; a smaller one keeps it close to the digits. */
+.digits__sep--decimal {
+  font-size: 0.4em;
+}
+
+/* "Práce · 2. pomodoro", "Cvičení · Kolo 3/8" or the latest lap, under the digits. */
+.stage__phase {
+  margin: 0.6em 0 0;
+  font-size: min(4cqw, 8cqh);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.stage[data-phase='rest'] .stage__phase {
+  color: var(--stage-muted);
+}
+
+/* Interval settings: two columns, so the labels fit the drawer. */
+.duration--four {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+.panel input[aria-invalid] {
+  border-color: #d23c3c;
+}
+
+/* Lap list under the controls. */
+.laps__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.laps__title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.laps__head .button {
+  min-height: 44px;
+  margin-left: auto;
+}
+
+.laps__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.laps__table th,
+.laps__table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+.laps__table th:first-child,
+.laps__table td:first-child {
+  text-align: left;
+}
+
+.laps__table th {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.laps__table tbody {
+  display: table-row-group;
+}
+
+.laps__table tbody tr:first-child td {
+  font-weight: 600;
+}
+
+/* "Vlastní texty": collapsed by default, with the same chevron as the theme groups. */
+.custom-texts summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.custom-texts summary::-webkit-details-marker {
+  display: none;
+}
+
+.custom-texts summary:hover {
+  color: var(--text);
+}
+
+.custom-texts summary::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s;
+}
+
+.custom-texts[open] summary::before {
+  transform: rotate(45deg);
+}
+
+.custom-texts > .field-group {
+  margin-bottom: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-texts summary::before {
+    transition: none;
+  }
+}

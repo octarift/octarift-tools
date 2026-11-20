@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Countdown – Octarift Tools</title>
-    <meta name="description" content="Online countdown to a date or timer. Themes, animated backgrounds, your own background image and fullscreen mode." />
+    <meta name="description" content="Online countdown to a date, timer, stopwatch with laps, Pomodoro and interval timer for workouts (Tabata, HIIT). Themes, animated backgrounds and fullscreen." />
     <!-- Link previews (WhatsApp, Facebook, Slack…). Crawlers do not run scripts, so these stay in English;
          the page switches to Czech for Czech visitors at runtime. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Octarift Tools" />
     <meta property="og:title" content="Countdown" />
-    <meta property="og:description" content="Online countdown to a date or timer. Themes, animated backgrounds, your own background image and fullscreen mode." />
+    <meta property="og:description" content="Online countdown to a date, timer, stopwatch with laps, Pomodoro and interval timer for workouts (Tabata, HIIT). Themes, animated backgrounds and fullscreen." />
     <meta property="og:url" content="https://tools.octarift.com/countdown/" />
     <meta property="og:image" content="https://tools.octarift.com/og/countdown.jpg" />
     <meta property="og:image:width" content="1200" />
@@ -46,6 +46,7 @@
         <div class="stage__content">
           <h1 id="stage-title" class="stage__title"></h1>
           <div id="digits" class="digits" role="timer"></div>
+          <p id="phase" class="stage__phase" hidden></p>
           <p id="done" class="stage__done" data-i18n="done" hidden>Čas vypršel!</p>
         </div>
         <div id="ios-tip" class="ios-tip" role="note" hidden>
@@ -85,6 +86,8 @@
         <span class="controls__spacer"></span>
         <button id="start" class="button button--primary" type="button">Start</button>
         <button id="pause" class="button" type="button" data-i18n="pause" hidden>Pauza</button>
+        <button id="lap" class="button" type="button" data-i18n="lap" aria-keyshortcuts="L" hidden>Mezičas</button>
+        <button id="skip" class="button" type="button" data-i18n="skip" hidden>Další fáze</button>
         <button id="reset" class="button" type="button" data-i18n="reset">Reset</button>
         <button id="immersive" class="button" type="button" data-i18n="immersive" aria-keyshortcuts="O W">
           Celé okno
@@ -97,6 +100,23 @@
       <p id="shortcuts" class="hint controls__hint" data-i18n="shortcuts">
         Mezerník spustí nebo pozastaví, F přepne celou obrazovku, N otevře nastavení.
       </p>
+
+      <section id="laps" class="laps" aria-labelledby="laps-title" hidden>
+        <div class="laps__head">
+          <h2 id="laps-title" class="laps__title" data-i18n="laps">Mezičasy</h2>
+          <button id="laps-copy" class="button button--small" type="button" data-i18n="copyLaps">Kopírovat</button>
+        </div>
+        <table class="laps__table">
+          <thead>
+            <tr>
+              <th scope="col" data-i18n="lapNumber">Kolo</th>
+              <th scope="col" data-i18n="lapTime">Čas kola</th>
+              <th scope="col" data-i18n="lapTotal">Celkem</th>
+            </tr>
+          </thead>
+          <tbody id="laps-body"></tbody>
+        </table>
+      </section>
 
       <aside data-promo="countdown"></aside>
       <aside class="ad-slot" data-ad-slot="countdown-bottom"></aside>
@@ -120,7 +140,11 @@
         <div class="segmented" role="group" aria-label="Režim" data-i18n-attr="aria-label:mode">
           <button type="button" data-mode="timer" data-i18n="modeTimer">Časovač</button>
           <button type="button" data-mode="date" data-i18n="modeDate">K datu</button>
+          <button type="button" data-mode="stopwatch" data-i18n="modeStopwatch">Stopky</button>
+          <button type="button" data-mode="pomodoro" data-i18n="modePomodoro">Pomodoro</button>
+          <button type="button" data-mode="interval" data-i18n="modeInterval">Intervaly</button>
         </div>
+        <p id="mode-hint" class="hint mode-hint" hidden></p>
 
         <div id="timer-fields" class="field-group">
           <div class="duration">
@@ -152,6 +176,46 @@
             ><span data-i18n="targetDate">Cílové datum a čas</span><input id="target-date" type="datetime-local"
           /></label>
         </div>
+
+        <div id="pomodoro-fields" class="field-group" hidden>
+          <div class="duration">
+            <label><span data-i18n="pomodoroWork">Práce (min)</span><input id="pomo-work" type="number" min="1" max="240" inputmode="numeric" /></label>
+            <label><span data-i18n="pomodoroShort">Krátká pauza (min)</span><input id="pomo-short" type="number" min="1" max="120" inputmode="numeric" /></label>
+            <label><span data-i18n="pomodoroLong">Dlouhá pauza (min)</span><input id="pomo-long" type="number" min="1" max="120" inputmode="numeric" /></label>
+          </div>
+          <label class="field field--inline"><span data-i18n="pomodoroRounds">Bloků do dlouhé pauzy</span><input id="pomo-rounds" type="number" min="1" max="12" inputmode="numeric" /></label>
+          <div class="chips" aria-label="Rychlá volba" data-i18n-attr="aria-label:presets">
+            <button type="button" class="chip" data-pomodoro="25,5,15,4">25 / 5</button>
+            <button type="button" class="chip" data-pomodoro="50,10,30,2">50 / 10</button>
+            <button type="button" class="chip" data-pomodoro="90,20,30,2">90 / 20</button>
+          </div>
+        </div>
+
+        <div id="interval-fields" class="field-group" hidden>
+          <div class="duration duration--four">
+            <label><span data-i18n="intervalPrepare">Příprava (s)</span><input id="int-prepare" type="number" min="0" max="600" inputmode="numeric" /></label>
+            <label><span data-i18n="intervalWork">Cvičení (s)</span><input id="int-work" type="number" min="1" max="3600" inputmode="numeric" /></label>
+            <label><span data-i18n="intervalRest">Odpočinek (s)</span><input id="int-rest" type="number" min="0" max="3600" inputmode="numeric" /></label>
+            <label><span data-i18n="intervalRounds">Počet kol</span><input id="int-rounds" type="number" min="1" max="99" inputmode="numeric" /></label>
+          </div>
+          <div class="chips" aria-label="Rychlá volba" data-i18n-attr="aria-label:presets">
+            <button type="button" class="chip" data-interval="10,20,10,8">Tabata 20/10 × 8</button>
+            <button type="button" class="chip" data-interval="10,30,30,10">30/30 × 10</button>
+            <button type="button" class="chip" data-interval="10,45,15,10">45/15 × 10</button>
+            <button type="button" class="chip" data-interval="10,60,30,8">60/30 × 8</button>
+          </div>
+          <p id="interval-total" class="hint"></p>
+        </div>
+
+        <label id="sound-field" class="check" hidden>
+          <input id="sound" type="checkbox" /><span data-i18n="sound">Zvukové signály při změně fáze</span>
+        </label>
+
+        <details id="custom-texts" class="field custom-texts">
+          <summary data-i18n="customTexts">Vlastní texty</summary>
+          <div id="label-fields" class="field-group"></div>
+          <p class="hint" data-i18n="customTextsHint">Prázdné pole použije výchozí text.</p>
+        </details>
 
         <label class="field">
           <span data-i18n="title">Nadpis (nepovinný)</span>

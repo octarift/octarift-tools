@@ -4,7 +4,7 @@ import { site } from '@shared/config';
 import { createFullscreen } from '@shared/fullscreen';
 import { mountSiteChrome } from '@shared/site-chrome';
 import { createWakeLock } from '@shared/wake-lock';
-import { playAlarm, primeAudio } from './alarm';
+import { playAlarm, playCue, primeAudio, type Cue } from './alarm';
 import {
   clearCustomBackground,
   isSupportedBackground,
@@ -12,10 +12,32 @@ import {
   MAX_BACKGROUND_BYTES,
   saveCustomBackground,
 } from './background';
-import { applyStrings, setMetaDescription, tr } from '@shared/i18n';
+import { applyStrings, lang, setMetaDescription, tr } from '@shared/i18n';
 import { PencilDigits } from './pencil';
+import {
+  formatElapsed,
+  intervalPhases,
+  intervalTotalMs,
+  pomodoroPhase,
+  splitElapsed,
+  type Phase,
+  type PhaseKind,
+} from './phases';
 import { s } from './strings';
-import { buildShareUrl, loadState, MAX_DURATION_MS, saveState, type Mode } from './state';
+import {
+  buildShareUrl,
+  canPause,
+  inRange,
+  LIMITS,
+  loadState,
+  MAX_DURATION_MS,
+  MAX_LABEL_LENGTH,
+  MODE_LABELS,
+  MODES,
+  saveState,
+  type LabelKey,
+  type Mode,
+} from './state';
 import { FALLBACK_THEME, isThemeId, themeCategories, themes, usesPencil, type ThemeId } from './themes';
 import { formatShort, msFromHMS, nextNewYear, pad, splitMs, toLocalInputValue } from './timer';
 
@@ -35,24 +57,46 @@ const els = {
   video: $<HTMLVideoElement>('#stage-video'),
   stageTitle: $('#stage-title'),
   digits: $('#digits'),
+  phase: $('#phase'),
   done: $('#done'),
+  modeHint: $('#mode-hint'),
   timerFields: $('#timer-fields'),
   dateFields: $('#date-fields'),
+  pomodoroFields: $('#pomodoro-fields'),
+  intervalFields: $('#interval-fields'),
   hours: $<HTMLInputElement>('#dur-h'),
   minutes: $<HTMLInputElement>('#dur-m'),
   seconds: $<HTMLInputElement>('#dur-s'),
   targetDate: $<HTMLInputElement>('#target-date'),
+  pomoWork: $<HTMLInputElement>('#pomo-work'),
+  pomoShort: $<HTMLInputElement>('#pomo-short'),
+  pomoLong: $<HTMLInputElement>('#pomo-long'),
+  pomoRounds: $<HTMLInputElement>('#pomo-rounds'),
+  intPrepare: $<HTMLInputElement>('#int-prepare'),
+  intWork: $<HTMLInputElement>('#int-work'),
+  intRest: $<HTMLInputElement>('#int-rest'),
+  intRounds: $<HTMLInputElement>('#int-rounds'),
+  intervalTotal: $('#interval-total'),
+  soundField: $('#sound-field'),
+  customTexts: $('#custom-texts'),
+  labelFields: $('#label-fields'),
+  sound: $<HTMLInputElement>('#sound'),
   title: $<HTMLInputElement>('#title'),
   themeList: $('#theme-list'),
   bgInput: $<HTMLInputElement>('#bg-input'),
   bgRemove: $<HTMLButtonElement>('#bg-remove'),
   start: $<HTMLButtonElement>('#start'),
   pause: $<HTMLButtonElement>('#pause'),
+  lap: $<HTMLButtonElement>('#lap'),
+  skip: $<HTMLButtonElement>('#skip'),
   reset: $<HTMLButtonElement>('#reset'),
   fullscreen: $<HTMLButtonElement>('#fullscreen'),
   immersive: $<HTMLButtonElement>('#immersive'),
   shortcuts: $('#shortcuts'),
   share: $<HTMLButtonElement>('#share'),
+  laps: $('#laps'),
+  lapsBody: $('#laps-body'),
+  lapsCopy: $<HTMLButtonElement>('#laps-copy'),
   toast: $('#toast'),
   settings: $<HTMLDialogElement>('#settings'),
   settingsOpen: $<HTMLButtonElement>('#settings-open'),
@@ -129,6 +173,16 @@ document.querySelector('meta[name="apple-mobile-web-app-title"]')?.setAttribute(
 
 /* ---------- time ---------- */
 
+const isPhased = (m: Mode) => m === 'pomodoro' || m === 'interval';
+
+/** The Pomodoro or interval phase at `index`; null after the last interval phase (and in other modes). */
+function phaseAt(index: number): Phase | null {
+  if (state.mode === 'pomodoro') return pomodoroPhase(state.pomodoro, index);
+  if (state.mode === 'interval') return intervalPhases(state.interval)[index] ?? null;
+  return null;
+}
+
+/** Countdown modes: time left (of the current phase). */
 function remainingMs(now = Date.now()): number {
   switch (state.status) {
     case 'running':
@@ -138,8 +192,15 @@ function remainingMs(now = Date.now()): number {
     case 'finished':
       return 0;
     case 'idle':
-      return state.mode === 'timer' ? state.durationMs : Math.max(0, (state.targetDate ?? now) - now);
+      if (state.mode === 'date') return Math.max(0, (state.targetDate ?? now) - now);
+      if (isPhased(state.mode)) return phaseAt(0)?.durationMs ?? 0;
+      return state.durationMs;
   }
+}
+
+/** Stopwatch: time measured so far. */
+function elapsedMs(now = Date.now()): number {
+  return state.status === 'running' && state.startedAt !== null ? now - state.startedAt : state.elapsedMs;
 }
 
 function readDuration(): number {
@@ -161,11 +222,27 @@ function commit(): void {
   render();
 }
 
+const cueFor = (kind: PhaseKind): Cue => (kind === 'work' || kind === 'exercise' ? 'work' : 'rest');
+
+function cue(c: Cue): void {
+  if (state.sound) playCue(c);
+}
+
 function start(): void {
   primeAudio();
   const now = Date.now();
 
-  if (state.mode === 'timer') {
+  if (state.mode === 'stopwatch') {
+    state = { ...state, status: 'running', startedAt: now - state.elapsedMs };
+  } else if (isPhased(state.mode)) {
+    if (state.status === 'paused') {
+      state = { ...state, status: 'running', endsAt: now + (state.remainingMs ?? 0), remainingMs: null };
+    } else {
+      const first = phaseAt(0);
+      if (!first) return;
+      state = { ...state, status: 'running', phase: 0, endsAt: now + first.durationMs, remainingMs: null };
+    }
+  } else if (state.mode === 'timer') {
     const ms = state.status === 'paused' ? (state.remainingMs ?? 0) : readDuration();
     if (ms <= 0) {
       toast(s.toastNoDuration);
@@ -186,8 +263,13 @@ function start(): void {
 }
 
 function pause(): void {
-  if (state.status !== 'running' || state.mode !== 'timer') return;
-  state = { ...state, status: 'paused', remainingMs: Math.max(0, (state.endsAt ?? 0) - Date.now()), endsAt: null };
+  if (state.status !== 'running' || !canPause(state.mode)) return;
+  const now = Date.now();
+  if (state.mode === 'stopwatch') {
+    state = { ...state, status: 'paused', elapsedMs: elapsedMs(now), startedAt: null };
+  } else {
+    state = { ...state, status: 'paused', remainingMs: Math.max(0, (state.endsAt ?? 0) - now), endsAt: null };
+  }
   void wakeLock.disable();
   commit();
 }
@@ -203,6 +285,10 @@ function reset(): void {
     remainingMs: null,
     durationMs: ms > 0 ? ms : state.durationMs,
     targetDate: Number.isFinite(target) ? target : state.targetDate,
+    startedAt: null,
+    elapsedMs: 0,
+    laps: [],
+    phase: 0,
   };
   void wakeLock.disable();
   commit();
@@ -211,13 +297,72 @@ function reset(): void {
 function finish(): void {
   state = { ...state, status: 'finished', endsAt: null, remainingMs: null };
   void wakeLock.disable();
-  playAlarm();
+  if (state.mode === 'interval') cue('end');
+  else playAlarm();
   commit();
+}
+
+/** Stopwatch: records the current time as a lap. */
+function lap(): void {
+  if (state.mode !== 'stopwatch' || state.status !== 'running') return;
+  state = { ...state, laps: [...state.laps, elapsedMs()] };
+  commit();
+}
+
+/** Pomodoro and intervals: jumps to the next phase (and ends an interval workout after its last one). */
+function skip(): void {
+  if (!isPhased(state.mode) || (state.status !== 'running' && state.status !== 'paused')) return;
+  const next = phaseAt(state.phase + 1);
+  if (!next) {
+    finish();
+    return;
+  }
+  state =
+    state.status === 'running'
+      ? { ...state, phase: state.phase + 1, endsAt: Date.now() + next.durationMs }
+      : { ...state, phase: state.phase + 1, remainingMs: next.durationMs };
+  lastTick = 0;
+  cue(cueFor(next.kind));
+  commit();
+}
+
+/**
+ * Moves a running Pomodoro or interval past every phase that has ended. Each next phase starts exactly
+ * when the previous one ended, so a tab that slept in the background catches up without drift.
+ * Returns true when something changed.
+ */
+function advancePhases(now = Date.now()): boolean {
+  if (!isPhased(state.mode) || state.status !== 'running' || state.endsAt === null) return false;
+  let changed: Phase | null = null;
+  while (state.endsAt !== null && state.endsAt <= now) {
+    const next = phaseAt(state.phase + 1);
+    if (!next) {
+      finish();
+      return true;
+    }
+    state = { ...state, phase: state.phase + 1, endsAt: state.endsAt + next.durationMs };
+    changed = next;
+  }
+  if (!changed) return false;
+  lastTick = 0;
+  cue(cueFor(changed.kind));
+  commit();
+  return true;
 }
 
 function setMode(mode: Mode): void {
   if (mode === state.mode) return;
-  state = { ...state, mode, status: 'idle', endsAt: null, remainingMs: null };
+  state = {
+    ...state,
+    mode,
+    status: 'idle',
+    endsAt: null,
+    remainingMs: null,
+    startedAt: null,
+    elapsedMs: 0,
+    laps: [],
+    phase: 0,
+  };
   void wakeLock.disable();
   commit();
 }
@@ -225,6 +370,100 @@ function setMode(mode: Mode): void {
 function setTheme(theme: ThemeId): void {
   state = { ...state, theme };
   commit();
+}
+
+/* ---------- custom texts ---------- */
+
+/** Built-in text for each customizable label. */
+function defaultLabel(key: LabelKey): string {
+  if (key === 'done') return s.done;
+  if (key === 'workoutDone') return s.workoutDone;
+  return s.phases[key];
+}
+
+/** The user's text, or the built-in one. */
+const label = (key: LabelKey): string => state.labels[key] || defaultLabel(key);
+
+const escapeAttr = (text: string) =>
+  text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] ?? c);
+
+let labelFieldsMode: Mode | null = null;
+
+/** Fields for the texts of the current mode; rebuilt only when the mode changes, so typing keeps focus. */
+function renderLabelFields(): void {
+  const keys = MODE_LABELS[state.mode];
+  els.customTexts.hidden = keys.length === 0;
+  if (labelFieldsMode === state.mode) return;
+  labelFieldsMode = state.mode;
+  els.labelFields.innerHTML = keys
+    .map(
+      (key) =>
+        `<label class="field"><span>${s.labelNames[key]}</span>` +
+        `<input type="text" data-label="${key}" maxlength="${MAX_LABEL_LENGTH}" ` +
+        `placeholder="${escapeAttr(defaultLabel(key))}" value="${escapeAttr(state.labels[key] ?? '')}"></label>`,
+    )
+    .join('');
+}
+
+els.labelFields.addEventListener('input', (e) => {
+  const input = e.target as HTMLInputElement;
+  const key = input.dataset.label as LabelKey | undefined;
+  if (!key) return;
+  const labels = { ...state.labels };
+  const text = input.value.trim().slice(0, MAX_LABEL_LENGTH);
+  if (text) labels[key] = text;
+  else delete labels[key];
+  state = { ...state, labels };
+  commit();
+});
+
+/* ---------- Pomodoro and interval settings ---------- */
+
+const minutesOf = (ms: number) => String(Math.round(ms / 60_000));
+const secondsOf = (ms: number) => String(Math.round(ms / 1000));
+
+function writePhaseSettings(): void {
+  const p = state.pomodoro;
+  els.pomoWork.value = minutesOf(p.workMs);
+  els.pomoShort.value = minutesOf(p.shortMs);
+  els.pomoLong.value = minutesOf(p.longMs);
+  els.pomoRounds.value = String(p.rounds);
+  const i = state.interval;
+  els.intPrepare.value = secondsOf(i.prepareMs);
+  els.intWork.value = secondsOf(i.workMs);
+  els.intRest.value = secondsOf(i.restMs);
+  els.intRounds.value = String(i.rounds);
+  els.sound.checked = state.sound;
+}
+
+/**
+ * Reads the fields; a value out of range is ignored (the previous one stays) and the field is marked.
+ * A running Pomodoro or workout keeps its current phase; the new lengths apply from the next one.
+ */
+function readPhaseSettings(): void {
+  const field = (input: HTMLInputElement, unit: number, limits: readonly [number, number], fallback: number) => {
+    const v = Number(input.value) * unit;
+    const ok = input.value.trim() !== '' && inRange(v, limits);
+    input.toggleAttribute('aria-invalid', !ok);
+    return ok ? v : fallback;
+  };
+  const p = state.pomodoro;
+  const i = state.interval;
+  state = {
+    ...state,
+    pomodoro: {
+      workMs: field(els.pomoWork, 60_000, LIMITS.pomodoroWork, p.workMs),
+      shortMs: field(els.pomoShort, 60_000, LIMITS.pomodoroBreak, p.shortMs),
+      longMs: field(els.pomoLong, 60_000, LIMITS.pomodoroBreak, p.longMs),
+      rounds: Math.round(field(els.pomoRounds, 1, LIMITS.pomodoroRounds, p.rounds)),
+    },
+    interval: {
+      prepareMs: field(els.intPrepare, 1000, LIMITS.intervalPrepare, i.prepareMs),
+      workMs: field(els.intWork, 1000, LIMITS.intervalWork, i.workMs),
+      restMs: field(els.intRest, 1000, LIMITS.intervalRest, i.restMs),
+      rounds: Math.round(field(els.intRounds, 1, LIMITS.intervalRounds, i.rounds)),
+    },
+  };
 }
 
 /* ---------- custom background ---------- */
@@ -278,26 +517,53 @@ async function removeBackground(): Promise<void> {
 
 /* ---------- rendering ---------- */
 
+/** One block of the big display: digits, the small label under them, and whether it is a decimal fraction. */
+interface Unit {
+  value: string;
+  label: string;
+  fraction?: boolean;
+}
+
 let lastDigitsKey = '';
 const pencil = new PencilDigits(els.digits);
+/** "," in Czech, "." in English: the separator before the stopwatch's hundredths. */
+const decimalMark = (1.5).toLocaleString(lang).charAt(1);
 
-function renderDigits(ms: number): void {
+function countdownUnits(ms: number): Unit[] {
   const p = splitMs(ms);
-  const units: Array<[value: string, label: string]> = [];
-  if (p.days > 0) units.push([String(p.days), s.unitDays]);
-  if (p.days > 0 || p.hours > 0) units.push([pad(p.hours), s.unitHours]);
-  units.push([pad(p.minutes), s.unitMinutes], [pad(p.seconds), s.unitSeconds]);
+  const units: Unit[] = [];
+  if (p.days > 0) units.push({ value: String(p.days), label: s.unitDays });
+  if (p.days > 0 || p.hours > 0) units.push({ value: pad(p.hours), label: s.unitHours });
+  units.push({ value: pad(p.minutes), label: s.unitMinutes }, { value: pad(p.seconds), label: s.unitSeconds });
+  return units;
+}
 
+function stopwatchUnits(ms: number): Unit[] {
+  const p = splitElapsed(ms);
+  const units: Unit[] = [];
+  if (p.hours > 0) units.push({ value: String(p.hours), label: s.unitHours });
+  units.push(
+    { value: pad(p.minutes), label: s.unitMinutes },
+    { value: pad(p.seconds), label: s.unitSeconds },
+    { value: pad(p.centis), label: s.unitCentis, fraction: true },
+  );
+  return units;
+}
+
+function renderDigits(all: Unit[], ariaLabel: string): void {
   // Pencil/chalk themes draw digits stroke by stroke; every other theme uses plain text.
+  // They skip the stopwatch's hundredths: redrawing strokes a hundred times a second would be too much.
   const pencilMode = usesPencil(els.stage.dataset.theme);
-  const key = `${pencilMode ? 'pencil' : 'text'}|${units.map((u) => u[0]).join(':')}`;
+  const units = pencilMode ? all.filter((u) => !u.fraction) : all;
+  const key = `${pencilMode ? 'pencil' : 'text'}|${units.map((u) => u.value).join(':')}`;
   if (key === lastDigitsKey) return;
   lastDigitsKey = key;
 
-  els.digits.dataset.units = String(units.length);
-  els.digits.setAttribute('aria-label', formatShort(ms));
+  // The hundredths are drawn smaller, so they count as less than a full unit when sizing the line.
+  els.digits.dataset.units = String(units.filter((u) => !u.fraction).length);
+  els.digits.setAttribute('aria-label', ariaLabel);
   if (pencilMode) {
-    pencil.render(units);
+    pencil.render(units.map((u) => [u.value, u.label]));
     return;
   }
   pencil.reset();
@@ -306,11 +572,22 @@ function renderDigits(ms: number): void {
   const cells = (value: string) => [...value].map((ch) => `<span class="digit">${ch}</span>`).join('');
   els.digits.innerHTML = units
     .map(
-      ([value, label], i) =>
-        `${i ? '<span class="digits__sep" aria-hidden="true">:</span>' : ''}` +
-        `<span class="unit"><span class="unit__value">${cells(value)}</span><span class="unit__label">${label}</span></span>`,
+      (u, i) =>
+        `${i ? `<span class="digits__sep${u.fraction ? ' digits__sep--decimal' : ''}" aria-hidden="true">${u.fraction ? decimalMark : ':'}</span>` : ''}` +
+        `<span class="unit${u.fraction ? ' unit--fraction' : ''}"><span class="unit__value">${cells(u.value)}</span><span class="unit__label">${u.label}</span></span>`,
     )
     .join('');
+}
+
+/** The big display for the current mode. */
+function renderDisplay(now = Date.now()): void {
+  if (state.mode === 'stopwatch') {
+    const ms = elapsedMs(now);
+    renderDigits(stopwatchUnits(ms), formatElapsed(ms, decimalMark));
+  } else {
+    const ms = remainingMs(now);
+    renderDigits(countdownUnits(ms), formatShort(ms));
+  }
 }
 
 let measuredFont = '';
@@ -374,39 +651,101 @@ function renderThemes(): void {
   });
 }
 
-function renderTitle(ms: number): void {
-  const label = state.title || s.pageTitle;
-  document.title =
-    state.status === 'running' || state.status === 'paused'
-      ? `${formatShort(ms)} · ${label}`
-      : state.status === 'finished'
-        ? `${s.finishedTitle} · ${label}`
-        : `${s.pageTitle} – ${site.name}`;
+/** Phase or lap line under the digits: "Práce · 2. pomodoro", "Cvičení · Kolo 3/8", "Kolo 4 · 00:12,34". */
+function phaseText(): string {
+  if (state.mode === 'stopwatch') {
+    const n = state.laps.length;
+    if (!n) return '';
+    const lapMs = state.laps[n - 1]! - (state.laps[n - 2] ?? 0);
+    return s.lapLatest.replace('{n}', String(n)).replace('{time}', formatElapsed(lapMs, decimalMark));
+  }
+  if (!isPhased(state.mode) || state.status === 'finished') return '';
+  const phase = phaseAt(state.phase);
+  if (!phase) return '';
+  const name = label(phase.kind);
+  if (state.mode === 'pomodoro') return `${name} · ${s.pomodoroNumber.replace('{n}', String(phase.round))}`;
+  if (phase.kind === 'prepare') return name;
+  const round = s.roundOf.replace('{n}', String(phase.round)).replace('{total}', String(state.interval.rounds));
+  return `${name} · ${round}`;
+}
+
+function renderPhase(): void {
+  const text = phaseText();
+  els.phase.textContent = text;
+  els.phase.hidden = !text;
+  const kind = isPhased(state.mode) && state.status !== 'finished' ? phaseAt(state.phase)?.kind : undefined;
+  // Work phases and rest phases get a slightly different look (see countdown.css).
+  if (kind) els.stage.dataset.phase = cueFor(kind);
+  else delete els.stage.dataset.phase;
+}
+
+function renderTitle(now = Date.now()): void {
+  const name = state.title || s.modeTitles[state.mode];
+  let title: string;
+  if (state.status === 'running' || state.status === 'paused') {
+    const time =
+      state.mode === 'stopwatch' ? formatElapsed(elapsedMs(now), decimalMark).slice(0, -3) : formatShort(remainingMs(now));
+    const phase = isPhased(state.mode) ? label(phaseAt(state.phase)?.kind ?? 'work') : name;
+    title = `${time} · ${phase}`;
+  } else if (state.status === 'finished') {
+    title = `${s.finishedTitle} · ${name}`;
+  } else {
+    title = `${s.modeTitles[state.mode]} – ${site.name}`;
+  }
+  // The stopwatch redraws many times a second; only touch the tab title when the text changes.
+  if (document.title !== title) document.title = title;
+}
+
+function renderLaps(): void {
+  const laps = state.laps;
+  els.laps.hidden = state.mode !== 'stopwatch' || laps.length === 0;
+  if (els.laps.hidden) return;
+  // Newest first, like most stopwatches.
+  els.lapsBody.innerHTML = laps
+    .map((total, i) => {
+      const lapMs = total - (laps[i - 1] ?? 0);
+      return `<tr><td>${i + 1}</td><td>${formatElapsed(lapMs, decimalMark)}</td><td>${formatElapsed(total, decimalMark)}</td></tr>`;
+    })
+    .reverse()
+    .join('');
 }
 
 function render(): void {
-  const ms = remainingMs();
   const running = state.status === 'running';
+  const phased = isPhased(state.mode);
 
   els.stage.dataset.theme = state.theme === 'custom' && !hasCustomBg ? FALLBACK_THEME : state.theme;
   updateDigitWidth();
   els.stage.classList.toggle('is-finished', state.status === 'finished');
   els.stageTitle.textContent = state.title;
   els.done.hidden = state.status !== 'finished';
-  renderDigits(ms);
-  renderTitle(ms);
+  els.done.textContent = label(state.mode === 'interval' ? 'workoutDone' : 'done');
+  renderDisplay();
+  renderPhase();
+  renderTitle();
+  renderLaps();
 
   document.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => {
     b.setAttribute('aria-pressed', String(b.dataset.mode === state.mode));
   });
   els.timerFields.hidden = state.mode !== 'timer';
   els.dateFields.hidden = state.mode !== 'date';
-  els.shortcuts.textContent = state.mode === 'date' ? s.shortcutsDate : s.shortcuts;
+  els.pomodoroFields.hidden = state.mode !== 'pomodoro';
+  els.intervalFields.hidden = state.mode !== 'interval';
+  els.soundField.hidden = !phased;
+  renderLabelFields();
+  els.modeHint.textContent = s.modeHints[state.mode];
+  els.modeHint.hidden = !s.modeHints[state.mode];
+  els.intervalTotal.textContent = s.intervalTotal.replace('{time}', formatShort(intervalTotalMs(state.interval)));
+  els.shortcuts.textContent =
+    state.mode === 'date' ? s.shortcutsDate : state.mode === 'stopwatch' ? s.shortcutsStopwatch : s.shortcuts;
 
   els.start.hidden = running;
   els.start.textContent = state.status === 'paused' ? s.resume : s.start;
-  els.pause.hidden = !(running && state.mode === 'timer');
-  els.reset.disabled = state.status === 'idle';
+  els.pause.hidden = !(running && canPause(state.mode));
+  els.lap.hidden = !(running && state.mode === 'stopwatch');
+  els.skip.hidden = !(phased && (running || state.status === 'paused'));
+  els.reset.disabled = state.status === 'idle' && !(state.mode === 'stopwatch' && state.elapsedMs > 0);
   els.bgRemove.hidden = !hasCustomBg;
 
   renderThemes();
@@ -416,10 +755,10 @@ function render(): void {
 
 /**
  * The shown seconds roll over whenever (anchor - now) crosses a whole second, so the
- * anchor is the moment the countdown hits zero. Null when the display is not moving.
+ * anchor is the moment the countdown (or current phase) hits zero. Null when the display is not moving.
  */
 function secondsAnchor(): number | null {
-  if (state.status === 'running') return state.endsAt;
+  if (state.status === 'running' && state.mode !== 'stopwatch') return state.endsAt;
   if (state.status === 'idle' && state.mode === 'date') return state.targetDate;
   return null;
 }
@@ -429,20 +768,36 @@ let tickTimer = 0;
 /** Wakes up just after the displayed value changes instead of polling, so digits flip on time. */
 function scheduleTick(): void {
   window.clearTimeout(tickTimer);
-  const anchor = secondsAnchor();
-  const now = Date.now();
-  const delay = anchor !== null && anchor > now ? ((anchor - now) % 1000 || 1000) + 5 : 500;
+  let delay: number;
+  if (state.mode === 'stopwatch' && state.status === 'running') {
+    // Hundredths are shown; ~25 updates a second look continuous and cost little.
+    delay = usesPencil(els.stage.dataset.theme) ? 1000 - (elapsedMs() % 1000) + 5 : 40;
+  } else {
+    const anchor = secondsAnchor();
+    const now = Date.now();
+    delay = anchor !== null && anchor > now ? ((anchor - now) % 1000 || 1000) + 5 : 500;
+  }
   tickTimer = window.setTimeout(tick, delay);
 }
 
+/** Interval mode: the last whole second for which the 3-2-1 click has played (0 = none yet). */
+let lastTick = 0;
+
 function tick(): void {
-  if (state.status === 'running' && remainingMs() <= 0) {
+  if (advancePhases()) return; // re-rendered already
+  if (state.status === 'running' && !isPhased(state.mode) && state.mode !== 'stopwatch' && remainingMs() <= 0) {
     finish(); // re-renders and reschedules
     return;
   }
-  const ms = remainingMs();
-  renderDigits(ms);
-  renderTitle(ms);
+  if (state.mode === 'interval' && state.status === 'running') {
+    const left = Math.ceil(remainingMs() / 1000);
+    if (left >= 1 && left <= 3 && left !== lastTick) {
+      lastTick = left;
+      cue('tick');
+    }
+  }
+  renderDisplay();
+  renderTitle();
   syncTerminalBlink();
   scheduleTick();
 }
@@ -454,7 +809,8 @@ function tick(): void {
 function syncTerminalBlink(): void {
   if (els.stage.dataset.theme !== 'terminal') return;
   const now = Date.now();
-  const phase = (((now - (secondsAnchor() ?? 0)) % 1000) + 1000) % 1000;
+  const anchor = state.mode === 'stopwatch' ? state.startedAt : secondsAnchor();
+  const phase = (((now - (anchor ?? 0)) % 1000) + 1000) % 1000;
   for (const anim of els.stage.getAnimations({ subtree: true })) {
     if (!(anim instanceof CSSAnimation) || !anim.animationName.startsWith('wt-term-')) continue;
     const current = (Number(anim.currentTime) || 0) % 1000;
@@ -493,7 +849,7 @@ async function share(): Promise<void> {
   if (state.mode === 'date') {
     const target = new Date(els.targetDate.value).getTime();
     if (Number.isFinite(target)) state = { ...state, targetDate: target };
-  } else if (state.status === 'idle') {
+  } else if (state.mode === 'timer' && state.status === 'idle') {
     state = { ...state, durationMs: readDuration() || state.durationMs };
   }
   saveState(state);
@@ -507,10 +863,27 @@ async function share(): Promise<void> {
   }
 }
 
+/** Laps as tab-separated text, so they paste into a spreadsheet as columns. */
+async function copyLaps(): Promise<void> {
+  const rows = state.laps.map((total, i) =>
+    [i + 1, formatElapsed(total - (state.laps[i - 1] ?? 0), decimalMark), formatElapsed(total, decimalMark)].join('\t'),
+  );
+  const text = [[s.lapNumber, s.lapTime, s.lapTotal].join('\t'), ...rows].join('\n');
+  try {
+    await navigator.clipboard.writeText(text);
+    toast(s.toastLapsCopied);
+  } catch {
+    window.prompt(s.copyPrompt, text);
+  }
+}
+
 /* ---------- events ---------- */
 
 document.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => {
-  b.addEventListener('click', () => setMode(b.dataset.mode === 'date' ? 'date' : 'timer'));
+  b.addEventListener('click', () => {
+    const mode = b.dataset.mode as Mode;
+    if (MODES.includes(mode)) setMode(mode);
+  });
 });
 
 document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((b) => {
@@ -533,6 +906,54 @@ document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((b) => {
     }
   }),
 );
+
+[els.pomoWork, els.pomoShort, els.pomoLong, els.pomoRounds, els.intPrepare, els.intWork, els.intRest, els.intRounds].forEach(
+  (input) =>
+    input.addEventListener('input', () => {
+      readPhaseSettings();
+      commit();
+    }),
+);
+
+// Presets: "25,5,15,4" = work, short break, long break (minutes), blocks; "10,20,10,8" = prepare, work, rest (s), rounds.
+document.querySelectorAll<HTMLButtonElement>('[data-pomodoro]').forEach((b) => {
+  b.addEventListener('click', () => {
+    const [work, short, long, rounds] = b.dataset.pomodoro!.split(',').map(Number);
+    state = {
+      ...state,
+      pomodoro: { workMs: work! * 60_000, shortMs: short! * 60_000, longMs: long! * 60_000, rounds: rounds! },
+      status: 'idle',
+      endsAt: null,
+      remainingMs: null,
+      phase: 0,
+    };
+    writePhaseSettings();
+    void wakeLock.disable();
+    commit();
+  });
+});
+document.querySelectorAll<HTMLButtonElement>('[data-interval]').forEach((b) => {
+  b.addEventListener('click', () => {
+    const [prepare, work, rest, rounds] = b.dataset.interval!.split(',').map(Number);
+    state = {
+      ...state,
+      interval: { prepareMs: prepare! * 1000, workMs: work! * 1000, restMs: rest! * 1000, rounds: rounds! },
+      status: 'idle',
+      endsAt: null,
+      remainingMs: null,
+      phase: 0,
+    };
+    writePhaseSettings();
+    void wakeLock.disable();
+    commit();
+  });
+});
+
+els.sound.addEventListener('change', () => {
+  state = { ...state, sound: els.sound.checked };
+  primeAudio();
+  commit();
+});
 
 els.targetDate.addEventListener('change', () => {
   const target = new Date(els.targetDate.value).getTime();
@@ -558,8 +979,11 @@ els.bgInput.addEventListener('change', () => void onBackgroundChosen());
 els.bgRemove.addEventListener('click', () => void removeBackground());
 els.start.addEventListener('click', start);
 els.pause.addEventListener('click', pause);
+els.lap.addEventListener('click', lap);
+els.skip.addEventListener('click', skip);
 els.reset.addEventListener('click', reset);
 els.share.addEventListener('click', () => void share());
+els.lapsCopy.addEventListener('click', () => void copyLaps());
 document.querySelectorAll<HTMLButtonElement>('[data-action="fullscreen"]').forEach((b) => {
   b.addEventListener('click', () => void fullscreen.toggle());
 });
@@ -578,8 +1002,10 @@ document.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   if (e.key === ' ') {
     e.preventDefault();
-    if (state.status === 'running') pause();
-    else start();
+    if (state.status === 'running' && canPause(state.mode)) pause();
+    else if (state.status !== 'running') start();
+  } else if (/^l$/i.test(e.key)) {
+    lap();
   } else if (/^[ns]$/i.test(e.key) && !fullscreen.isOn()) {
     // N for Nastavení, S for Settings; both work in either language.
     setImmersive(false);
@@ -620,9 +1046,11 @@ els.settings.addEventListener('close', () => {
 /* ---------- init ---------- */
 
 writeDuration(state.durationMs);
+writePhaseSettings();
 els.targetDate.value = toLocalInputValue(state.targetDate ?? nextNewYear());
 els.title.value = state.title;
-render();
+// A Pomodoro or workout left running in a closed tab continues where the clock says it should be.
+if (!advancePhases()) render();
 if (state.status === 'running') void wakeLock.enable();
 
 void loadCustomBackground().then((blob) => {
