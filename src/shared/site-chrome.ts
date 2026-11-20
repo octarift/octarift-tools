@@ -38,7 +38,9 @@ export function mountSiteChrome(currentSlug?: string): void {
     footer.innerHTML =
       `<span>© ${new Date().getFullYear()} <a href="${site.studio.url}">${site.studio.name}</a>` +
       (GAME_MENTIONS_ENABLED ? ` · <a href="${gamePromo.pageUrl}">${gamePromo.name}</a>` : '') +
-      // Notices required by the MIT licenses of code bundled into the scripts.
+      ` · <a href="/about/?lang=${lang}">${tr({ cs: 'O webu', en: 'About' })}</a>` +
+      ` · <a href="/privacy/?lang=${lang}">${tr({ cs: 'Ochrana soukromí', en: 'Privacy' })}</a>` +
+      // Notices required by the licenses of code used in the scripts.
       ` · <a href="/third-party-licenses.txt">${tr({ cs: 'Licence', en: 'Licenses' })}</a>` +
       `</span>${coffeeButton()}`;
   }

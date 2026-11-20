@@ -90,6 +90,8 @@ src/
     heic.ts                     HEIC detection; native decode first (Safari), else libheif from public/vendor
     zip.ts                      store-only ZIP writer for "download all"
     main.ts, strings.ts, image-compressor.css
+  privacy/, about/              text pages (privacy policy, about and contact) via shared/text-page.ts;
+                                not tools, so not in `tools`; linked from the footer
 public/                         static files copied as-is (favicon, og images, vendor/, later robots.txt, ads.txt)
 ```
 
@@ -134,6 +136,13 @@ public/                         static files copied as-is (favicon, og images, v
 - HEIC: try `createImageBitmap` first; only if that fails load libheif (~0.7 MB gzipped), once per page.
 - JPEG output gets a white background (transparent areas would turn black). Results bigger than the
   original are flagged, not hidden.
+
+## Privacy policy
+
+- `src/privacy/strings.ts` must match what the site really does. Update it (and its effective date) before
+  adding analytics, ads or anything that loads third-party content or sends data anywhere; ads in the EU
+  also need a certified consent banner (CMP). Today: no third-party requests, only the hosting (GitHub Pages).
+- Controller and contact (same as octarift.com): Michal Šilhán (Octarift), octarift.studio@gmail.com.
 
 ## Not done yet (ideas, in rough priority)
 
