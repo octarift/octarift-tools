@@ -60,10 +60,65 @@ function licenseNotices(): Plugin {
   };
 }
 
+/**
+ * Fills %CHRISTMAS_YEAR% in page HTML with the year of the next Christmas (from 27 December on, next
+ * year's). The static text is what search engines read first; the page itself updates it live.
+ * After New Year a fresh deploy is needed for the static text to follow.
+ */
+function christmasYear(): Plugin {
+  return {
+    name: 'christmas-year',
+    transformIndexHtml(html) {
+      const now = new Date();
+      const year = now >= new Date(now.getFullYear(), 11, 27) ? now.getFullYear() + 1 : now.getFullYear();
+      return html.replaceAll('%CHRISTMAS_YEAR%', String(year));
+    },
+  };
+}
+
+const SITE_URL = 'https://tools.octarift.com';
+
+/**
+ * Writes sitemap.xml from the pages Vite builds (pageInputs), so new tools are listed automatically.
+ * Each page has a Czech and an English URL (?lang=cs / ?lang=en) plus the plain one as x-default,
+ * matching the hreflang links in the pages.
+ */
+function sitemap(): Plugin {
+  return {
+    name: 'sitemap',
+    apply: 'build',
+    generateBundle() {
+      const lastmod = new Date().toISOString().slice(0, 10);
+      const paths = Object.keys(pageInputs())
+        .map((name) => (name === 'hub' ? '/' : `/${name}/`))
+        .sort((a, b) => (a === '/' ? -1 : b === '/' ? 1 : a.localeCompare(b)));
+      const alternates = (path: string) =>
+        [
+          `    <xhtml:link rel="alternate" hreflang="cs" href="${SITE_URL}${path}?lang=cs"/>`,
+          `    <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}${path}?lang=en"/>`,
+          `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${path}"/>`,
+        ].join('\n');
+      const urls = paths.flatMap((path) =>
+        ['cs', 'en'].map(
+          (l) => `  <url>\n    <loc>${SITE_URL}${path}?lang=${l}</loc>\n    <lastmod>${lastmod}</lastmod>\n${alternates(path)}\n  </url>`,
+        ),
+      );
+      this.emitFile({
+        type: 'asset',
+        fileName: 'sitemap.xml',
+        source:
+          '<?xml version="1.0" encoding="UTF-8"?>\n' +
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' +
+          `${urls.join('\n')}\n</urlset>\n`,
+      });
+    },
+  };
+}
+
 export default defineConfig({
   root,
   publicDir: resolve(here, 'public'),
-  plugins: [licenseNotices()],
+  plugins: [licenseNotices(), christmasYear(), sitemap()],
   resolve: {
     alias: { '@shared': resolve(root, 'shared') },
   },

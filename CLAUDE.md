@@ -90,9 +90,11 @@ src/
     heic.ts                     HEIC detection; native decode first (Safari), else libheif from public/vendor
     zip.ts                      store-only ZIP writer for "download all"
     main.ts, strings.ts, image-compressor.css
+  odpocet-do-vanoc/             Christmas countdown landing page (SEO): Czech-first static HTML, 24 Dec in Czech,
+                                25 Dec in English; christmas.ts = dates/Advent (pure); links into /countdown/
   privacy/, about/              text pages (privacy policy, about and contact) via shared/text-page.ts;
                                 not tools, so not in `tools`; linked from the footer
-public/                         static files copied as-is (favicon, og images, vendor/, later robots.txt, ads.txt)
+public/                         static files copied as-is (favicon, og images, vendor/, robots.txt, later ads.txt)
 ```
 
 ## Adding a new tool
@@ -143,6 +145,14 @@ public/                         static files copied as-is (favicon, og images, v
   adding analytics, ads or anything that loads third-party content or sends data anywhere; ads in the EU
   also need a certified consent banner (CMP). Today: no third-party requests, only the hosting (GitHub Pages).
 - Controller and contact (same as octarift.com): Michal Šilhán (Octarift), octarift.studio@gmail.com.
+
+## SEO
+
+- `sitemap.xml` is generated at build time from the page folders (vite.config.ts), with cs/en/x-default
+  alternates; `public/robots.txt` points to it. Landing pages that are not tools (e.g. Christmas) are linked
+  from the hub's "Oblíbené odpočty".
+- `%CHRISTMAS_YEAR%` in HTML is filled at build time; deploy once after 27 December so the static text
+  shows the next year (the page itself updates live).
 
 ## Not done yet (ideas, in rough priority)
 

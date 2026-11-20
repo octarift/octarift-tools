@@ -9,11 +9,15 @@ const strings = tr({
     heading: 'Nástroje',
     lead: 'Jednoduché nástroje, které běží přímo ve vašem prohlížeči.',
     description: 'Jednoduché online nástroje, které fungují přímo v prohlížeči.',
+    popular: 'Oblíbené odpočty',
+    christmas: 'Odpočet do Vánoc',
   },
   en: {
     heading: 'Tools',
     lead: 'Simple tools that run right in your browser.',
     description: 'Simple online tools that work right in your browser.',
+    popular: 'Popular countdowns',
+    christmas: 'Christmas countdown',
   },
 });
 
@@ -32,4 +36,12 @@ if (list) {
       </a></li>`,
     )
     .join('');
+}
+
+// Ready-made countdown pages (seasonal content that people search for).
+const popular = document.querySelector<HTMLElement>('#popular');
+if (popular) {
+  popular.innerHTML =
+    `<h2 class="hub__subtitle">${strings.popular}</h2>` +
+    `<ul class="hub-links"><li><a href="/odpocet-do-vanoc/?lang=${lang}">🎄 ${strings.christmas}</a></li></ul>`;
 }
