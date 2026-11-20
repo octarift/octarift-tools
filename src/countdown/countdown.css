@@ -2696,7 +2696,14 @@ body:is(.pseudo-fullscreen, .immersive) .stage__exit {
   font-size: calc(min(14cqw, 29cqh) / var(--fit, 1));
 }
 
+/* Only the digits shrink: the value keeps a full-size line box (a block with inline digits gets the
+   full font's strut), so its label sits at the same height as the labels of the other units. */
 .unit--fraction .unit__value {
+  display: block;
+  white-space: nowrap;
+}
+
+.unit--fraction .digit {
   font-size: 0.55em;
 }
 
