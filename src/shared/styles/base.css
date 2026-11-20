@@ -2,6 +2,8 @@
 :root {
   color-scheme: light dark;
   --bg: #f6f7fb;
+  /* Background of a tool's stage in fullscreen: true black in dark mode, so OLED screens stay off. */
+  --fullscreen-bg: var(--bg);
   --surface: #ffffff;
   --surface-2: #eef0f6;
   --text: #16181d;
@@ -25,6 +27,7 @@
   :root:not([data-scheme='light']) {
     color-scheme: dark;
     --bg: #0e1015;
+    --fullscreen-bg: #000;
     --surface: #161922;
     --surface-2: #1f2331;
     --text: #eceef3;
@@ -40,6 +43,7 @@
 :root[data-scheme='dark'] {
   color-scheme: dark;
   --bg: #0e1015;
+  --fullscreen-bg: #000;
   --surface: #161922;
   --surface-2: #1f2331;
   --text: #eceef3;
