@@ -337,11 +337,21 @@ function animate(className: string, ms: number): Promise<void> {
  * A coin with both faces in 3D. It spins several half turns; each half turn shows the other face, so the
  * result stays open until the coin settles. The final angle is set by the result (decided beforehand).
  */
+/** "Hlava 2× · Orel 1×" with the current side names. */
+const tallyText = (headsName: string, tailsName: string) =>
+  s.tally
+    .replace('{heads}', headsName)
+    .replace('{tails}', tailsName)
+    .replace('{h}', String(tally.heads))
+    .replace('{t}', String(tally.tails));
+
 async function flipCoin(heads: boolean, headsName: string, tailsName: string): Promise<void> {
   const coin = (side: 'heads' | 'tails', name: string) =>
     `<span class="coin__face coin__face--${side}"><span>${escapeHtml(name)}</span></span>`;
+  // The tally stays in place (with the previous counts) while the coin is in the air, so nothing below moves.
   els.result.innerHTML =
-    `<div class="coin-toss"><div class="coin3d">${coin('heads', headsName)}${coin('tails', tailsName)}</div></div>`;
+    `<div class="coin-toss"><div class="coin3d">${coin('heads', headsName)}${coin('tails', tailsName)}</div></div>` +
+    `<p class="rnd-result__total" data-tally>${escapeHtml(tallyText(headsName, tailsName))}</p>`;
   const disc = els.result.querySelector<HTMLElement>('.coin3d')!;
   // Whole turns end on heads, an extra half turn on tails.
   const end = 360 * 6 + (heads ? 0 : 180);
@@ -375,7 +385,8 @@ async function go(): Promise<void> {
         winners = [list[index]!];
         busy = true;
         els.go.disabled = true;
-        setResult(`<p class="rnd-result__spinning">…</p>`, '');
+        // Same lines as the final result (label + name), so the button below does not jump when it lands.
+        setResult(`<p class="rnd-result__label">${s.winner}</p><p class="rnd-result__big rnd-result__spinning">…</p>`, '');
         wheel.setNames(list);
         await wheel.spin(index, randomBelow(1000) / 1000, reduceMotion());
         busy = false;
@@ -446,16 +457,7 @@ async function go(): Promise<void> {
       await flipCoin(heads, headsName, tailsName);
       if (heads) tally.heads++;
       else tally.tails++;
-      els.result.insertAdjacentHTML(
-        'beforeend',
-        `<p class="rnd-result__total">${escapeHtml(
-          s.tally
-            .replace('{heads}', headsName)
-            .replace('{tails}', tailsName)
-            .replace('{h}', String(tally.heads))
-            .replace('{t}', String(tally.tails)),
-        )}</p>`,
-      );
+      els.result.querySelector('[data-tally]')!.textContent = tallyText(headsName, tailsName);
       resultText = face;
       els.copy.disabled = false;
       addHistory('coin', face);
