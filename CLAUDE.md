@@ -22,10 +22,15 @@ game Rift Defense (`com.octarift.riftdefense` on Google Play).
 - **Ads, the Rift Defense promo card and the Buy Me a Coffee button appear only outside fullscreen.** Fullscreen is the product; keep it clean.
 - The promo card is filled into `<aside data-promo="campaign">` by `site-chrome.ts`; its Play link carries
   `utm_source=octarift-tools&utm_campaign=<campaign>` so installs show in Play Console. Text lives in `gamePromo` in `config.ts`.
-- UI is bilingual: Czech (formal "vy" form) and English. Czech/Slovak browsers get Czech, everyone else English;
-  `?lang=cs|en` overrides and is remembered (`src/shared/i18n.ts`). Each page lists both versions with hreflang links.
-  **Never hard-code UI text**: add it to the tool's `strings.ts` (`en` is typed from `cs`, so a missing translation
-  fails the build), shared text uses `tr({ cs, en })`, static HTML uses `data-i18n` / `data-i18n-attr`.
+- UI is in Czech (formal "vy" form), English and German (formal "Sie"). Czech/Slovak browsers get Czech, browsers
+  that list German before English get German, everyone else English; `?lang=cs|en|de` overrides and is remembered
+  (`src/shared/i18n.ts`). Each page lists all versions with hreflang links.
+  **Never hard-code UI text**: add it to the tool's `strings.ts` (`en` and `de` are typed from `cs`, so a missing
+  translation fails the build), shared text uses `tr({ cs, en, de })`, static HTML uses `data-i18n` / `data-i18n-attr`.
+- German is written by Claude and not reviewed by a native speaker: the footer shows "Übersetzungsfehler melden"
+  (mailto) in German, and the German privacy policy says the Czech version prevails. Keep the established terms:
+  Countdown, Stoppuhr, Text umwandeln, QR-Code-Generator, Bilder verkleinern, Zufallsgenerator, Design (theme),
+  Vollbild, WLAN, GiroCode (SEPA). German "remove accents" and slugs write ä/ö/ü as ae/oe/ue.
   Code, comments and commit messages are in English. English UI text uses US spelling (color, center).
 - Light/dark/system switch in the header (`src/shared/color-scheme.ts`): the choice is a `scheme` cookie on
   `.octarift.com`, shared with the studio site (its `scheme.js`); no cookie = follow the system. An inline
@@ -95,13 +100,14 @@ src/
     zip.ts                      store-only ZIP writer for "download all"
     main.ts, strings.ts, image-compressor.css
   odpocet-do-vanoc/             Christmas countdown landing page (SEO): Czech-first static HTML; a 24/25 Dec toggle
-                                (default 24 in Czech, in English 24 for browsers with a Christmas-Eve-country language,
-                                else 25; remembered, ?day= in links); christmas.ts = dates/Advent (pure)
+                                (default 24 in Czech and German, in English 24 for browsers with a Christmas-Eve-country
+                                language, else 25; remembered, ?day= in links); christmas.ts = dates/Advent (pure)
   odpocet-do-noveho-roku/       New Year countdown landing page (SEO), same pattern as Christmas; newyear.ts (pure);
                                 Fireworks theme (id `newyear`); both holiday pages share shared/styles/holiday-page.css
   jak-vytvorit-qr-platbu/, heic-na-jpg/, pomodoro-technika/, tabata-trenink/
-                                guides (SEO articles): Czech article in the HTML, English in strings.ts, via
-                                shared/guide-page.ts; each links to its tool and to the other guides; listed on
+                                guides (SEO articles): Czech article in the HTML, English and German in strings.ts, via
+                                shared/guide-page.ts (the QR Platba guide has no German: German visitors get English,
+                                it is in NO_GERMAN in vite.config.ts and has no de hreflang); each links to its tool and to the other guides; listed on
                                 the hub (Návody) and linked from the QR generator, image compressor and countdown
   privacy/, about/              text pages (privacy policy, about and contact) via shared/text-page.ts;
                                 not tools, so not in `tools`; linked from the footer
@@ -168,7 +174,7 @@ public/                         static files copied as-is (favicon, og images, v
 
 - New guides: same template as the existing ones (head with hreflang, `#guide` article, `.guide-cta` button to the
   tool with useful presets, "Další návody" list); add them to every guide's list and to the hub's `guideList`.
-- `sitemap.xml` is generated at build time from the page folders (vite.config.ts), with cs/en/x-default
+- `sitemap.xml` is generated at build time from the page folders (vite.config.ts), with cs/en/de/x-default
   alternates; `public/robots.txt` points to it. Landing pages that are not tools (e.g. Christmas) are linked
   from the hub's "Oblíbené odpočty".
 - `%CHRISTMAS_YEAR%`, `%NEW_YEAR%` and `%OLD_YEAR%` in HTML are filled at build time (`holidayYears` in

@@ -143,12 +143,22 @@ const normalizeSpaces = perLine((line) =>
     .replace(/:(?=\p{L})/gu, ': '),
 );
 
-const slug = perLine((line) =>
-  removeDiacritics(line)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, ''),
-);
+/** German writes ä, ö, ü as ae, oe, ue when it has to do without them (Mädchen → Maedchen, not Madchen). */
+const UMLAUTS: Record<string, string> = { ä: 'ae', ö: 'oe', ü: 'ue', Ä: 'Ae', Ö: 'Oe', Ü: 'Ue' };
+const germanUmlauts = (text: string, lang: string) =>
+  lang === 'de' ? text.replace(/[äöüÄÖÜ]/g, (ch) => UMLAUTS[ch] ?? ch) : text;
+const asciiText = (text: string, lang: string) => removeDiacritics(germanUmlauts(text, lang));
+
+const slug = (text: string, lang: string) =>
+  text
+    .split('\n')
+    .map((line) =>
+      asciiText(line, lang)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, ''),
+    )
+    .join('\n');
 
 function stripHtml(text: string): string {
   const withBreaks = text
@@ -361,7 +371,7 @@ export const conversions: Conversion[] = [
   { id: 'replace', group: 'cleanup', run: (t, _l, ctx) => findReplace(t, ctx.replace).text },
   { id: 'linearize', group: 'cleanup', run: linearize },
   { id: 'spaces', group: 'cleanup', run: normalizeSpaces },
-  { id: 'diacritics', group: 'cleanup', run: removeDiacritics },
+  { id: 'diacritics', group: 'cleanup', run: asciiText },
   { id: 'slug', group: 'cleanup', run: slug },
   { id: 'stripHtml', group: 'cleanup', run: stripHtml },
 

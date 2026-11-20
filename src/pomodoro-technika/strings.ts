@@ -1,4 +1,4 @@
-/** English version of the guide (the Czech one is the page's HTML). Generated from a template. */
+/** English and German versions of the guide (the Czech one is the page's HTML). */
 import type { GuideTranslation } from '@shared/guide-page';
 
 export const en: GuideTranslation = {
@@ -43,5 +43,51 @@ and you can set any times you like.</p>
 </ul>
 
 <div class="guide-related"><h2>More guides</h2><ul><li><a href="/jak-vytvorit-qr-platbu/">How to create a QR payment code</a></li><li><a href="/heic-na-jpg/">How to convert HEIC to JPG</a></li><li><a href="/tabata-trenink/">Tabata workout</a></li></ul></div>
+`,
+};
+
+export const de: GuideTranslation = {
+  title: 'Die Pomodoro-Technik – so funktioniert sie, mit kostenlosem Online-Timer',
+  description: 'Was die Pomodoro-Technik ist, wie sie funktioniert (25 Minuten Arbeit, 5 Minuten Pause), warum sie beim Konzentrieren hilft, und ein kostenloser Online-Pomodoro-Timer.',
+  html: `
+<h1>Die Pomodoro-Technik</h1>
+<p class="text-page__meta">Anleitung · Online-Pomodoro-Timer</p>
+<p>Pomodoro ist eine einfache Methode des Zeitmanagements: Sie arbeiten in kurzen, konzentrierten Blöcken mit
+regelmäßigen Pausen dazwischen. Francesco Cirillo hat sie Ende der 1980er-Jahre als Student entwickelt, als er nach
+einem Weg suchte, sich besser zu konzentrieren. Benannt ist sie nach einem Küchenwecker in Tomatenform
+(<em>pomodoro</em> ist Italienisch für Tomate).</p>
+
+<div class="guide-cta"><p>Starten Sie einen Pomodoro-Timer; die Phasen wechseln von selbst mit einem kurzen Ton.</p>
+<a class="button button--primary" href="/countdown/?mode=pomodoro">Pomodoro starten</a></div>
+
+<h2>So funktioniert es</h2>
+<ol>
+  <li>Wählen Sie die Aufgabe, an der Sie arbeiten werden.</li>
+  <li>Stellen Sie den Timer auf <strong>25 Minuten</strong> und arbeiten Sie nur an dieser Aufgabe, ohne E-Mail und Handy.</li>
+  <li>Wenn er klingelt, machen Sie <strong>5 Minuten Pause</strong>: strecken, trinken, weg vom Bildschirm.</li>
+  <li>Nach <strong>vier Blöcken</strong> folgt eine längere Pause, meist <strong>15–30 Minuten</strong>.</li>
+</ol>
+
+<h2>Warum es hilft</h2>
+<ul>
+  <li><strong>Ein kurzer Block ist leichter anzufangen.</strong> 25 Minuten klingen selbst bei einer unangenehmen Aufgabe machbar.</li>
+  <li><strong>Pausen beugen Ermüdung vor.</strong> Regelmäßige Erholung hält Sie den ganzen Tag konzentriert.</li>
+  <li><strong>Weniger Unterbrechungen.</strong> Wenn Sie wissen, dass bald eine Pause kommt, ignorieren Sie Handy und E-Mail leichter.</li>
+  <li><strong>Ein Gefühl für Zeit.</strong> Das Zählen der Pomodoros zeigt, wie viel Arbeit eine Aufgabe wirklich gekostet hat.</li>
+</ul>
+
+<h2>Varianten</h2>
+<p>Feste Regeln gibt es nicht. Für konzentrierte Arbeit eignen sich längere Blöcke von <strong>50 / 10</strong> oder
+<strong>90 / 20</strong> Minuten, für Kinder und kurze Aufmerksamkeitsspannen kürzere. Unser Timer bietet die
+Schnellauswahl 25/5, 50/10 und 90/20, und Sie können beliebige Zeiten einstellen.</p>
+
+<h2>Tipps</h2>
+<ul>
+  <li>Lassen Sie den Timer im Vollbild oder in einem eigenen Fenster laufen, damit Sie ihn immer sehen.</li>
+  <li>Sie können die Phasen umbenennen, zum Beispiel in „Lernen“ und „Erholung“.</li>
+  <li>Wenn Sie jemand unterbricht, notieren Sie es, erledigen Sie es in der Pause und machen Sie dann weiter.</li>
+</ul>
+
+<div class="guide-related"><h2>Weitere Anleitungen</h2><ul><li><a href="/heic-na-jpg/">HEIC in JPG umwandeln</a></li><li><a href="/tabata-trenink/">Tabata-Training</a></li></ul></div>
 `,
 };

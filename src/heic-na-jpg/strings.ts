@@ -1,4 +1,4 @@
-/** English version of the guide (the Czech one is the page's HTML). Generated from a template. */
+/** English and German versions of the guide (the Czech one is the page's HTML). */
 import type { GuideTranslation } from '@shared/guide-page';
 
 export const en: GuideTranslation = {
@@ -41,5 +41,50 @@ because every device opens JPG.</p>
 <p>No. The whole conversion happens in your browser. Your photos never leave your computer or phone.</p>
 
 <div class="guide-related"><h2>More guides</h2><ul><li><a href="/jak-vytvorit-qr-platbu/">How to create a QR payment code</a></li><li><a href="/pomodoro-technika/">The Pomodoro Technique</a></li><li><a href="/tabata-trenink/">Tabata workout</a></li></ul></div>
+`,
+};
+
+export const de: GuideTranslation = {
+  title: 'HEIC in JPG umwandeln – iPhone-Fotos kostenlos und ohne Hochladen',
+  description: 'So wandeln Sie iPhone-Fotos von HEIC kostenlos direkt im Browser in JPG um, ohne sie hochzuladen, und so nimmt Ihr iPhone Fotos als JPG auf.',
+  html: `
+<h1>HEIC in JPG umwandeln</h1>
+<p class="text-page__meta">Anleitung · iPhone-Fotos</p>
+<p>iPhones speichern Fotos als <strong>HEIC</strong> (HEIF). Das ist effizient: Ein Foto braucht bei ähnlicher
+Qualität etwa halb so viel Platz wie ein JPG. Viele Programme, Websites und ältere Computer können es aber nicht
+öffnen. Am einfachsten wandeln Sie die Fotos in das universelle Format <strong>JPG</strong> um.</p>
+
+<div class="guide-cta"><p>Die Umwandlung läuft direkt in Ihrem Browser; die Fotos werden nie hochgeladen. Sie können viele auf einmal hinzufügen.</p>
+<a class="button button--primary" href="/image-compressor/">HEIC in JPG umwandeln</a></div>
+
+<h2>Schritte</h2>
+<ol>
+  <li>Öffnen Sie <a href="/image-compressor/">Bilder verkleinern</a>.</li>
+  <li>Wählen Sie als Format <strong>JPG</strong> und eine Qualität um <strong>80 %</strong>.</li>
+  <li>Lassen Sie bei der längsten Seite <strong>Originalgröße</strong>, oder verkleinern Sie die Fotos gleich, z. B. auf 1920 px für E-Mails.</li>
+  <li>Ziehen Sie die HEIC-Fotos in das Fenster (oder wählen Sie sie über die Schaltfläche aus).</li>
+  <li>Laden Sie sie einzeln herunter oder alle zusammen als ZIP.</li>
+</ol>
+<p>Bei der Umwandlung werden die Metadaten entfernt, auch der <strong>GPS-Standort</strong>, an dem das Foto
+aufgenommen wurde. Das ist praktisch, wenn Sie Fotos teilen oder online stellen.</p>
+
+<h2>So nimmt Ihr iPhone Fotos als JPG auf</h2>
+<p>Öffnen Sie auf dem iPhone <strong>Einstellungen → Kamera → Formate</strong> und wählen Sie
+<strong>Maximale Kompatibilität</strong>. Neue Fotos werden dann als JPG gespeichert (sie brauchen mehr Platz).
+Bereits aufgenommene Fotos bleiben HEIC.</p>
+<p>Wenn Sie Fotos per Kabel auf einen Computer kopieren, können Sie außerdem
+<strong>Einstellungen → Fotos → Auf Mac oder PC übertragen</strong> auf <strong>Automatisch</strong> stellen; dann
+wandelt das iPhone sie bei der Übertragung um.</p>
+
+<h2>Häufige Fragen</h2>
+<h3>Verliert das Foto an Qualität?</h3>
+<p>Bei 80–90 % Qualität ist der Unterschied praktisch unsichtbar. Wenn Sie die Fotos weiter bearbeiten möchten, wählen Sie eine höhere Qualität.</p>
+<h3>Warum kann Windows HEIC nicht öffnen?</h3>
+<p>Windows braucht dafür Erweiterungen aus dem Microsoft Store (HEIF-Bilderweiterungen und HEVC-Videoerweiterungen).
+Die Umwandlung in JPG ist einfacher, denn JPG öffnet jedes Gerät.</p>
+<h3>Werden meine Fotos irgendwohin hochgeladen?</h3>
+<p>Nein. Die gesamte Umwandlung findet in Ihrem Browser statt. Ihre Fotos verlassen Ihren Computer oder Ihr Handy nie.</p>
+
+<div class="guide-related"><h2>Weitere Anleitungen</h2><ul><li><a href="/pomodoro-technika/">Die Pomodoro-Technik</a></li><li><a href="/tabata-trenink/">Tabata-Training</a></li></ul></div>
 `,
 };

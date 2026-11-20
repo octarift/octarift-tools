@@ -86,9 +86,11 @@ const SITE_URL = 'https://tools.octarift.com';
 
 /**
  * Writes sitemap.xml from the pages Vite builds (pageInputs), so new tools are listed automatically.
- * Each page has a Czech and an English URL (?lang=cs / ?lang=en) plus the plain one as x-default,
- * matching the hreflang links in the pages.
+ * Each page has a Czech, an English and a German URL (?lang=cs / en / de) plus the plain one as x-default,
+ * matching the hreflang links in the pages. Pages without a German version are listed in NO_GERMAN.
  */
+const NO_GERMAN = new Set(['/jak-vytvorit-qr-platbu/']);
+
 function sitemap(): Plugin {
   return {
     name: 'sitemap',
@@ -98,14 +100,16 @@ function sitemap(): Plugin {
       const paths = Object.keys(pageInputs())
         .map((name) => (name === 'hub' ? '/' : `/${name}/`))
         .sort((a, b) => (a === '/' ? -1 : b === '/' ? 1 : a.localeCompare(b)));
+      const langs = (path: string) => (NO_GERMAN.has(path) ? ['cs', 'en'] : ['cs', 'en', 'de']);
       const alternates = (path: string) =>
         [
-          `    <xhtml:link rel="alternate" hreflang="cs" href="${SITE_URL}${path}?lang=cs"/>`,
-          `    <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}${path}?lang=en"/>`,
+          ...langs(path).map(
+            (l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}${path}?lang=${l}"/>`,
+          ),
           `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${path}"/>`,
         ].join('\n');
       const urls = paths.flatMap((path) =>
-        ['cs', 'en'].map(
+        langs(path).map(
           (l) => `  <url>\n    <loc>${SITE_URL}${path}?lang=${l}</loc>\n    <lastmod>${lastmod}</lastmod>\n${alternates(path)}\n  </url>`,
         ),
       );

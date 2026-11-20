@@ -3,7 +3,7 @@ import { bindSchemeSwitch, schemeSwitchHtml } from './color-scheme';
 import { lang, LANGS, langUrl, tr } from './i18n';
 import { enforceNumberLimits } from './number-limits';
 
-const LANG_LABELS = { cs: 'Čeština', en: 'English' } as const;
+const LANG_LABELS = { cs: 'Čeština', en: 'English', de: 'Deutsch' } as const;
 
 /**
  * Fills the shared header (with the language switch), footer, game promo and ad slots.
@@ -23,17 +23,27 @@ export function mountSiteChrome(currentSlug?: string): void {
           `<a href="/${t.slug}/${q}"${t.slug === currentSlug ? ' aria-current="page"' : ''}>${tr(t.name)}</a>`,
       )
       .join('');
-    const switcher = LANGS.map(
+    // Language menu: only the current language is visible, the rest folds out (stays short as languages are added).
+    const languageLabel = tr({ cs: 'Jazyk', en: 'Language', de: 'Sprache' });
+    const options = LANGS.map(
       (l) =>
-        `<a href="${langUrl(l)}" hreflang="${l}" lang="${l}" title="${LANG_LABELS[l]}"` +
-        `${l === lang ? ' aria-current="true"' : ''}>${l.toUpperCase()}</a>`,
+        `<li><a href="${langUrl(l)}" hreflang="${l}" lang="${l}"${l === lang ? ' aria-current="true"' : ''}>` +
+        `<span>${LANG_LABELS[l]}</span><span class="lang-menu__code">${l.toUpperCase()}</span></a></li>`,
     ).join('');
+    const switcher =
+      `<details class="lang-menu"><summary aria-label="${languageLabel}: ${LANG_LABELS[lang]}" title="${languageLabel}">` +
+      `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">` +
+      `<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>` +
+      `<span>${lang.toUpperCase()}</span>` +
+      `<svg class="lang-menu__chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>` +
+      `</summary><ul class="lang-menu__list">${options}</ul></details>`;
     header.innerHTML =
       `<a class="site-brand" href="/${q}"><img src="/favicon.svg" alt="" width="30" height="30">${site.name}</a>` +
-      `<nav class="site-nav" aria-label="${tr({ cs: 'Nástroje', en: 'Tools' })}">${links}</nav>` +
+      `<nav class="site-nav" aria-label="${tr({ cs: 'Nástroje', en: 'Tools', de: 'Werkzeuge' })}">${links}</nav>` +
       `<div class="site-switches">${schemeSwitchHtml()}` +
-      `<nav class="lang-switch" aria-label="${tr({ cs: 'Jazyk', en: 'Language' })}">${switcher}</nav></div>`;
+      `<nav class="lang-switch" aria-label="${languageLabel}">${switcher}</nav></div>`;
     bindSchemeSwitch(header);
+    bindLangMenu(header);
   }
 
   const footer = document.querySelector<HTMLElement>('[data-site-footer]');
@@ -41,10 +51,14 @@ export function mountSiteChrome(currentSlug?: string): void {
     footer.innerHTML =
       `<span>© ${new Date().getFullYear()} <a href="${site.studio.url}">${site.studio.name}</a>` +
       (GAME_MENTIONS_ENABLED ? ` · <a href="${gamePromo.pageUrl}">${gamePromo.name}</a>` : '') +
-      ` · <a href="/about/?lang=${lang}">${tr({ cs: 'O webu', en: 'About' })}</a>` +
-      ` · <a href="/privacy/?lang=${lang}">${tr({ cs: 'Ochrana soukromí', en: 'Privacy' })}</a>` +
+      ` · <a href="/about/?lang=${lang}">${tr({ cs: 'O webu', en: 'About', de: 'Über diese Seite' })}</a>` +
+      ` · <a href="/privacy/?lang=${lang}">${tr({ cs: 'Ochrana soukromí', en: 'Privacy', de: 'Datenschutz' })}</a>` +
       // Notices required by the licenses of code used in the scripts.
-      ` · <a href="/third-party-licenses.txt">${tr({ cs: 'Licence', en: 'Licenses' })}</a>` +
+      ` · <a href="/third-party-licenses.txt">${tr({ cs: 'Licence', en: 'Licenses', de: 'Lizenzen' })}</a>` +
+      // German is a machine-assisted translation checked only by the author: invite corrections.
+      (lang === 'de'
+        ? ` · <a href="mailto:octarift.studio@gmail.com?subject=${encodeURIComponent('Übersetzungsfehler')}">Übersetzungsfehler melden</a>`
+        : '') +
       `</span>${coffeeButton()}`;
   }
 
@@ -55,7 +69,7 @@ export function mountSiteChrome(currentSlug?: string): void {
     }
     const campaign = slot.dataset.promo || 'tools';
     slot.classList.add('promo');
-    slot.setAttribute('aria-label', `${tr({ cs: 'Hra', en: 'Game' })} ${gamePromo.name}`);
+    slot.setAttribute('aria-label', `${tr({ cs: 'Hra', en: 'Game', de: 'Spiel' })} ${gamePromo.name}`);
     slot.innerHTML =
       `<div class="promo__icon" aria-hidden="true"></div>` +
       `<div class="promo__text"><span class="promo__eyebrow">${tr(gamePromo.platform)}</span>` +
@@ -71,9 +85,24 @@ export function mountSiteChrome(currentSlug?: string): void {
     }
     if (import.meta.env.DEV && site.ads.showPlaceholder) {
       slot.classList.add('ad-slot--placeholder');
-      slot.textContent = `${tr({ cs: 'Místo pro reklamu', en: 'Ad space' })} (${slot.dataset.adSlot ?? ''})`;
+      slot.textContent = `${tr({ cs: 'Místo pro reklamu', en: 'Ad space', de: 'Werbefläche' })} (${slot.dataset.adSlot ?? ''})`;
     } else {
       slot.remove();
+    }
+  });
+}
+
+/** The language menu is a <details>; this closes it on a click outside or Escape. */
+function bindLangMenu(root: ParentNode): void {
+  const menu = root.querySelector<HTMLDetailsElement>('.lang-menu');
+  if (!menu) return;
+  document.addEventListener('click', (e) => {
+    if (menu.open && !menu.contains(e.target as Node)) menu.open = false;
+  });
+  menu.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu.open) {
+      menu.open = false;
+      menu.querySelector('summary')?.focus();
     }
   });
 }

@@ -40,9 +40,9 @@ export function setScheme(scheme: Scheme): void {
 /** Markup for the three-way switch; wire it up with bindSchemeSwitch(). */
 export function schemeSwitchHtml(): string {
   const labels: Record<Scheme, string> = {
-    auto: tr({ cs: 'Podle systému', en: 'System' }),
-    light: tr({ cs: 'Světlý vzhled', en: 'Light' }),
-    dark: tr({ cs: 'Tmavý vzhled', en: 'Dark' }),
+    auto: tr({ cs: 'Podle systému', en: 'System', de: 'Wie im System' }),
+    light: tr({ cs: 'Světlý vzhled', en: 'Light', de: 'Hell' }),
+    dark: tr({ cs: 'Tmavý vzhled', en: 'Dark', de: 'Dunkel' }),
   };
   const current = readScheme();
   const buttons = SCHEMES.map(
@@ -50,7 +50,7 @@ export function schemeSwitchHtml(): string {
       `<button type="button" data-scheme-option="${s}" aria-pressed="${s === current}" title="${labels[s]}" aria-label="${labels[s]}">` +
       `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">${ICONS[s]}</svg></button>`,
   ).join('');
-  return `<div class="scheme-switch" role="group" aria-label="${tr({ cs: 'Vzhled', en: 'Appearance' })}">${buttons}</div>`;
+  return `<div class="scheme-switch" role="group" aria-label="${tr({ cs: 'Vzhled', en: 'Appearance', de: 'Darstellung' })}">${buttons}</div>`;
 }
 
 export function bindSchemeSwitch(root: ParentNode): void {

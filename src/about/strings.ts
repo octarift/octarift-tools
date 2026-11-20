@@ -17,7 +17,7 @@ i v mobilu, bez instalace a bez registrace.</p>`,
     se neodesílají. Podrobnosti najdete v <a href="/privacy/">zásadách ochrany soukromí</a>.</li>
   <li><strong>Žádné účty ani sledování.</strong> Web si pamatuje jen nastavení, která si sami zvolíte.</li>
   <li><strong>Rychlost a jednoduchost.</strong> Nástroj se otevře a hned funguje, i na pomalejším připojení.</li>
-  <li><strong>Česky i anglicky.</strong> Jazyk přepnete vpravo nahoře.</li>
+  <li><strong>Česky, anglicky a německy.</strong> Jazyk přepnete vpravo nahoře.</li>
 </ul>
 
 <h2>Kdo za webem stojí</h2>
@@ -50,7 +50,7 @@ with nothing to install and no sign-up.</p>`,
     never sent anywhere. See the <a href="/privacy/">privacy policy</a> for details.</li>
   <li><strong>No accounts, no tracking.</strong> The site only remembers the settings you choose.</li>
   <li><strong>Fast and simple.</strong> A tool opens and works right away, even on a slow connection.</li>
-  <li><strong>In Czech and English.</strong> Switch the language at the top right.</li>
+  <li><strong>In Czech, English and German.</strong> Switch the language at the top right.</li>
 </ul>
 
 <h2>Who makes it</h2>
@@ -67,4 +67,39 @@ Republic. The tools are free; in the future, unobtrusive ads may help to pay for
 `,
 };
 
-export const s = tr({ cs, en });
+const de: typeof cs = {
+  pageTitle: 'Über diese Seite und Kontakt',
+  metaDescription:
+    'Octarift Tools sind kostenlose Online-Werkzeuge, die in Ihrem Browser laufen: Countdown und Stoppuhr, Text umwandeln, QR-Codes, Bilder verkleinern und Zufallsgenerator. Ohne Anmeldung, nichts wird hochgeladen.',
+  heading: 'Über diese Seite',
+  intro: `
+<p>Octarift Tools sind einfache, kostenlose Werkzeuge für alltägliche Aufgaben. Sie funktionieren direkt im Browser
+auf dem Computer oder Handy, ohne Installation und ohne Anmeldung.</p>`,
+  toolsTitle: 'Werkzeuge',
+  body: `
+<h2>Was uns wichtig ist</h2>
+<ul>
+  <li><strong>Ihre Daten bleiben bei Ihnen.</strong> Texte, Fotos und Zahlungsdaten werden auf Ihrem Gerät verarbeitet
+    und nirgendwohin gesendet. Einzelheiten finden Sie in der <a href="/privacy/">Datenschutzerklärung</a>.</li>
+  <li><strong>Keine Konten, kein Tracking.</strong> Die Seite merkt sich nur die Einstellungen, die Sie wählen.</li>
+  <li><strong>Schnell und einfach.</strong> Ein Werkzeug öffnet sich und funktioniert sofort, auch bei langsamer Verbindung.</li>
+  <li><strong>Auf Tschechisch, Englisch und Deutsch.</strong> Die Sprache wechseln Sie oben rechts. Die deutsche
+    Übersetzung ist neu; wenn Ihnen ein Fehler auffällt, schreiben Sie uns bitte.</li>
+</ul>
+
+<h2>Wer dahintersteht</h2>
+<p>Die Seite wird von <a href="https://octarift.com/">Octarift</a> betrieben, einem kleinen unabhängigen Studio aus
+Tschechien. Die Werkzeuge sind kostenlos; künftig könnte dezente Werbung helfen, sie zu finanzieren, aber nie im
+Vollbildmodus.</p>
+
+<h2>Kontakt</h2>
+<p>Sie haben eine Idee für ein neues Werkzeug, einen Fehler gefunden oder vermissen etwas? Schreiben Sie an
+<a href="mailto:octarift.studio@gmail.com">octarift.studio@gmail.com</a>. Wir lesen jede Nachricht.</p>
+
+<h2>Lizenzen</h2>
+<p>Einige Werkzeuge nutzen Open-Source-Bibliotheken anderer Autoren. Die Liste und ihre Lizenzen finden Sie auf der
+Seite <a href="/third-party-licenses.txt">Lizenzen</a> (auf Englisch).</p>
+`,
+};
+
+export const s = tr({ cs, en, de });

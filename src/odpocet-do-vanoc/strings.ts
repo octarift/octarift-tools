@@ -159,4 +159,82 @@ so it stays right even after you close and reopen the page.</p>
   dateFormat: { weekday: 'long', day: 'numeric', month: 'long' },
 };
 
-export const s = tr({ cs, en });
+const de: typeof cs = {
+  pageTitle: 'Countdown bis Weihnachten {year} – wie viele Tage noch bis Weihnachten',
+  metaDescription:
+    'Wie viele Tage noch bis Weihnachten? Ein Live-Countdown bis Heiligabend {year} mit festlichem Design, auch im Vollbild. Termine für Weihnachten und Advent {year}.',
+  heading: 'Countdown bis Weihnachten {year}',
+  merry: 'Frohe Weihnachten!',
+  /** In German-speaking countries presents come on Christmas Eve. */
+  defaultDay: 24,
+  dayChoice: 'Countdown bis',
+  byDay: {
+    24: {
+      choice: 'Heiligabend (24. Dez.)',
+      stageTitle: 'Bis Heiligabend',
+      lead: 'Heiligabend {year} fällt auf {weekday}, den {date}.',
+      appTitle: 'Bis Heiligabend',
+      daysLeft: {
+        one: 'Heiligabend ist <strong>morgen</strong>.',
+        few: 'Heiligabend ist <strong>in {days} Tagen</strong>.',
+        many: 'Heiligabend ist <strong>in {days} Tagen</strong>.',
+        zero: 'Heiligabend ist <strong>heute</strong>.',
+      },
+    },
+    25: {
+      choice: '1. Weihnachtstag (25. Dez.)',
+      stageTitle: 'Bis Weihnachten',
+      lead: 'Der 1. Weihnachtstag {year} fällt auf {weekday}, den {date}.',
+      appTitle: 'Bis Weihnachten',
+      daysLeft: {
+        one: 'Weihnachten ist <strong>morgen</strong>.',
+        few: 'Weihnachten ist <strong>in {days} Tagen</strong>.',
+        many: 'Weihnachten ist <strong>in {days} Tagen</strong>.',
+        zero: 'Weihnachten ist <strong>heute</strong>.',
+      },
+    },
+  },
+  units: { days: 'Tage', hours: 'Std.', minutes: 'Min.', seconds: 'Sek.' },
+  leadMerry: 'Frohe Feiertage! Der Countdown bis zum nächsten Weihnachten beginnt am 27. Dezember.',
+  open: 'Im Vollbild öffnen',
+  share: 'Link teilen',
+  copied: 'Link kopiert.',
+  copyPrompt: 'Link kopieren:',
+  weeks: ' Das sind {weeks}.',
+  weeksForms: { one: '{n} Woche', few: '{n} Wochen', many: '{n} Wochen' },
+  daysForms: { one: '{n} Tag', few: '{n} Tage', many: '{n} Tage' },
+  and: ' und ',
+  body: `
+<h2>Wie viele Tage noch bis Weihnachten</h2>
+<p>{daysLeft}{weeks} Der Countdown oben zeigt die genaue verbleibende Zeit auf die Sekunde und richtet sich immer nach
+der tatsächlichen Uhrzeit, sodass er auch nach dem Schließen und erneuten Öffnen der Seite stimmt.</p>
+
+<h2>Wann ist Weihnachten {year}</h2>
+<ul>
+  <li><strong>Heiligabend:</strong> {d24}</li>
+  <li><strong>1. Weihnachtstag:</strong> {d25}</li>
+  <li><strong>2. Weihnachtstag:</strong> {d26}</li>
+</ul>
+
+<h2>Advent {year}</h2>
+<p>Der Advent beginnt am vierten Sonntag vor dem 1. Weihnachtstag. In diesem Jahr fallen die Adventssonntage auf:</p>
+<ul>
+  <li><strong>1. Advent:</strong> {a1}</li>
+  <li><strong>2. Advent:</strong> {a2}</li>
+  <li><strong>3. Advent:</strong> {a3}</li>
+  <li><strong>4. Advent:</strong> {a4}</li>
+</ul>
+
+<h2>Tipps</h2>
+<ul>
+  <li><strong>Im Vollbild:</strong> Zeigen Sie den Countdown auf dem Fernseher, im Klassenzimmer oder im Büro. Die
+    Schaltfläche oben öffnet ihn mit allen Einstellungen, einschließlich des Designs Weihnachtsbaum oder eines eigenen
+    Hintergrundbilds.</li>
+  <li><strong>An die Familie senden:</strong> Der Link öffnet denselben Countdown auf jedem Gerät.</li>
+  <li><strong>Silvester:</strong> Gleich nach Weihnachten probieren Sie den <a href="{newYearLink}">Countdown bis Neujahr</a>.</li>
+</ul>
+`,
+  dateFormat: { weekday: 'long', day: 'numeric', month: 'long' },
+};
+
+export const s = tr({ cs, en, de });

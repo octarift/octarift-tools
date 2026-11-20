@@ -205,36 +205,91 @@ textarea {
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
 }
 
-.lang-switch {
-  display: flex;
-  gap: 2px;
-  padding: 3px;
-  border-radius: 999px;
-  background: var(--surface-2);
+/* Language menu: the current language as a pill like the scheme switch, the others fold out below. */
+.lang-menu {
+  position: relative;
 }
 
-.lang-switch a {
-  display: grid;
-  place-items: center;
-  min-width: 40px;
-  min-height: 32px;
-  padding: 0 10px;
+.lang-menu summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 12px;
   border-radius: 999px;
-  color: var(--muted);
+  background: var(--surface-2);
+  color: var(--text);
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.04em;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lang-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.lang-menu summary svg {
+  color: var(--muted);
+}
+
+.lang-menu__chevron {
+  transition: transform 0.15s ease;
+}
+
+.lang-menu[open] .lang-menu__chevron {
+  transform: rotate(180deg);
+}
+
+.lang-menu__list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 50;
+  min-width: 180px;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+  list-style: none;
+}
+
+.lang-menu__list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--text);
   text-decoration: none;
 }
 
-.lang-switch a:hover {
-  color: var(--text);
+.lang-menu__list a:hover,
+.lang-menu__list a:focus-visible {
+  background: var(--surface-2);
 }
 
-.lang-switch a[aria-current='true'] {
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+.lang-menu__list a[aria-current='true'] {
+  font-weight: 700;
+}
+
+.lang-menu__code {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-menu__chevron {
+    transition: none;
+  }
 }
 
 .site-footer {

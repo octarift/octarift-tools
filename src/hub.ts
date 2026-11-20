@@ -35,6 +35,21 @@ const strings = tr({
       ['tabata-trenink', 'Tabata workout'],
     ],
   },
+  de: {
+    heading: 'Werkzeuge',
+    lead: 'Einfache Werkzeuge, die direkt in Ihrem Browser laufen.',
+    description: 'Einfache Online-Werkzeuge, die direkt im Browser funktionieren.',
+    popular: 'Beliebte Countdowns',
+    christmas: 'Countdown bis Weihnachten',
+    newYear: 'Countdown bis Neujahr',
+    guides: 'Anleitungen',
+    // The QR Platba guide is about Czech bank payments: not offered to German visitors.
+    guideList: [
+      ['heic-na-jpg', 'HEIC in JPG umwandeln'],
+      ['pomodoro-technika', 'Die Pomodoro-Technik'],
+      ['tabata-trenink', 'Tabata-Training'],
+    ],
+  },
 });
 
 applyStrings(strings);

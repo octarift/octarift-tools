@@ -143,4 +143,85 @@ Republic this is the <a href="https://uoou.gov.cz/en" rel="noopener">Office for 
 `,
 };
 
-export const s = tr({ cs, en });
+const de: typeof cs = {
+  pageTitle: 'Datenschutzerklärung',
+  metaDescription:
+    'Wie Octarift Tools mit Ihren Daten umgeht: Die Werkzeuge laufen in Ihrem Browser, Dateien und Texte werden nie hochgeladen, und die Seite verwendet keine Tracking-Cookies.',
+  heading: 'Datenschutzerklärung',
+  effective: 'Gültig ab 20. November 2026',
+  body: `
+<div class="text-page__summary">
+  <p><strong>Kurz gesagt:</strong> Alle Werkzeuge laufen direkt in Ihrem Browser. Texte, Bilder, Fotos, Zahlungsdaten
+  oder Passwörter, die Sie eingeben, werden nirgendwohin gesendet, und niemand, auch wir nicht, hat Zugriff darauf.
+  Die Seite hat keine Benutzerkonten und verwendet keine Tracking-Cookies, Analysedienste oder Werbung.</p>
+</div>
+
+<h2>1. Wer die Seite betreibt</h2>
+<p>Die Website tools.octarift.com (die „Seite“) wird von Michal Šilhán betrieben, einer natürlichen Person, die unter
+dem Namen Octarift tätig ist, Tschechische Republik. Kontakt:
+<a href="mailto:octarift.studio@gmail.com">octarift.studio@gmail.com</a>.</p>
+
+<h2>2. Daten, die Sie in die Werkzeuge eingeben</h2>
+<p>Text umwandeln, QR-Code-Generator, Bilder verkleinern, Zufallsgenerator und Countdown verarbeiten alles auf Ihrem
+Gerät. Was Sie eingeben oder hinzufügen (Texte, Fotos einschließlich ihrer Metadaten, Kontonummern, WLAN-Passwörter,
+den Countdown-Hintergrund…), wird an keinen Server gesendet. Wir betreiben keinen Server, der es empfangen könnte.</p>
+
+<h2>3. Was die Seite in Ihrem Browser speichert</h2>
+<p>Damit sich die Werkzeuge Ihre Einstellungen merken, speichern sie diese im Speicher Ihres Browsers. Diese Daten
+bleiben auf Ihrem Gerät, werden nie an uns oder andere gesendet und sorgen nur dafür, dass die Seite so funktioniert,
+wie Sie es wünschen. Deshalb ist dafür keine Einwilligung erforderlich.</p>
+<div class="text-page__table"><table>
+  <thead><tr><th>Was</th><th>Wo</th><th>Wie lange</th></tr></thead>
+  <tbody>
+    <tr><td>Ihre Wahl der hellen oder dunklen Darstellung (nur wenn Sie sie ändern)</td><td>Cookie <code>scheme</code>, gemeinsam mit octarift.com</td><td>1 Jahr</td></tr>
+    <tr><td>Ihre Sprache; Einstellungen von Countdown und Stoppuhr (Modus, Zeiten, Design, eigene Texte); Typ und
+      Aussehen des QR-Codes; die zuletzt verwendete Textumwandlung; Bildformat, Qualität und Größe; Namensliste und
+      Einstellungen des Zufallsgenerators; ob der iPhone-Hinweis angezeigt wurde</td>
+      <td>localStorage</td><td>bis Sie sie löschen</td></tr>
+    <tr><td>In „Text umwandeln“ eingegebener Text, im QR-Code-Generator ausgefüllte Angaben</td><td>sessionStorage</td><td>bis der Tab geschlossen wird</td></tr>
+    <tr><td>Ihr eigenes Hintergrundbild oder -video für den Countdown</td><td>IndexedDB</td><td>bis Sie es entfernen</td></tr>
+  </tbody>
+</table></div>
+<p>Sie können all das jederzeit in den Einstellungen Ihres Browsers löschen (Websitedaten für tools.octarift.com
+löschen).</p>
+
+<h2>4. Hosting</h2>
+<p>Die Seite ist statisch und wird auf GitHub Pages (GitHub, Inc., USA) gehostet. Beim Laden einer Seite sendet Ihr
+Browser die üblichen technischen Daten, etwa Ihre IP-Adresse, den Browsertyp und die Adresse der Seite. GitHub
+verarbeitet sie, um die Seite auszuliefern und den Dienst vor Angriffen zu schützen, und kann sie kurzzeitig in
+Server-Logs speichern. Wir haben keinen Zugriff auf diese Logs. Rechtsgrundlage ist das berechtigte Interesse am
+sicheren Betrieb der Seite (Art. 6 Abs. 1 lit. f DSGVO). Übermittlungen in die USA stützen sich auf das
+EU-US Data Privacy Framework oder Standardvertragsklauseln. Einzelheiten finden Sie in der
+<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">Datenschutzerklärung
+von GitHub</a>.</p>
+<p>Das Laden der Unterstützung für HEIC-Fotos ruft nur eine Datei von dieser Seite ab; kein anderer Dienst wird
+kontaktiert.</p>
+
+<h2>5. Analyse und Werbung</h2>
+<p>Die Seite verwendet derzeit keine Besucheranalyse und keine Werbung und bindet keine Inhalte Dritter ein. Sollten wir
+sie künftig hinzufügen, aktualisieren wir diese Erklärung vorher und bitten Sie um Ihre Einwilligung, wo das Gesetz
+es verlangt.</p>
+
+<h2>6. Links zu anderen Websites</h2>
+<p>Die Seite verlinkt auf andere Websites (zum Beispiel octarift.com oder Lizenzquellen). Sobald Sie einem Link folgen,
+gelten deren Bestimmungen. Von Ihnen erstellte QR-Codes können Links zu Diensten wie PayPal oder Revolut enthalten;
+die Seite selbst kontaktiert diese Dienste nicht.</p>
+
+<h2>7. Ihre Rechte</h2>
+<p>Nach der DSGVO haben Sie das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung,
+Datenübertragbarkeit und Widerspruch. Da wir selbst keine Ihrer Daten speichern, betreffen diese Rechte vor allem die
+Logs des Hosting-Anbieters; wir helfen Ihnen gern unter dem oben genannten Kontakt. Sie können sich auch bei einer
+Aufsichtsbehörde beschweren; in Tschechien ist das das
+<a href="https://uoou.gov.cz/en" rel="noopener">Amt für den Schutz personenbezogener Daten (ÚOOÚ)</a>.</p>
+
+<h2>8. Änderungen</h2>
+<p>Wir können diese Erklärung aktualisieren. Die aktuelle Fassung ist immer auf dieser Seite mit ihrem Gültigkeitsdatum
+veröffentlicht.</p>
+
+<h2>9. Sprachfassungen</h2>
+<p>Diese deutsche Fassung ist eine Übersetzung. Bei Abweichungen zwischen den Sprachfassungen ist die tschechische
+Fassung maßgeblich.</p>
+`,
+};
+
+export const s = tr({ cs, en, de });

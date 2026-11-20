@@ -1,15 +1,17 @@
 /**
- * UI language. Czech for browsers set to Czech or Slovak, English for everyone else.
+ * UI language. Czech for browsers that list Czech or Slovak, German for browsers that put German
+ * before English, English for everyone else.
  *
  * Order of precedence: ?lang= in the URL (also remembered), then the remembered choice,
- * then the browser's languages. Each language has its own URL (?lang=cs / ?lang=en) so
- * search engines can index both; the pages list them with hreflang links.
+ * then the browser's languages. Each language has its own URL (?lang=cs / ?lang=en / ?lang=de) so
+ * search engines can index all of them; the pages list them with hreflang links.
+ * Keep LANGS alphabetical: it is the order of the language menu.
  */
-export const LANGS = ['cs', 'en'] as const;
+export const LANGS = ['cs', 'de', 'en'] as const;
 export type Lang = (typeof LANGS)[number];
 
 const STORAGE_KEY = 'lang';
-const isLang = (v: unknown): v is Lang => v === 'cs' || v === 'en';
+const isLang = (v: unknown): v is Lang => (LANGS as readonly unknown[]).includes(v);
 
 function detect(): Lang {
   const fromUrl = new URLSearchParams(location.search).get('lang');
@@ -28,7 +30,10 @@ function detect(): Lang {
     // Storage blocked: fall through to the browser languages.
   }
   const prefs = navigator.languages?.length ? navigator.languages : [navigator.language];
-  return prefs.some((l) => /^(cs|sk)\b/i.test(l)) ? 'cs' : 'en';
+  if (prefs.some((l) => /^(cs|sk)\b/i.test(l))) return 'cs';
+  // German or English, whichever comes first in the visitor's list.
+  const first = prefs.find((l) => /^(de|en)\b/i.test(l));
+  return first && /^de\b/i.test(first) ? 'de' : 'en';
 }
 
 export const lang: Lang = detect();
