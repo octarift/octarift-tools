@@ -150,6 +150,7 @@ const fullscreen = createFullscreen(els.stage, (on) => {
   document.body.classList.toggle('is-fullscreen', on);
   els.fullscreen.textContent = on ? s.exitFullscreen : s.fullscreen;
   if (on) setImmersive(false);
+  if (on) startDateCountdown();
   wakeCursor();
   if (on) maybeShowIosTip();
   else iosTip.hidden = true;
@@ -158,10 +159,13 @@ const fullscreen = createFullscreen(els.stage, (on) => {
 /* ---------- Fill window: the stage covers the browser window, without real fullscreen ---------- */
 
 let immersive = false;
+const fillWakeLock = createWakeLock();
 
 function setImmersive(on: boolean): void {
   if (immersive === on) return;
   immersive = on;
+  if (on) startDateCountdown();
+  void (on ? fillWakeLock.enable() : fillWakeLock.disable());
   document.body.classList.toggle('immersive', on);
   wakeCursor();
   if (on) toast(s.immersiveHint);
@@ -290,6 +294,16 @@ function start(): void {
   }
   void wakeLock.enable();
   commit();
+}
+
+/**
+ * A countdown to a date already counts without Start, but only a started one shows the end message
+ * and plays the sound. Fullscreen and fill window are for watching it, so they start it.
+ */
+function startDateCountdown(): void {
+  if (state.mode !== 'date' || state.status !== 'idle') return;
+  const target = new Date(els.targetDate.value).getTime();
+  if (Number.isFinite(target) && target > Date.now()) start();
 }
 
 function pause(): void {
@@ -794,6 +808,7 @@ function render(): void {
 
   renderThemes();
   syncTerminalBlink();
+  syncDateWakeLock();
   scheduleTick();
 }
 
@@ -808,6 +823,18 @@ function secondsAnchor(): number | null {
 }
 
 let tickTimer = 0;
+
+/* A countdown to a date runs without Start (status idle), so it keeps the screen on by itself
+   until the date has passed. */
+const dateWakeLock = createWakeLock();
+let dateCounting = false;
+
+function syncDateWakeLock(): void {
+  const counting = state.mode === 'date' && state.status === 'idle' && (state.targetDate ?? 0) > Date.now();
+  if (counting === dateCounting) return;
+  dateCounting = counting;
+  void (counting ? dateWakeLock.enable() : dateWakeLock.disable());
+}
 
 /** Wakes up just after the displayed value changes instead of polling, so digits flip on time. */
 function scheduleTick(): void {
@@ -843,6 +870,7 @@ function tick(): void {
   renderDisplay();
   renderTitle();
   syncTerminalBlink();
+  syncDateWakeLock();
   scheduleTick();
 }
 

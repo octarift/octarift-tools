@@ -1,6 +1,9 @@
+import { createWakeLock } from './wake-lock';
+
 /**
  * Fullscreen for one element. Falls back to a CSS "pseudo fullscreen"
  * (body.pseudo-fullscreen) where the Fullscreen API is missing, e.g. iPhone Safari.
+ * The screen is kept on while in fullscreen (either kind).
  */
 export interface FullscreenControl {
   toggle(): Promise<void>;
@@ -13,6 +16,11 @@ export interface FullscreenControl {
 export function createFullscreen(el: HTMLElement, onChange: (on: boolean) => void): FullscreenControl {
   const native = document.fullscreenEnabled && typeof el.requestFullscreen === 'function';
   let pseudo = false;
+  const wakeLock = createWakeLock();
+  const changed = (on: boolean) => {
+    void (on ? wakeLock.enable() : wakeLock.disable());
+    onChange(on);
+  };
 
   const isOn = () => document.fullscreenElement === el || pseudo;
 
@@ -25,7 +33,7 @@ export function createFullscreen(el: HTMLElement, onChange: (on: boolean) => voi
     document.addEventListener('fullscreenchange', () => {
       // Native fullscreen arrived late, after the fallback had already kicked in.
       if (document.fullscreenElement === el && pseudo) setPseudo(false);
-      onChange(isOn());
+      changed(isOn());
     });
   }
 
@@ -44,7 +52,7 @@ export function createFullscreen(el: HTMLElement, onChange: (on: boolean) => voi
       }
     }
     setPseudo(true);
-    onChange(true);
+    changed(true);
   }
 
   async function exit() {
@@ -52,7 +60,7 @@ export function createFullscreen(el: HTMLElement, onChange: (on: boolean) => voi
       await document.exitFullscreen().catch(() => undefined);
     } else if (pseudo) {
       setPseudo(false);
-      onChange(false);
+      changed(false);
     }
   }
 
