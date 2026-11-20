@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Random picker, teams and dice – Octarift Tools</title>
+    <meta name="description" content="Online name picker with a wheel of fortune, random team generator, dice roller (any number of dice and sides), coin flip, random number and random order. Fair randomness, fullscreen ready." />
+    <!-- Link previews (WhatsApp, Facebook, Slack…). Crawlers do not run scripts, so these stay in English;
+         the page switches to Czech for Czech visitors at runtime. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Octarift Tools" />
+    <meta property="og:title" content="Random Picker, Teams and Dice" />
+    <meta property="og:description" content="Name picker with a wheel of fortune, team generator, dice roller, coin flip and random numbers. Fair, free, fullscreen ready." />
+    <meta property="og:url" content="https://tools.octarift.com/random/" />
+    <meta property="og:image" content="https://tools.octarift.com/og/random.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Random Picker – Octarift Tools" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="cs_CZ" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="cs" href="https://tools.octarift.com/random/?lang=cs" />
+    <link rel="alternate" hreflang="en" href="https://tools.octarift.com/random/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://tools.octarift.com/random/" />
+    <!-- Apply the saved light/dark choice before first paint (see src/shared/color-scheme.ts). -->
+    <script>try{var m=document.cookie.match(/(?:^|; )scheme=(light|dark)/);if(m)document.documentElement.dataset.scheme=m[1]}catch(e){}</script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <!-- Visible text is filled from strings.ts (data-i18n / data-i18n-attr); the Czech here is only the fallback. -->
+  <body>
+    <header class="site-header" data-site-header></header>
+
+    <main class="rnd">
+      <h1 class="rnd__title" data-i18n="heading">Losování, týmy a kostky</h1>
+      <p class="rnd__lead" data-i18n="lead"></p>
+
+      <section class="rnd__form">
+        <div id="rnd-modes" class="rnd-modes" role="group" data-i18n-attr="aria-label:modesLabel"></div>
+        <p id="rnd-mode-hint" class="rnd__hint"></p>
+
+        <div class="rnd-fields">
+          <!-- Names: picking, teams and order -->
+          <div id="f-names" class="rnd-field rnd-field--wide">
+            <label for="rnd-names" data-i18n="names">Jména</label>
+            <textarea id="rnd-names" rows="8" spellcheck="false" data-i18n-attr="placeholder:namesPlaceholder"></textarea>
+            <span id="rnd-names-count" class="rnd__hint"></span>
+          </div>
+
+          <label id="f-pick-count" class="rnd-field"
+            ><span data-i18n="pickCount">Kolik vylosovat</span
+            ><input id="rnd-pick-count" type="number" min="1" max="999" inputmode="numeric"
+          /></label>
+          <div id="f-pick-options" class="rnd-field rnd-field--wide rnd-checks">
+            <label class="rnd-check"
+              ><input id="rnd-wheel" type="checkbox" /><span data-i18n="showWheel">Kolo štěstí</span></label
+            >
+            <label class="rnd-check"
+              ><input id="rnd-remove" type="checkbox" /><span data-i18n="removeDrawn">Vylosované odebrat ze seznamu</span></label
+            >
+          </div>
+
+          <!-- Teams -->
+          <div id="f-teams-by" class="rnd-field rnd-field--wide">
+            <span class="rnd-field__label" data-i18n="teamsBy">Rozdělit podle</span>
+            <div class="rnd-chips" role="group" data-i18n-attr="aria-label:teamsBy">
+              <button type="button" class="chip" data-teams-by="count" data-i18n="teamsByCount">počtu týmů</button>
+              <button type="button" class="chip" data-teams-by="size" data-i18n="teamsBySize">velikosti týmu</button>
+            </div>
+          </div>
+          <label id="f-team-value" class="rnd-field"
+            ><span id="rnd-team-label" data-i18n="teamCount">Počet týmů</span
+            ><input id="rnd-team-value" type="number" min="1" max="100" inputmode="numeric"
+          /></label>
+
+          <!-- Dice -->
+          <label id="f-dice-count" class="rnd-field"
+            ><span data-i18n="diceCount">Počet kostek</span
+            ><input id="rnd-dice-count" type="number" min="1" max="30" inputmode="numeric"
+          /></label>
+          <div id="f-dice-sides" class="rnd-field rnd-field--wide">
+            <span class="rnd-field__label" data-i18n="diceSides">Počet stran</span>
+            <div class="rnd-chips" role="group" data-i18n-attr="aria-label:diceSides">
+              <button type="button" class="chip" data-sides="4">4</button>
+              <button type="button" class="chip" data-sides="6">6</button>
+              <button type="button" class="chip" data-sides="8">8</button>
+              <button type="button" class="chip" data-sides="10">10</button>
+              <button type="button" class="chip" data-sides="12">12</button>
+              <button type="button" class="chip" data-sides="20">20</button>
+              <button type="button" class="chip" data-sides="100">100</button>
+              <label class="rnd-custom-sides"
+                ><span data-i18n="diceCustom">Jiný</span
+                ><input id="rnd-dice-sides" type="number" min="2" max="1000" inputmode="numeric"
+              /></label>
+            </div>
+          </div>
+
+          <!-- Coin -->
+          <div id="f-coin" class="rnd-field rnd-field--wide">
+            <span class="rnd-field__label" data-i18n="coinSides">Názvy stran mince</span>
+            <div class="rnd-pair">
+              <label class="rnd-field"
+                ><span class="visually-hidden" data-i18n="coinHeadsLabel">První strana</span
+                ><input id="rnd-coin-heads" type="text" maxlength="30" autocomplete="off"
+              /></label>
+              <label class="rnd-field"
+                ><span class="visually-hidden" data-i18n="coinTailsLabel">Druhá strana</span
+                ><input id="rnd-coin-tails" type="text" maxlength="30" autocomplete="off"
+              /></label>
+            </div>
+          </div>
+
+          <!-- Number -->
+          <label id="f-num-min" class="rnd-field"
+            ><span data-i18n="numberMin">Od</span><input id="rnd-num-min" type="number" inputmode="numeric" min="-1000000000" max="1000000000"
+          /></label>
+          <label id="f-num-max" class="rnd-field"
+            ><span data-i18n="numberMax">Do</span><input id="rnd-num-max" type="number" inputmode="numeric" min="-1000000000" max="1000000000"
+          /></label>
+          <label id="f-num-count" class="rnd-field"
+            ><span data-i18n="numberCount">Kolik čísel</span
+            ><input id="rnd-num-count" type="number" min="1" max="1000" inputmode="numeric"
+          /></label>
+          <div id="f-num-options" class="rnd-field rnd-checks">
+            <label class="rnd-check"
+              ><input id="rnd-num-unique" type="checkbox" /><span data-i18n="numberUnique">Bez opakování</span></label
+            >
+            <label class="rnd-check"
+              ><input id="rnd-num-sort" type="checkbox" /><span data-i18n="numberSort">Seřadit</span></label
+            >
+          </div>
+        </div>
+        <p id="rnd-error" class="rnd__error" role="alert" hidden></p>
+        <p class="rnd__hint" data-i18n="fair"></p>
+      </section>
+
+      <section class="rnd__output">
+        <div id="rnd-stage" class="rnd-stage" aria-live="polite">
+          <div id="rnd-result" class="rnd-result">
+            <p class="rnd-result__empty" data-i18n="stageEmpty">Výsledek se zobrazí tady.</p>
+          </div>
+          <svg id="rnd-wheel-svg" class="wheel" role="img" hidden></svg>
+          <div class="rnd-stage__actions">
+            <button id="rnd-go" class="button button--primary rnd-go" type="button">Losovat</button>
+          </div>
+          <button class="rnd-stage__exit" type="button" data-action="fullscreen" data-i18n-attr="aria-label:exitFullscreen">✕</button>
+        </div>
+        <div class="rnd-tools">
+          <button id="rnd-copy" class="button" type="button" data-i18n="copy" disabled>Kopírovat výsledek</button>
+          <button id="rnd-fullscreen" class="button" type="button" data-action="fullscreen" data-i18n="fullscreen">Celá obrazovka</button>
+        </div>
+        <p class="rnd__hint" data-i18n="shortcuts"></p>
+        <div id="rnd-history" class="rnd-history" hidden>
+          <div class="rnd-history__head">
+            <h2 class="rnd-history__title" data-i18n="history">Předchozí hody</h2>
+            <button id="rnd-history-clear" class="button button--small" type="button" data-i18n="clearHistory">Vymazat</button>
+          </div>
+          <ol id="rnd-history-list" class="rnd-history__list" reversed></ol>
+        </div>
+      </section>
+
+      <aside class="rnd__promo" data-promo="random"></aside>
+      <aside class="ad-slot" data-ad-slot="random-bottom"></aside>
+    </main>
+
+    <footer class="site-footer" data-site-footer></footer>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

@@ -67,3 +67,14 @@ export const imageCompressorIcon = svg(
     `<path d="M44 44l-5-5M39 43v-4h4"/>` +
     `</g>`,
 );
+
+/** Two dice (five and two pips) in the ramp's greens. */
+export const randomIcon = svg(
+  `<rect x="5" y="9" width="21" height="21" rx="4.5" stroke="#5ad278" stroke-width="3" transform="rotate(-12 15.5 19.5)"/>` +
+    `<g fill="#c4f27a" transform="rotate(-12 15.5 19.5)">` +
+    `<circle cx="10.5" cy="14" r="1.9"/><circle cx="20.5" cy="14" r="1.9"/><circle cx="15.5" cy="19.5" r="1.9"/>` +
+    `<circle cx="10.5" cy="25" r="1.9"/><circle cx="20.5" cy="25" r="1.9"/>` +
+    `</g>` +
+    `<rect x="23" y="20" width="19" height="19" rx="4" fill="#147d4c" stroke="#33b866" stroke-width="2.6" transform="rotate(14 32.5 29.5)"/>` +
+    `<g fill="#c4f27a" transform="rotate(14 32.5 29.5)"><circle cx="28" cy="25" r="1.8"/><circle cx="37" cy="34" r="1.8"/></g>`,
+);

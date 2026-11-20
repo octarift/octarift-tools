@@ -1,5 +1,5 @@
 import type { Lang } from './i18n';
-import { countdownIcon, imageCompressorIcon, qrCodeIcon, textConverterIcon } from './tool-icons';
+import { countdownIcon, imageCompressorIcon, qrCodeIcon, randomIcon, textConverterIcon } from './tool-icons';
 
 /** Text in every UI language. */
 export type Localized = Record<Lang, string>;
@@ -94,5 +94,14 @@ export const tools: ToolInfo[] = [
       en: 'Resize and compress photos, including iPhone HEIC. Convert to JPG, WebP or PNG and strip GPS and EXIF data.',
     },
     icon: imageCompressorIcon,
+  },
+  {
+    slug: 'random',
+    name: { cs: 'Losování', en: 'Random picker' },
+    description: {
+      cs: 'Losování jmen s kolem štěstí, rozdělení do týmů, hod kostkami a mincí, náhodné číslo a pořadí.',
+      en: 'Name picker with a wheel of fortune, team generator, dice roller, coin flip, random number and order.',
+    },
+    icon: randomIcon,
   },
 ];

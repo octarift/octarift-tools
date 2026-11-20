@@ -2,8 +2,8 @@
 
 A collection of small browser-based tools on one site, published at
 https://tools.octarift.com under the Octarift studio brand. Tools so far: a
-countdown with stopwatch, Pomodoro and interval modes (`/countdown/`), a text converter (`/text-converter/`), a QR code generator (`/qr-code/`)
-and an image compressor (`/image-compressor/`).
+countdown with stopwatch, Pomodoro and interval modes (`/countdown/`), a text converter (`/text-converter/`), a QR code generator (`/qr-code/`),
+an image compressor (`/image-compressor/`) and a random picker with teams and dice (`/random/`).
 
 The studio site (octarift.com, separate repo `octarift/octarift-web`, local
 `D:\Projects\octarift-web`) links here, and these tools promote the studio's
@@ -32,6 +32,9 @@ game Rift Defense (`com.octarift.riftdefense` on Google Play).
   `<head>` snippet in every page applies it before paint, and base.css keeps the dark tokens in two equal blocks.
 - Respect `prefers-reduced-motion` for every animation; animated backgrounds must stay cheap (CSS/GPU, no heavy JS loops).
 - Mobile matters: layouts must work at 360 px width, touch targets ≥ 44 px.
+- Number fields: always give `<input type="number">` real `min`/`max` (and set them from code when they depend on
+  other values). `shared/number-limits.ts` (installed by `mountSiteChrome`) then makes them impossible to exceed:
+  above max is replaced while typing, below a positive min when leaving the field.
 
 ## Stack
 
@@ -95,6 +98,10 @@ src/
                                 else 25; remembered, ?day= in links); christmas.ts = dates/Advent (pure)
   privacy/, about/              text pages (privacy policy, about and contact) via shared/text-page.ts;
                                 not tools, so not in `tools`; linked from the footer
+  random/                       random picker (/random/): names with a wheel of fortune, teams, order, dice, coin, numbers
+    rng.ts                      fair randomness (crypto + rejection sampling), shuffle, teams, dice (pure)
+    wheel.ts                    SVG wheel; the winner is drawn first, the CSS transition only animates to it
+    main.ts, strings.ts, random.css
 public/                         static files copied as-is (favicon, og images, vendor/, robots.txt, later ads.txt)
 ```
 

@@ -1,6 +1,7 @@
 import { GAME_MENTIONS_ENABLED, gamePromo, site, tools } from './config';
 import { bindSchemeSwitch, schemeSwitchHtml } from './color-scheme';
 import { lang, LANGS, langUrl, tr } from './i18n';
+import { enforceNumberLimits } from './number-limits';
 
 const LANG_LABELS = { cs: 'Čeština', en: 'English' } as const;
 
@@ -10,6 +11,8 @@ const LANG_LABELS = { cs: 'Čeština', en: 'English' } as const;
  * <aside data-promo="campaign"> and <aside data-ad-slot="name"> elements.
  */
 export function mountSiteChrome(currentSlug?: string): void {
+  // Every page with number fields gets binding min/max limits.
+  enforceNumberLimits();
   const header = document.querySelector<HTMLElement>('[data-site-header]');
   if (header) {
     // Keep the chosen language when moving between pages.

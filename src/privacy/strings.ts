@@ -23,7 +23,7 @@ const cs = {
 Česká republika. Kontakt: <a href="mailto:octarift.studio@gmail.com">octarift.studio@gmail.com</a>.</p>
 
 <h2>2. Data, která zadáváte do nástrojů</h2>
-<p>Převod textu, generátor QR kódů, zmenšení obrázků i odpočet zpracovávají vše ve vašem zařízení.
+<p>Převod textu, generátor QR kódů, zmenšení obrázků, losování i odpočet zpracovávají vše ve vašem zařízení.
 Obsah, který zadáte nebo nahrajete (text, fotky včetně jejich metadat, čísla účtů, hesla k Wi-Fi, obrázek na pozadí
 odpočtu…), se neposílá na žádný server. Neprovozujeme žádný vlastní server, který by ho mohl přijmout.</p>
 
@@ -36,7 +36,7 @@ Proto k nim není potřeba souhlas.</p>
   <tbody>
     <tr><td>Zvolený světlý nebo tmavý vzhled (jen pokud ho změníte)</td><td>cookie <code>scheme</code>, sdílená s octarift.com</td><td>1 rok</td></tr>
     <tr><td>Zvolený jazyk; nastavení odpočtu a stopek (režim, časy, motiv, vlastní texty); typ a vzhled QR kódu;
-      naposledy použitý převod textu; formát, kvalita a velikost obrázků; že už se zobrazil tip pro iPhone</td>
+      naposledy použitý převod textu; formát, kvalita a velikost obrázků; seznam jmen a nastavení v losování; že už se zobrazil tip pro iPhone</td>
       <td>localStorage</td><td>dokud je nesmažete</td></tr>
     <tr><td>Rozepsaný text v převodu textu, vyplněné údaje v generátoru QR kódů</td><td>sessionStorage</td><td>do zavření karty</td></tr>
     <tr><td>Vlastní obrázek nebo video na pozadí odpočtu</td><td>IndexedDB</td><td>dokud ho neodeberete</td></tr>
@@ -92,7 +92,7 @@ const en: typeof cs = {
 Octarift, Czech Republic. Contact: <a href="mailto:octarift.studio@gmail.com">octarift.studio@gmail.com</a>.</p>
 
 <h2>2. Data you enter into the tools</h2>
-<p>The text converter, QR code generator, image compressor and countdown process everything on your device.
+<p>The text converter, QR code generator, image compressor, random picker and countdown process everything on your device.
 What you enter or add (text, photos including their metadata, account numbers, Wi-Fi passwords, the countdown
 background…) is not sent to any server. We do not run any server that could receive it.</p>
 
@@ -105,7 +105,7 @@ consent is needed for it.</p>
   <tbody>
     <tr><td>Your light or dark appearance choice (only if you change it)</td><td>cookie <code>scheme</code>, shared with octarift.com</td><td>1 year</td></tr>
     <tr><td>Your language; countdown and stopwatch settings (mode, times, theme, custom texts); QR code type and look;
-      the last text conversion used; image format, quality and size; whether the iPhone tip was shown</td>
+      the last text conversion used; image format, quality and size; the name list and settings of the random picker; whether the iPhone tip was shown</td>
       <td>localStorage</td><td>until you delete it</td></tr>
     <tr><td>Text typed into the text converter, details filled into the QR code generator</td><td>sessionStorage</td><td>until the tab is closed</td></tr>
     <tr><td>Your own countdown background image or video</td><td>IndexedDB</td><td>until you remove it</td></tr>

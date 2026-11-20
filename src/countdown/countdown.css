@@ -2611,6 +2611,15 @@ body:is(.pseudo-fullscreen, .immersive) .stage__exit {
    A column's baseline is its first line (the digits), so baseline alignment lines the digits up. */
 .digits:has(.unit--fraction) {
   align-items: baseline;
+  /* The hundredths, the decimal mark and the extra gaps make the line wider than mm:ss alone; in
+     monospace themes (Tech, Terminal) the separators even take a full digit width. Sized so that
+     "mm:ss,cc" (about 4.4 digit widths) fits the stage with its padding. */
+  font-size: calc(min(20cqw, 34cqh) / var(--fit, 1));
+}
+
+/* With hours: "h:mm:ss,cc". */
+.digits[data-units='3']:has(.unit--fraction) {
+  font-size: calc(min(14cqw, 29cqh) / var(--fit, 1));
 }
 
 .unit--fraction .unit__value {
