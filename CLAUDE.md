@@ -98,6 +98,10 @@ src/
                                 else 25; remembered, ?day= in links); christmas.ts = dates/Advent (pure)
   odpocet-do-noveho-roku/       New Year countdown landing page (SEO), same pattern as Christmas; newyear.ts (pure);
                                 Fireworks theme (id `newyear`); both holiday pages share shared/styles/holiday-page.css
+  jak-vytvorit-qr-platbu/, heic-na-jpg/, pomodoro-technika/, tabata-trenink/
+                                guides (SEO articles): Czech article in the HTML, English in strings.ts, via
+                                shared/guide-page.ts; each links to its tool and to the other guides; listed on
+                                the hub (Návody) and linked from the QR generator, image compressor and countdown
   privacy/, about/              text pages (privacy policy, about and contact) via shared/text-page.ts;
                                 not tools, so not in `tools`; linked from the footer
   random/                       random picker (/random/): names with a wheel of fortune, teams, order, dice, coin, numbers
@@ -158,6 +162,8 @@ public/                         static files copied as-is (favicon, og images, v
 
 ## SEO
 
+- New guides: same template as the existing ones (head with hreflang, `#guide` article, `.guide-cta` button to the
+  tool with useful presets, "Další návody" list); add them to every guide's list and to the hub's `guideList`.
 - `sitemap.xml` is generated at build time from the page folders (vite.config.ts), with cs/en/x-default
   alternates; `public/robots.txt` points to it. Landing pages that are not tools (e.g. Christmas) are linked
   from the hub's "Oblíbené odpočty".

@@ -12,6 +12,13 @@ const strings = tr({
     popular: 'Oblíbené odpočty',
     christmas: 'Odpočet do Vánoc',
     newYear: 'Odpočet do Nového roku',
+    guides: 'Návody',
+    guideList: [
+      ['jak-vytvorit-qr-platbu', 'Jak vytvořit QR Platbu'],
+      ['heic-na-jpg', 'Jak převést HEIC na JPG'],
+      ['pomodoro-technika', 'Pomodoro technika'],
+      ['tabata-trenink', 'Tabata trénink'],
+    ],
   },
   en: {
     heading: 'Tools',
@@ -20,6 +27,13 @@ const strings = tr({
     popular: 'Popular countdowns',
     christmas: 'Christmas countdown',
     newYear: 'New Year countdown',
+    guides: 'Guides',
+    guideList: [
+      ['jak-vytvorit-qr-platbu', 'How to create a QR payment code'],
+      ['heic-na-jpg', 'How to convert HEIC to JPG'],
+      ['pomodoro-technika', 'The Pomodoro Technique'],
+      ['tabata-trenink', 'Tabata workout'],
+    ],
   },
 });
 
@@ -46,5 +60,10 @@ if (popular) {
   popular.innerHTML =
     `<h2 class="hub__subtitle">${strings.popular}</h2>` +
     `<ul class="hub-links"><li><a href="/odpocet-do-vanoc/?lang=${lang}">🎄 ${strings.christmas}</a></li>` +
-    `<li><a href="/odpocet-do-noveho-roku/?lang=${lang}">🎆 ${strings.newYear}</a></li></ul>`;
+    `<li><a href="/odpocet-do-noveho-roku/?lang=${lang}">🎆 ${strings.newYear}</a></li></ul>` +
+    // Guides: articles that bring visitors from search straight to the tools.
+    `<h2 class="hub__subtitle hub__subtitle--next">${strings.guides}</h2>` +
+    `<ul class="hub-links">${strings.guideList
+      .map(([slug, name]) => `<li><a href="/${slug}/?lang=${lang}">${name}</a></li>`)
+      .join('')}</ul>`;
 }

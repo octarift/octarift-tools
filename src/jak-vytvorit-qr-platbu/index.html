@@ -1,0 +1,82 @@
+<!doctype html>
+<!-- A guide for Czech searches: the Czech article is in the HTML (what search engines read first); English
+     visitors get the English version from strings.ts at runtime. Generated from a template; keep pages alike. -->
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jak vytvořit QR Platbu – návod krok za krokem | Octarift Tools</title>
+    <meta name="description" content="Návod, jak zdarma vytvořit QR kód pro platbu (QR Platba) na fakturu, pro spolek nebo mezi přáteli. Co zadat, jak kód zkontrolovat a vytisknout." />
+    <!-- Link previews stay in English like on the other pages. -->
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Octarift Tools" />
+    <meta property="og:title" content="How to create a Czech QR payment code – step by step" />
+    <meta property="og:description" content="A guide to creating a free QR payment code (QR Platba) for invoices, clubs or friends: what to fill in, how to check the code and print it." />
+    <meta property="og:url" content="https://tools.octarift.com/jak-vytvorit-qr-platbu/" />
+    <meta property="og:image" content="https://tools.octarift.com/og/qr-code.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="cs_CZ" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" hreflang="cs" href="https://tools.octarift.com/jak-vytvorit-qr-platbu/?lang=cs" />
+    <link rel="alternate" hreflang="en" href="https://tools.octarift.com/jak-vytvorit-qr-platbu/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://tools.octarift.com/jak-vytvorit-qr-platbu/" />
+    <!-- Apply the saved light/dark choice before first paint (see src/shared/color-scheme.ts). -->
+    <script>try{var m=document.cookie.match(/(?:^|; )scheme=(light|dark)/);if(m)document.documentElement.dataset.scheme=m[1]}catch(e){}</script>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <body>
+    <header class="site-header" data-site-header></header>
+    <main>
+      <article id="guide" class="text-page">
+<h1>Jak vytvořit QR Platbu</h1>
+<p class="text-page__meta">Návod · generátor QR kódů zdarma</p>
+<p>QR Platba je český standard pro platby přes QR kód. Plátce ho naskenuje v bankovní aplikaci a ta za něj vyplní
+číslo účtu, částku, variabilní symbol i zprávu. Nic se nepřepisuje, takže nevzniknou překlepy. Hodí se na faktury,
+pro spolky, školy, sbírky nebo když si chcete nechat poslat peníze od kamaráda.</p>
+
+<div class="guide-cta"><p>Kód vytvoříte během minuty v našem generátoru. Údaje se nikam neodesílají.</p>
+<a class="button button--primary" href="/qr-code/">Vytvořit QR Platbu</a></div>
+
+<h2>Postup krok za krokem</h2>
+<ol>
+  <li>Otevřete <a href="/qr-code/">generátor QR kódů</a> a zvolte <strong>Platba → QR Platba (CZ)</strong>.</li>
+  <li>Zadejte <strong>číslo účtu</strong> ve tvaru <code>předčíslí-číslo/kód banky</code> (např. <code>19-2000145399/0800</code>)
+    nebo jako IBAN. Generátor číslo zkontroluje a upozorní na překlep.</li>
+  <li>Vyplňte <strong>částku</strong>. Pokud ji necháte prázdnou, plátce ji zadá sám (hodí se na dary).</li>
+  <li>Doplňte <strong>variabilní symbol</strong>, případně specifický a konstantní, a <strong>zprávu pro příjemce</strong>.</li>
+  <li>Kód se objeví hned. Stáhněte ho jako <strong>PNG</strong> (do dokumentů a e-mailů) nebo <strong>SVG</strong> (pro tisk v libovolné velikosti).</li>
+</ol>
+
+<h2>Co všechno může QR Platba obsahovat</h2>
+<ul>
+  <li>číslo účtu příjemce (v kódu se vždy uloží jako IBAN),</li>
+  <li>částku a měnu (CZK nebo EUR),</li>
+  <li>variabilní, specifický a konstantní symbol,</li>
+  <li>datum splatnosti, jméno příjemce a zprávu pro příjemce.</li>
+</ul>
+
+<h2>Před odesláním kód vyzkoušejte</h2>
+<p>Než kód vytisknete nebo pošlete, naskenujte ho svou bankovní aplikací a zkontrolujte, že sedí účet, částka
+a symboly. Platbu přitom potvrzovat nemusíte. U tištěných kódů myslete na dostatečnou velikost a bílý okraj
+kolem kódu, aby ho telefony snadno přečetly.</p>
+
+<h2>Časté otázky</h2>
+<h3>Je QR Platba zdarma?</h3>
+<p>Ano. Formát je veřejný a náš generátor je zdarma, bez registrace.</p>
+<h3>Je to bezpečné?</h3>
+<p>Kód obsahuje jen údaje pro platbu, žádná hesla. Náš generátor ho vytváří přímo ve vašem prohlížeči, takže číslo
+účtu se nikam neodesílá. Plátce vždy vidí údaje v bankovní aplikaci a platbu musí sám potvrdit.</p>
+<h3>Funguje QR Platba i na Slovensku nebo v zahraničí?</h3>
+<p>Slovenské banky používají vlastní formát <strong>PAY by square</strong> a v zemích eurozóny se používá
+<strong>EPC QR kód (SEPA)</strong>. Oba najdete ve stejném generátoru v části Platba.</p>
+
+<div class="guide-related"><h2>Další návody</h2><ul><li><a href="/heic-na-jpg/">Jak převést HEIC na JPG</a></li><li><a href="/pomodoro-technika/">Pomodoro technika</a></li><li><a href="/tabata-trenink/">Tabata trénink</a></li></ul></div>
+</article>
+    </main>
+    <footer class="site-footer" data-site-footer></footer>
+  </body>
+</html>

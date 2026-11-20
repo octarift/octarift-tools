@@ -41,6 +41,16 @@
   color: var(--muted);
 }
 
+.qr__guide {
+  grid-column: 1 / -1;
+  margin: -10px 0 0;
+  font-size: 0.9rem;
+}
+
+.qr__guide a {
+  color: var(--accent);
+}
+
 .qr__form {
   grid-area: form;
   min-width: 0;

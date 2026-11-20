@@ -93,6 +93,7 @@ const els = {
   fullscreen: $<HTMLButtonElement>('#fullscreen'),
   immersive: $<HTMLButtonElement>('#immersive'),
   shortcuts: $('#shortcuts'),
+  guideLink: $('#guide-link'),
   share: $<HTMLButtonElement>('#share'),
   laps: $('#laps'),
   lapsBody: $('#laps-body'),
@@ -737,6 +738,15 @@ function render(): void {
   els.modeHint.textContent = s.modeHints[state.mode];
   els.modeHint.hidden = !s.modeHints[state.mode];
   els.intervalTotal.textContent = s.intervalTotal.replace('{time}', formatShort(intervalTotalMs(state.interval)));
+  // Guide for the modes that have one (also brings search visitors and these users together).
+  const guide =
+    state.mode === 'pomodoro' ? ['pomodoro-technika', s.guidePomodoro] : state.mode === 'interval' ? ['tabata-trenink', s.guideInterval] : null;
+  els.guideLink.hidden = !guide;
+  if (guide) {
+    const a = els.guideLink.querySelector('a')!;
+    a.href = `/${guide[0]}/?lang=${lang}`;
+    a.textContent = guide[1]!;
+  }
   els.shortcuts.textContent =
     state.mode === 'date' ? s.shortcutsDate : state.mode === 'stopwatch' ? s.shortcutsStopwatch : s.shortcuts;
 

@@ -20,6 +20,15 @@
   color: var(--muted);
 }
 
+.ic__guide {
+  margin: -10px 0 0;
+  font-size: 0.9rem;
+}
+
+.ic__guide a {
+  color: var(--accent);
+}
+
 .ic__hint {
   margin: 0;
   color: var(--muted);

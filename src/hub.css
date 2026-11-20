@@ -103,3 +103,7 @@
 .hub-links a:hover {
   border-color: var(--accent);
 }
+
+.hub__subtitle--next {
+  margin-top: 24px;
+}

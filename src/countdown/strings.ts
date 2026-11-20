@@ -108,6 +108,8 @@ const cs = {
   intervalTotal: 'Celý trénink trvá {time}.',
   sound: 'Zvukové signály při změně fáze',
   unitCentis: 'setiny',
+  guidePomodoro: 'Návod: Pomodoro technika a jak ji používat',
+  guideInterval: 'Návod: Tabata a intervalový trénink',
   customTexts: 'Vlastní texty',
   customTextsHint: 'Prázdné pole použije výchozí text, který vidíte šedě.',
   labelNames: {
@@ -225,6 +227,8 @@ const en: typeof cs = {
   intervalTotal: 'The whole workout takes {time}.',
   sound: 'Sound cues on phase changes',
   unitCentis: '1/100 s',
+  guidePomodoro: 'Guide: the Pomodoro Technique and how to use it',
+  guideInterval: 'Guide: Tabata and interval training',
   customTexts: 'Custom texts',
   customTextsHint: 'An empty field uses the default text shown in gray.',
   labelNames: {
