@@ -13,6 +13,7 @@ import {
   saveCustomBackground,
 } from './background';
 import { applyStrings, lang, setMetaDescription, tr } from '@shared/i18n';
+import { DEFAULT_OVERLAY, overlayUrl, readOverlay, type OverlayOptions } from './overlay';
 import { PencilDigits } from './pencil';
 import {
   formatElapsed,
@@ -103,15 +104,42 @@ const els = {
   settings: $<HTMLDialogElement>('#settings'),
   settingsOpen: $<HTMLButtonElement>('#settings-open'),
   settingsClose: $<HTMLButtonElement>('#settings-close'),
+  obsColor: $<HTMLInputElement>('#obs-color'),
+  obsShadow: $<HTMLInputElement>('#obs-shadow'),
+  obsLabels: $<HTMLInputElement>('#obs-labels'),
+  obsCopy: $<HTMLButtonElement>('#obs-copy'),
+  obsOpen: $<HTMLButtonElement>('#obs-open'),
 };
+
+/** OBS overlay (?overlay=1): transparent, digits only, starts by itself, saves nothing (see overlay.ts). */
+const overlay = readOverlay();
 
 const loaded = loadState();
 let state = loaded.state;
-// A shared link has been applied; drop it from the address bar so later edits are not overridden on reload.
 if (state.targetDate === null) state.targetDate = nextNewYear();
-if (loaded.fromLink) {
+if (overlay) {
+  // Everything an overlay shows comes from its link: no title or custom texts from this browser's settings.
+  const params = new URLSearchParams(location.search);
+  state = {
+    ...state,
+    sound: overlay.sound,
+    title: params.get('t') ?? '',
+    labels: [...params.keys()].some((k) => k.startsWith('l_')) ? state.labels : {},
+  };
+  const root = document.documentElement;
+  root.classList.add('overlay');
+  root.style.setProperty('--overlay-color', overlay.color);
+  root.dataset.overlayShadow = String(overlay.shadow);
+  root.dataset.overlayLabels = String(overlay.labels);
+} else if (loaded.fromLink) {
+  // A shared link has been applied; drop it from the address bar so later edits are not overridden on reload.
   saveState(state);
   history.replaceState(null, '', location.pathname);
+}
+
+/** Saves the state, except in an overlay, which must never change the countdown used outside OBS. */
+function persist(): void {
+  if (!overlay) saveState(state);
 }
 
 let hasCustomBg = false;
@@ -220,7 +248,7 @@ function writeDuration(ms: number): void {
 /* ---------- actions ---------- */
 
 function commit(): void {
-  saveState(state);
+  persist();
   render();
 }
 
@@ -719,7 +747,8 @@ function render(): void {
   const running = state.status === 'running';
   const phased = isPhased(state.mode);
 
-  els.stage.dataset.theme = state.theme === 'custom' && !hasCustomBg ? FALLBACK_THEME : state.theme;
+  // The overlay uses no theme at all: plain digits on a transparent background.
+  els.stage.dataset.theme = overlay ? 'overlay' : state.theme === 'custom' && !hasCustomBg ? FALLBACK_THEME : state.theme;
   updateDigitWidth();
   els.stage.classList.toggle('is-finished', state.status === 'finished');
   els.stageTitle.textContent = state.title;
@@ -867,7 +896,7 @@ async function share(): Promise<void> {
   } else if (state.mode === 'timer' && state.status === 'idle') {
     state = { ...state, durationMs: readDuration() || state.durationMs };
   }
-  saveState(state);
+  persist();
 
   const url = buildShareUrl(state, location.href);
   try {
@@ -877,6 +906,72 @@ async function share(): Promise<void> {
     window.prompt(s.copyPrompt, url);
   }
 }
+
+/* ---------- OBS overlay link ---------- */
+
+const OBS_KEY = 'countdown:obs:v1';
+
+function obsOptions(): OverlayOptions {
+  return {
+    color: /^#[0-9a-f]{6}$/i.test(els.obsColor.value) ? els.obsColor.value.toLowerCase() : DEFAULT_OVERLAY.color,
+    shadow: els.obsShadow.checked,
+    labels: els.obsLabels.checked,
+    // The overlay plays sounds when this countdown has them switched on.
+    sound: state.sound,
+  };
+}
+
+function writeObsOptions(): void {
+  let saved: Partial<OverlayOptions> = {};
+  try {
+    saved = JSON.parse(localStorage.getItem(OBS_KEY) ?? '{}') as Partial<OverlayOptions>;
+  } catch {
+    // Storage blocked or damaged: defaults.
+  }
+  els.obsColor.value = typeof saved.color === 'string' && /^#[0-9a-f]{6}$/i.test(saved.color) ? saved.color : DEFAULT_OVERLAY.color;
+  els.obsShadow.checked = saved.shadow ?? DEFAULT_OVERLAY.shadow;
+  els.obsLabels.checked = saved.labels ?? DEFAULT_OVERLAY.labels;
+}
+
+for (const input of [els.obsColor, els.obsShadow, els.obsLabels]) {
+  input.addEventListener('input', () => {
+    const { color, shadow, labels } = obsOptions();
+    try {
+      localStorage.setItem(OBS_KEY, JSON.stringify({ color, shadow, labels }));
+    } catch {
+      // Not remembered; the link still works.
+    }
+  });
+}
+
+/** The link for OBS: what this countdown shows now, as an overlay. */
+function obsLink(): string {
+  if (state.mode === 'date') {
+    const target = new Date(els.targetDate.value).getTime();
+    if (Number.isFinite(target)) state = { ...state, targetDate: target };
+  } else if (state.mode === 'timer' && state.status === 'idle') {
+    state = { ...state, durationMs: readDuration() || state.durationMs };
+  }
+  persist();
+  const url = new URL(overlayUrl(buildShareUrl(state, location.href), obsOptions()));
+  // The labels ("min / sec") and texts follow the language the link was made in, not OBS's browser.
+  url.searchParams.set('lang', lang);
+  return url.toString();
+}
+
+els.obsCopy.addEventListener('click', async () => {
+  const url = obsLink();
+  try {
+    await navigator.clipboard.writeText(url);
+    toast(s.toastObsCopied);
+  } catch {
+    window.prompt(s.copyPrompt, url);
+  }
+});
+
+els.obsOpen.addEventListener('click', () => {
+  window.open(obsLink(), '_blank', 'noopener');
+});
 
 /** Laps as tab-separated text, so they paste into a spreadsheet as columns. */
 async function copyLaps(): Promise<void> {
@@ -1064,8 +1159,14 @@ writeDuration(state.durationMs);
 writePhaseSettings();
 els.targetDate.value = toLocalInputValue(state.targetDate ?? nextNewYear());
 els.title.value = state.title;
+writeObsOptions();
 // A Pomodoro or workout left running in a closed tab continues where the clock says it should be.
 if (!advancePhases()) render();
+// In OBS nobody can press Start: the overlay starts by itself (a countdown to a date is already running).
+if (overlay && state.status !== 'running' && state.mode !== 'date') {
+  if (state.status === 'finished') reset();
+  start();
+}
 if (state.status === 'running') void wakeLock.enable();
 
 void loadCustomBackground().then((blob) => {

@@ -75,6 +75,7 @@ src/
     state.ts                    state shape, persistence, share-link encoding
     timer.ts                    pure time helpers
     phases.ts                   Pomodoro and interval phase sequences, stopwatch time format (pure)
+    overlay.ts                  OBS overlay links (?overlay=1, color, shadow, labels, sound)
     themes.ts + countdown.css   theme list grouped into categories, and their look ([data-theme="id"])
     pencil.ts                   hand-drawn SVG digits for themes flagged `pencil` (paper, chalkboard)
     background.ts, alarm.ts     custom background storage, sounds (end chime and phase cues; one on/off setting)
@@ -129,6 +130,9 @@ public/                         static files copied as-is (favicon, og images, v
   The custom background is never part of a link.
 - Phase names and end messages can be replaced by the user (`labels` in state, `MODE_LABELS` says which mode
   shows which; empty = built-in text from strings.ts); links carry them as `l_<key>=<text>`.
+- OBS overlay (`?overlay=1` on any share link): only the stage on a transparent background, no theme, starts by
+  itself, takes title and texts only from the link and never saves state (`persist()` skips it). The settings
+  drawer builds these links (options remembered under `countdown:obs:v1`).
 - Saved state lives in localStorage under `countdown:state:v1`; bump the version if the shape changes incompatibly.
 - Sound needs a user gesture first (`primeAudio()` on Start / first tap).
 - iPhone Safari has no Fullscreen API, so fullscreen there is the CSS fallback with Safari's bars visible.
@@ -175,4 +179,4 @@ public/                         static files copied as-is (favicon, og images, v
 
 - Real ad integration + GDPR consent banner (CMP) before enabling `site.ads.enabled`
 - Content/SEO pages (e.g. "Odpočet do Vánoc") — also needed for AdSense approval
-- PWA (offline), OBS/stream overlay mode with transparent background, more themes, i18n
+- PWA (offline), more themes

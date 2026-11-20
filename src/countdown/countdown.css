@@ -2836,3 +2836,80 @@ body:is(.pseudo-fullscreen, .immersive) .stage__exit {
     transition: none;
   }
 }
+
+/* ---------- OBS overlay (?overlay=1): only the stage, transparent, sized to the browser source ---------- */
+
+html.overlay,
+html.overlay body {
+  background: transparent;
+}
+
+html.overlay body > :not(main),
+html.overlay main > :not(#stage) {
+  display: none !important;
+}
+
+html.overlay main.countdown {
+  width: 100%;
+  padding: 0;
+}
+
+html.overlay .stage {
+  position: fixed;
+  inset: 0;
+  max-height: none;
+  min-height: 0;
+  aspect-ratio: auto;
+  border-radius: 0;
+  background: transparent;
+  --stage-fg: var(--overlay-color, #ffffff);
+  --stage-muted: var(--overlay-color, #ffffff);
+}
+
+html.overlay .stage__fx,
+html.overlay .stage__exit,
+html.overlay .ios-tip {
+  display: none !important;
+}
+
+html.overlay .stage .digits,
+html.overlay .stage .stage__title,
+html.overlay .stage .stage__phase,
+html.overlay .stage .stage__done,
+html.overlay .stage .unit__label {
+  color: var(--overlay-color, #ffffff);
+}
+
+/* A soft dark outline keeps light digits readable over bright game scenes. */
+html.overlay[data-overlay-shadow='true'] .stage :is(.digits, .stage__title, .stage__phase, .stage__done) {
+  text-shadow:
+    0 0.02em 0.04em rgb(0 0 0 / 0.85),
+    0 0 0.15em rgb(0 0 0 / 0.55);
+}
+
+html.overlay[data-overlay-shadow='false'] .stage :is(.digits, .stage__title, .stage__phase, .stage__done) {
+  text-shadow: none;
+}
+
+html.overlay[data-overlay-labels='false'] .unit__label {
+  display: none;
+}
+
+.obs__color {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.obs__color input {
+  width: 56px;
+  height: 40px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  cursor: pointer;
+}

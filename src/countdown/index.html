@@ -246,6 +246,23 @@
           </div>
           <p class="hint" data-i18n="bgPrivacy">Soubor zůstává jen ve vašem prohlížeči, nikam se nenahrává.</p>
         </div>
+
+        <details class="field custom-texts obs">
+          <summary data-i18n="obsTitle">Pro OBS a streamování</summary>
+          <div class="field-group">
+            <p class="hint" data-i18n="obsHint"></p>
+            <label class="obs__color"
+              ><span data-i18n="obsColor">Barva číslic</span><input id="obs-color" type="color" value="#ffffff"
+            /></label>
+            <label class="check"><input id="obs-shadow" type="checkbox" checked /><span data-i18n="obsShadow">Stín</span></label>
+            <label class="check"><input id="obs-labels" type="checkbox" checked /><span data-i18n="obsLabels">Popisky</span></label>
+            <div class="bg-row">
+              <button id="obs-copy" class="button button--primary" type="button" data-i18n="obsCopy">Kopírovat odkaz pro OBS</button>
+              <button id="obs-open" class="button" type="button" data-i18n="obsOpen">Náhled</button>
+            </div>
+            <p class="hint" data-i18n="obsSteps"></p>
+          </div>
+        </details>
       </div>
     </dialog>
 
