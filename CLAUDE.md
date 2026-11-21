@@ -179,7 +179,10 @@ public/                         static files copied as-is (favicon, og images, v
 
 - `src/privacy/strings.ts` must match what the site really does. Update it (and its effective date) before
   adding analytics, ads or anything that loads third-party content or sends data anywhere; ads in the EU
-  also need a certified consent banner (CMP). Today: no third-party requests, only the hosting (GitHub Pages).
+  also need a certified consent banner (CMP). Today: the hosting (GitHub Pages) and Cloudflare Web Analytics
+  (cookieless, so no consent needed; section 5) are the only third parties.
+- Analytics: Cloudflare Web Analytics, site registered as `octarift.com` (one token for this site and the studio
+  site). The `analytics()` plugin in vite.config.ts adds the beacon to every page, in production builds only.
 - Controller and contact (same as octarift.com): Michal Šilhán (Octarift), octarift.studio@gmail.com.
 
 ## SEO

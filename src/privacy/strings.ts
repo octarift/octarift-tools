@@ -10,12 +10,12 @@ const cs = {
   metaDescription:
     'Jak Octarift Tools zachází s vašimi údaji: nástroje běží ve vašem prohlížeči, soubory ani texty se nikam neodesílají a web nepoužívá sledovací cookies.',
   heading: 'Zásady ochrany soukromí',
-  effective: 'Platné od 20. listopadu 2026',
+  effective: 'Platné od 21. listopadu 2026',
   body: `
 <div class="text-page__summary">
   <p><strong>Ve zkratce:</strong> Všechny nástroje běží přímo ve vašem prohlížeči. Texty, obrázky, fotky,
   platební údaje ani hesla, která do nich zadáte, se nikam neodesílají a nikdo, ani my, k nim nemá přístup.
-  Web nemá uživatelské účty, nepoužívá sledovací cookies, analytiku ani reklamy.</p>
+  Web nemá uživatelské účty, nepoužívá sledovací cookies ani reklamy a návštěvnost měří jen anonymně, bez cookies.</p>
 </div>
 
 <h2>1. Kdo za webem stojí</h2>
@@ -55,8 +55,16 @@ rel="noopener">prohlášení GitHubu o ochraně soukromí</a>.</p>
 <p>Načtení podpory pro fotky HEIC se týká jen souboru z tohoto webu, žádná další služba se při tom nekontaktuje.</p>
 
 <h2>5. Analytika a reklama</h2>
-<p>Web v tuto chvíli nepoužívá žádnou analytiku návštěvnosti ani reklamy a nevkládá obsah cizích služeb.
-Pokud je v budoucnu zavedeme, tyto zásady předem upravíme, a kde to zákon vyžaduje, požádáme vás o souhlas.</p>
+<p>Návštěvnost měříme službou Cloudflare Web Analytics (Cloudflare, Inc., USA). Při načtení stránky se z adresy
+static.cloudflareinsights.com stáhne malý skript, který Cloudflaru pošle adresu stránky, odkud jste přišli, typ
+prohlížeče a zařízení a údaje o rychlosti načtení. Nepoužívá cookies ani úložiště prohlížeče, nevytváří otisk prohlížeče
+a nesleduje vás napříč dny ani weby. IP adresu Cloudflare použije jen k určení země a neukládá ji. My vidíme pouze
+souhrnná čísla (počty návštěv, stránky, země, prohlížeče), nikoli jednotlivé návštěvníky. Právním základem je oprávněný
+zájem zjistit, které nástroje se používají, a zlepšovat je (čl. 6 odst. 1 písm. f GDPR). Přenos do USA se opírá o rámec
+EU–USA pro ochranu osobních údajů (Data Privacy Framework). Podrobnosti najdete v <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">zásadách ochrany soukromí
+Cloudflaru</a>. Měření zablokujete běžným blokátorem reklam; stránky fungují stejně.</p>
+<p>Web nezobrazuje reklamy a nevkládá jiný obsah cizích služeb. Pokud reklamy v budoucnu zavedeme, tyto zásady předem
+upravíme, a kde to zákon vyžaduje, požádáme vás o souhlas.</p>
 
 <h2>6. Odkazy na jiné weby</h2>
 <p>Web obsahuje odkazy na jiné stránky (například octarift.com nebo zdroje licencí). Po kliknutí se řídíte zásadami
@@ -79,12 +87,12 @@ const en: typeof cs = {
   metaDescription:
     'How Octarift Tools handles your data: the tools run in your browser, files and text are never uploaded, and the site uses no tracking cookies.',
   heading: 'Privacy policy',
-  effective: 'Effective from 20 November 2026',
+  effective: 'Effective from 21 November 2026',
   body: `
 <div class="text-page__summary">
   <p><strong>In short:</strong> All tools run right in your browser. The text, images, photos, payment details or
   passwords you enter are never sent anywhere, and nobody, including us, has access to them. The site has no user
-  accounts and uses no tracking cookies, analytics or ads.</p>
+  accounts, uses no tracking cookies or ads, and counts visits only anonymously, without cookies.</p>
 </div>
 
 <h2>1. Who runs the site</h2>
@@ -124,8 +132,16 @@ privacy statement</a> for details.</p>
 <p>Loading HEIC photo support only fetches a file from this site; no other service is contacted.</p>
 
 <h2>5. Analytics and advertising</h2>
-<p>The site currently uses no visitor analytics or ads and embeds no third-party content. If we add them in the future,
-we will update this policy beforehand and ask for your consent where the law requires it.</p>
+<p>We count visits with Cloudflare Web Analytics (Cloudflare, Inc., USA). When a page loads, a small script is fetched
+from static.cloudflareinsights.com and sends Cloudflare the page address, the page you came from, your browser and
+device type, and page load timings. It uses no cookies or browser storage, does no fingerprinting and does not follow
+you across days or websites. Cloudflare uses your IP address only to determine your country and does not store it. We
+see only totals (visits, pages, countries, browsers), never individual visitors. The legal basis is our legitimate
+interest in knowing which tools are used and improving them (Art. 6(1)(f) GDPR). Transfers to the USA rely on the
+EU–US Data Privacy Framework. See <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">Cloudflare's privacy policy</a> for details. A common ad blocker blocks this
+measurement; the site works the same.</p>
+<p>The site shows no ads and embeds no other third-party content. If we add ads in the future, we will update this
+policy beforehand and ask for your consent where the law requires it.</p>
 
 <h2>6. Links to other websites</h2>
 <p>The site links to other websites (for example octarift.com or license sources). Once you follow a link, their
@@ -148,12 +164,12 @@ const de: typeof cs = {
   metaDescription:
     'Wie Octarift Tools mit Ihren Daten umgeht: Die Werkzeuge laufen in Ihrem Browser, Dateien und Texte werden nie hochgeladen, und die Seite verwendet keine Tracking-Cookies.',
   heading: 'Datenschutzerklärung',
-  effective: 'Gültig ab 20. November 2026',
+  effective: 'Gültig ab 21. November 2026',
   body: `
 <div class="text-page__summary">
   <p><strong>Kurz gesagt:</strong> Alle Werkzeuge laufen direkt in Ihrem Browser. Texte, Bilder, Fotos, Zahlungsdaten
   oder Passwörter, die Sie eingeben, werden nirgendwohin gesendet, und niemand, auch wir nicht, hat Zugriff darauf.
-  Die Seite hat keine Benutzerkonten und verwendet keine Tracking-Cookies, Analysedienste oder Werbung.</p>
+  Die Seite hat keine Benutzerkonten, verwendet keine Tracking-Cookies oder Werbung und zählt Besuche nur anonym, ohne Cookies.</p>
 </div>
 
 <h2>1. Wer die Seite betreibt</h2>
@@ -198,9 +214,17 @@ von GitHub</a>.</p>
 kontaktiert.</p>
 
 <h2>5. Analyse und Werbung</h2>
-<p>Die Seite verwendet derzeit keine Besucheranalyse und keine Werbung und bindet keine Inhalte Dritter ein. Sollten wir
-sie künftig hinzufügen, aktualisieren wir diese Erklärung vorher und bitten Sie um Ihre Einwilligung, wo das Gesetz
-es verlangt.</p>
+<p>Wir zählen Besuche mit Cloudflare Web Analytics (Cloudflare, Inc., USA). Beim Laden einer Seite wird ein kleines
+Skript von static.cloudflareinsights.com geladen, das Cloudflare die Adresse der Seite, die vorherige Seite, Browser- und
+Gerätetyp sowie Ladezeiten übermittelt. Es verwendet keine Cookies und keinen Browserspeicher, erstellt keinen
+Fingerabdruck des Browsers und verfolgt Sie nicht über Tage oder Websites hinweg. Ihre IP-Adresse nutzt Cloudflare nur
+zur Bestimmung des Landes und speichert sie nicht. Wir sehen nur Gesamtzahlen (Besuche, Seiten, Länder, Browser), nie
+einzelne Besucher. Rechtsgrundlage ist unser berechtigtes Interesse, zu erfahren, welche Werkzeuge genutzt werden, und
+sie zu verbessern (Art. 6 Abs. 1 lit. f DSGVO). Die Übermittlung in die USA stützt sich auf das EU-US Data Privacy
+Framework. Einzelheiten finden Sie in der <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">Datenschutzerklärung von Cloudflare</a>. Ein üblicher Werbeblocker
+blockiert diese Messung; die Seite funktioniert genauso.</p>
+<p>Die Seite zeigt keine Werbung und bindet keine anderen Inhalte Dritter ein. Sollten wir künftig Werbung hinzufügen,
+aktualisieren wir diese Erklärung vorher und bitten Sie um Ihre Einwilligung, wo das Gesetz es verlangt.</p>
 
 <h2>6. Links zu anderen Websites</h2>
 <p>Die Seite verlinkt auf andere Websites (zum Beispiel octarift.com oder Lizenzquellen). Sobald Sie einem Link folgen,
@@ -229,12 +253,12 @@ const es: typeof cs = {
   metaDescription:
     'Cómo trata Octarift Tools tus datos: las herramientas funcionan en tu navegador, los archivos y textos nunca se suben y la web no usa cookies de seguimiento.',
   heading: 'Política de privacidad',
-  effective: 'En vigor desde el 20 de noviembre de 2026',
+  effective: 'En vigor desde el 21 de noviembre de 2026',
   body: `
 <div class="text-page__summary">
   <p><strong>En resumen:</strong> Todas las herramientas funcionan directamente en tu navegador. Los textos, imágenes,
   fotos, datos de pago o contraseñas que introduces nunca se envían a ningún sitio y nadie, ni siquiera nosotros, tiene
-  acceso a ellos. La web no tiene cuentas de usuario y no usa cookies de seguimiento, analítica ni publicidad.</p>
+  acceso a ellos. La web no tiene cuentas de usuario, no usa cookies de seguimiento ni publicidad y solo cuenta las visitas de forma anónima, sin cookies.</p>
 </div>
 
 <h2>1. Quién gestiona la web</h2>
@@ -279,8 +303,17 @@ de privacidad de GitHub</a>.</p>
 servicio.</p>
 
 <h2>5. Analítica y publicidad</h2>
-<p>Actualmente la web no usa analítica de visitantes ni publicidad y no inserta contenido de terceros. Si los añadimos
-en el futuro, actualizaremos antes esta política y te pediremos consentimiento cuando la ley lo exija.</p>
+<p>Contamos las visitas con Cloudflare Web Analytics (Cloudflare, Inc., EE. UU.). Al cargar una página se descarga un
+pequeño script desde static.cloudflareinsights.com que envía a Cloudflare la dirección de la página, la página de la
+que vienes, el tipo de navegador y de dispositivo y los tiempos de carga. No usa cookies ni almacenamiento del
+navegador, no crea una huella digital del navegador y no te sigue entre días ni entre webs. Cloudflare usa tu dirección
+IP solo para determinar el país y no la guarda. Nosotros solo vemos cifras totales (visitas, páginas, países,
+navegadores), nunca visitantes individuales. La base jurídica es nuestro interés legítimo en saber qué herramientas se
+usan y mejorarlas (art. 6.1.f del RGPD). Las transferencias a EE. UU. se basan en el Marco de Privacidad de Datos
+UE-EE. UU. Encontrarás más detalles en la <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">política de privacidad de Cloudflare</a>. Un bloqueador de anuncios
+habitual bloquea esta medición; la web funciona igual.</p>
+<p>La web no muestra publicidad ni inserta otro contenido de terceros. Si en el futuro añadimos publicidad,
+actualizaremos antes esta política y te pediremos consentimiento cuando la ley lo exija.</p>
 
 <h2>6. Enlaces a otras webs</h2>
 <p>La web enlaza a otros sitios (por ejemplo octarift.com o las fuentes de las licencias). Cuando sigues un enlace, se
@@ -308,12 +341,12 @@ const fr: typeof cs = {
   metaDescription:
     'Comment Octarift Tools traite vos données : les outils fonctionnent dans votre navigateur, les fichiers et textes ne sont jamais envoyés et le site n’utilise aucun cookie de suivi.',
   heading: 'Politique de confidentialité',
-  effective: 'En vigueur depuis le 20 novembre 2026',
+  effective: 'En vigueur depuis le 21 novembre 2026',
   body: `
 <div class="text-page__summary">
   <p><strong>En bref :</strong> Tous les outils fonctionnent directement dans votre navigateur. Les textes, images,
   photos, données de paiement ou mots de passe que vous saisissez ne sont jamais envoyés, et personne, pas même nous,
-  n’y a accès. Le site n’a pas de comptes utilisateurs et n’utilise ni cookies de suivi, ni mesure d’audience, ni publicité.</p>
+  n’y a accès. Le site n’a pas de comptes utilisateurs, n’utilise ni cookies de suivi ni publicité et ne mesure l’audience que de façon anonyme, sans cookies.</p>
 </div>
 
 <h2>1. Qui gère le site</h2>
@@ -358,9 +391,18 @@ de confidentialité de GitHub</a> pour plus de détails.</p>
 n’est contacté.</p>
 
 <h2>5. Mesure d’audience et publicité</h2>
-<p>Le site n’utilise actuellement ni mesure d’audience ni publicité et n’intègre aucun contenu tiers. Si nous en
-ajoutons à l’avenir, nous mettrons d’abord cette politique à jour et vous demanderons votre consentement lorsque la loi
-l’exige.</p>
+<p>Nous mesurons l’audience avec Cloudflare Web Analytics (Cloudflare, Inc., États-Unis). Au chargement d’une page, un
+petit script est téléchargé depuis static.cloudflareinsights.com ; il transmet à Cloudflare l’adresse de la page, la
+page d’où vous venez, le type de navigateur et d’appareil et les temps de chargement. Il n’utilise ni cookies ni
+stockage du navigateur, ne crée pas d’empreinte du navigateur et ne vous suit pas d’un jour à l’autre ni d’un site à
+l’autre. Cloudflare utilise votre adresse IP uniquement pour déterminer le pays et ne la conserve pas. Nous ne voyons
+que des totaux (visites, pages, pays, navigateurs), jamais des visiteurs individuels. La base légale est notre intérêt
+légitime à savoir quels outils sont utilisés et à les améliorer (art. 6, par. 1, point f) du RGPD). Les transferts vers
+les États-Unis reposent sur le cadre de protection des données UE–États-Unis (Data Privacy Framework). Pour plus de
+détails, consultez la <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">politique de confidentialité de Cloudflare</a>. Un bloqueur de publicités courant bloque
+cette mesure ; le site fonctionne de la même façon.</p>
+<p>Le site n’affiche pas de publicité et n’intègre aucun autre contenu tiers. Si nous ajoutons de la publicité à
+l’avenir, nous mettrons d’abord cette politique à jour et vous demanderons votre consentement lorsque la loi l’exige.</p>
 
 <h2>6. Liens vers d’autres sites</h2>
 <p>Le site contient des liens vers d’autres sites (par exemple octarift.com ou les sources des licences). Dès que vous
@@ -389,12 +431,12 @@ const it: typeof cs = {
   metaDescription:
     'Come Octarift Tools tratta i tuoi dati: gli strumenti funzionano nel tuo browser, file e testi non vengono mai caricati e il sito non usa cookie di tracciamento.',
   heading: 'Informativa sulla privacy',
-  effective: 'In vigore dal 20 novembre 2026',
+  effective: 'In vigore dal 21 novembre 2026',
   body: `
 <div class="text-page__summary">
   <p><strong>In breve:</strong> Tutti gli strumenti funzionano direttamente nel tuo browser. Testi, immagini, foto, dati
   di pagamento o password che inserisci non vengono mai inviati e nessuno, nemmeno noi, vi ha accesso. Il sito non ha
-  account utente e non usa cookie di tracciamento, strumenti di analisi né pubblicità.</p>
+  account utente, non usa cookie di tracciamento né pubblicità e conta le visite solo in forma anonima, senza cookie.</p>
 </div>
 
 <h2>1. Chi gestisce il sito</h2>
@@ -438,8 +480,17 @@ sulla privacy di GitHub</a>.</p>
 contattato.</p>
 
 <h2>5. Analisi e pubblicità</h2>
-<p>Al momento il sito non usa analisi dei visitatori né pubblicità e non incorpora contenuti di terze parti. Se li
-aggiungeremo in futuro, aggiorneremo prima questa informativa e ti chiederemo il consenso dove la legge lo richiede.</p>
+<p>Contiamo le visite con Cloudflare Web Analytics (Cloudflare, Inc., USA). Quando una pagina si carica, viene scaricato
+un piccolo script da static.cloudflareinsights.com che invia a Cloudflare l’indirizzo della pagina, la pagina da cui
+arrivi, il tipo di browser e di dispositivo e i tempi di caricamento. Non usa cookie né la memoria del browser, non crea
+un’impronta del browser e non ti segue tra giorni diversi o tra siti. Cloudflare usa il tuo indirizzo IP solo per
+determinare il paese e non lo conserva. Noi vediamo solo dati complessivi (visite, pagine, paesi, browser), mai singoli
+visitatori. La base giuridica è il nostro legittimo interesse a sapere quali strumenti vengono usati e a migliorarli
+(art. 6, par. 1, lett. f del GDPR). I trasferimenti verso gli USA si basano sul quadro UE-USA per la protezione dei dati
+(Data Privacy Framework). Trovi i dettagli nell’<a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">informativa sulla privacy di Cloudflare</a>. Un comune blocco
+pubblicità blocca questa misurazione; il sito funziona allo stesso modo.</p>
+<p>Il sito non mostra pubblicità e non incorpora altri contenuti di terze parti. Se in futuro aggiungeremo pubblicità,
+aggiorneremo prima questa informativa e ti chiederemo il consenso dove la legge lo richiede.</p>
 
 <h2>6. Link ad altri siti</h2>
 <p>Il sito contiene link ad altri siti (ad esempio octarift.com o le fonti delle licenze). Quando segui un link, valgono
@@ -467,12 +518,12 @@ const pl: typeof cs = {
   metaDescription:
     'Jak Octarift Tools obchodzi się z Twoimi danymi: narzędzia działają w przeglądarce, pliki i teksty nigdy nie są wysyłane, a strona nie używa śledzących plików cookie.',
   heading: 'Polityka prywatności',
-  effective: 'Obowiązuje od 20 listopada 2026 r.',
+  effective: 'Obowiązuje od 21 listopada 2026 r.',
   body: `
 <div class="text-page__summary">
   <p><strong>W skrócie:</strong> Wszystkie narzędzia działają bezpośrednio w Twojej przeglądarce. Teksty, obrazy,
   zdjęcia, dane płatności ani hasła, które wpisujesz, nigdy nie są nigdzie wysyłane i nikt, również my, nie ma do nich
-  dostępu. Strona nie ma kont użytkowników i nie używa śledzących plików cookie, analityki ani reklam.</p>
+  dostępu. Strona nie ma kont użytkowników, nie używa śledzących plików cookie ani reklam, a odwiedziny liczy tylko anonimowo, bez plików cookie.</p>
 </div>
 
 <h2>1. Kto prowadzi stronę</h2>
@@ -514,8 +565,17 @@ o prywatności GitHub</a>.</p>
 <p>Wczytanie obsługi zdjęć HEIC pobiera tylko plik z tej strony; żadna inna usługa nie jest kontaktowana.</p>
 
 <h2>5. Analityka i reklamy</h2>
-<p>Strona obecnie nie używa analityki odwiedzin ani reklam i nie osadza treści stron trzecich. Jeśli je w przyszłości
-dodamy, wcześniej zaktualizujemy tę politykę i poprosimy o zgodę tam, gdzie wymaga tego prawo.</p>
+<p>Odwiedziny liczymy za pomocą Cloudflare Web Analytics (Cloudflare, Inc., USA). Przy wczytaniu strony pobierany jest
+z adresu static.cloudflareinsights.com mały skrypt, który wysyła do Cloudflare adres strony, stronę, z której
+przychodzisz, typ przeglądarki i urządzenia oraz czasy wczytywania. Nie używa plików cookie ani pamięci przeglądarki, nie
+tworzy odcisku przeglądarki i nie śledzi Cię między dniami ani stronami. Adresu IP Cloudflare używa tylko do ustalenia
+kraju i go nie przechowuje. My widzimy wyłącznie zbiorcze liczby (odwiedziny, strony, kraje, przeglądarki), nigdy
+pojedynczych odwiedzających. Podstawą prawną jest nasz prawnie uzasadniony interes w tym, by wiedzieć, z których narzędzi
+się korzysta, i je ulepszać (art. 6 ust. 1 lit. f RODO). Przekazywanie danych do USA opiera się na unijno-amerykańskich
+ramach ochrony danych (Data Privacy Framework). Szczegóły znajdziesz w <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">polityce prywatności Cloudflare</a>. Typowy
+bloker reklam blokuje ten pomiar; strona działa tak samo.</p>
+<p>Strona nie wyświetla reklam ani nie osadza innych treści stron trzecich. Jeśli w przyszłości dodamy reklamy,
+wcześniej zaktualizujemy tę politykę i poprosimy o zgodę tam, gdzie wymaga tego prawo.</p>
 
 <h2>6. Linki do innych stron</h2>
 <p>Strona zawiera linki do innych witryn (na przykład octarift.com lub źródeł licencji). Po przejściu przez link
@@ -542,12 +602,12 @@ const sk: typeof cs = {
   metaDescription:
     'Ako Octarift Tools zaobchádza s vašimi údajmi: nástroje bežia vo vašom prehliadači, súbory ani texty sa nikam neodosielajú a web nepoužíva sledovacie cookies.',
   heading: 'Zásady ochrany súkromia',
-  effective: 'Účinné od 20. novembra 2026',
+  effective: 'Účinné od 21. novembra 2026',
   body: `
 <div class="text-page__summary">
   <p><strong>Stručne:</strong> Všetky nástroje bežia priamo vo vašom prehliadači. Texty, obrázky, fotky, platobné údaje
-  ani heslá, ktoré zadáte, sa nikam neodosielajú a nikto, ani my, k nim nemá prístup. Web nemá používateľské účty a
-  nepoužíva sledovacie cookies, analytiku ani reklamu.</p>
+  ani heslá, ktoré zadáte, sa nikam neodosielajú a nikto, ani my, k nim nemá prístup. Web nemá používateľské účty,
+  nepoužíva sledovacie cookies ani reklamu a návštevnosť meria len anonymne, bez cookies.</p>
 </div>
 
 <h2>1. Kto web prevádzkuje</h2>
@@ -588,8 +648,16 @@ o ochrane súkromia GitHubu</a>.</p>
 <p>Načítanie podpory fotiek HEIC stiahne len súbor z tohto webu; žiadna iná služba sa nekontaktuje.</p>
 
 <h2>5. Analytika a reklama</h2>
-<p>Web v súčasnosti nepoužíva analytiku návštevnosti ani reklamu a nevkladá obsah tretích strán. Ak ich v budúcnosti
-pridáme, tieto zásady vopred aktualizujeme a tam, kde to zákon vyžaduje, vás požiadame o súhlas.</p>
+<p>Návštevnosť meriame službou Cloudflare Web Analytics (Cloudflare, Inc., USA). Pri načítaní stránky sa z adresy
+static.cloudflareinsights.com stiahne malý skript, ktorý Cloudflaru pošle adresu stránky, odkiaľ ste prišli, typ
+prehliadača a zariadenia a údaje o rýchlosti načítania. Nepoužíva cookies ani úložisko prehliadača, nevytvára odtlačok
+prehliadača a nesleduje vás naprieč dňami ani webmi. IP adresu Cloudflare použije len na určenie krajiny a neukladá ju.
+My vidíme iba súhrnné čísla (počty návštev, stránky, krajiny, prehliadače), nie jednotlivých návštevníkov. Právnym
+základom je oprávnený záujem zistiť, ktoré nástroje sa používajú, a zlepšovať ich (čl. 6 ods. 1 písm. f GDPR). Prenos
+do USA sa opiera o rámec EÚ – USA na ochranu osobných údajov (Data Privacy Framework). Podrobnosti nájdete v
+<a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">zásadách ochrany súkromia Cloudflaru</a>. Meranie zablokujete bežným blokovačom reklám; stránky fungujú rovnako.</p>
+<p>Web nezobrazuje reklamu a nevkladá iný obsah tretích strán. Ak reklamu v budúcnosti pridáme, tieto zásady vopred
+aktualizujeme a tam, kde to zákon vyžaduje, vás požiadame o súhlas.</p>
 
 <h2>6. Odkazy na iné weby</h2>
 <p>Web odkazuje na iné stránky (napríklad octarift.com alebo zdroje licencií). Keď prejdete na odkaz, platia ich

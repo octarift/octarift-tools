@@ -82,6 +82,31 @@ function holidayYears(): Plugin {
   };
 }
 
+/**
+ * Cloudflare Web Analytics (no cookies, no storage; see the privacy policy, section 5). Only in the
+ * production build, so local development is not counted. The site is registered as octarift.com, so the
+ * same token also serves the studio site (octarift-web).
+ */
+const CF_ANALYTICS_TOKEN = '9cbd948d04d540c2845fe4cdd8e87449';
+
+function analytics(): Plugin {
+  return {
+    name: 'analytics',
+    apply: 'build',
+    transformIndexHtml: () => [
+      {
+        tag: 'script',
+        attrs: {
+          type: 'module',
+          src: 'https://static.cloudflareinsights.com/beacon.min.js',
+          'data-cf-beacon': JSON.stringify({ token: CF_ANALYTICS_TOKEN }),
+        },
+        injectTo: 'body',
+      },
+    ],
+  };
+}
+
 const SITE_URL = 'https://tools.octarift.com';
 
 /**
@@ -130,7 +155,7 @@ function sitemap(): Plugin {
 export default defineConfig({
   root,
   publicDir: resolve(here, 'public'),
-  plugins: [licenseNotices(), holidayYears(), sitemap()],
+  plugins: [licenseNotices(), holidayYears(), analytics(), sitemap()],
   resolve: {
     alias: { '@shared': resolve(root, 'shared') },
   },
